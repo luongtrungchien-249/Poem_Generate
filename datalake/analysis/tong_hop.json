@@ -12,15 +12,21 @@
   "pheu_theo_cong": [
     {
       "so": 1,
-      "ten": "Hình thức",
+      "ten": "Hình thức và số dòng",
       "ma_luat": [
-        "H3"
+        "H3",
+        "H4"
       ],
-      "trich_luat": "Văn bản phải được phân dòng. Một khối liền mạch không xuống dòng không thuộc thể này.",
+      "muc": "chan",
+      "trich_luat": "Văn bản phải được phân dòng, từ 4 dòng trở lên. Một khối liền mạch không xuống dòng không thuộc thể này. [H4, 18/09/2026: số dòng trong bài phải là bội của 4 — luật cứng, không ngoại lệ]",
       "vao": 62034,
-      "qua": 62032,
-      "chan_tai_day": 2,
-      "khong_chay": 0
+      "qua": 57366,
+      "chan_tai_day": 4668,
+      "khong_chay": 0,
+      "ghi_nhan_nhung_khong_chan": 0,
+      "ty_le_qua": 92.48,
+      "ty_le_chan": 7.52,
+      "ty_le_con_lai": 92.48
     },
     {
       "so": 2,
@@ -29,15 +35,20 @@
         "H1",
         "H2"
       ],
+      "muc": "chan",
       "trich_luat": "Mỗi dòng phải có đúng 7 tiếng. Ràng buộc này áp dụng cho toàn bộ các dòng của bài, không có ngoại lệ.",
-      "vao": 62032,
-      "qua": 59437,
-      "chan_tai_day": 2595,
-      "khong_chay": 2
+      "vao": 57366,
+      "qua": 55297,
+      "chan_tai_day": 2069,
+      "khong_chay": 4668,
+      "ghi_nhan_nhung_khong_chan": 0,
+      "ty_le_qua": 96.39,
+      "ty_le_chan": 3.61,
+      "ty_le_con_lai": 89.14
     },
     {
       "so": 3,
-      "ten": "Loại trừ Đường luật",
+      "ten": "Đối chiếu Đường luật",
       "ma_luat": [
         "F1",
         "F2",
@@ -45,11 +56,16 @@
         "F4",
         "F5"
       ],
-      "trich_luat": "Nếu bài có đúng 4 hoặc 8 dòng, độc vận, có niêm, có đối theo mẫu: bài thuộc Đường luật, không phải thất ngôn tự do. (§9 Bước 2)",
-      "vao": 59437,
-      "qua": 55149,
-      "chan_tai_day": 4288,
-      "khong_chay": 2597
+      "muc": "ghi_nhan",
+      "trich_luat": "Việc một bài thất ngôn tự do vẫn có niêm, có đối, có độc vận là được phép. Nhưng đó là lựa chọn của tác giả, không phải tiêu chí nhận diện thể. (§3) · F5: Không giới hạn số dòng ở con số 4 hoặc 8.",
+      "vao": 55297,
+      "qua": 55297,
+      "chan_tai_day": 0,
+      "khong_chay": 6737,
+      "ghi_nhan_nhung_khong_chan": 4288,
+      "ty_le_qua": 100.0,
+      "ty_le_chan": 0.0,
+      "ty_le_con_lai": 89.14
     },
     {
       "so": 4,
@@ -57,33 +73,39 @@
       "ma_luat": [
         "S1",
         "S2",
-        "S3",
-        "S4",
-        "S5"
+        "S3"
       ],
+      "muc": "chan",
       "trich_luat": "P2, P4, P6 nên luân phiên bằng – trắc để tạo nhạc tính. [QĐ-1: áp lên TOÀN BỘ dòng; QĐ-2: không cho phá khuôn]",
-      "vao": 55149,
-      "qua": 21374,
-      "chan_tai_day": 33775,
-      "khong_chay": 6885
+      "vao": 55297,
+      "qua": 24726,
+      "chan_tai_day": 30571,
+      "khong_chay": 6737,
+      "ghi_nhan_nhung_khong_chan": 0,
+      "ty_le_qua": 44.71,
+      "ty_le_chan": 55.29,
+      "ty_le_con_lai": 39.86
     },
     {
       "so": 5,
       "ten": "Vần",
       "ma_luat": [
         "S6",
-        "S7",
-        "S8",
         "S9",
         "S10",
         "S11",
         "S12"
       ],
-      "trich_luat": "Sơ đồ vần nên nhất quán trong phạm vi một khổ. [QĐ-3: so vần theo âm chính + âm cuối, không theo chuỗi ký tự]",
-      "vao": 21374,
-      "qua": 16391,
-      "chan_tai_day": 4983,
-      "khong_chay": 40660
+      "muc": "chan",
+      "trich_luat": "Sơ đồ vần nên nhất quán trong phạm vi một khổ. [QĐ-7b: cụm bốn dòng liên tiếp phải có ít nhất một cặp hiệp vần chân; QĐ-3: so vần theo âm chính + âm cuối]",
+      "vao": 24726,
+      "qua": 24366,
+      "chan_tai_day": 360,
+      "khong_chay": 37308,
+      "ghi_nhan_nhung_khong_chan": 0,
+      "ty_le_qua": 98.54,
+      "ty_le_chan": 1.46,
+      "ty_le_con_lai": 39.28
     },
     {
       "so": 6,
@@ -93,11 +115,16 @@
         "S14",
         "S15"
       ],
+      "muc": "chan",
       "trich_luat": "Nên có một nhịp chủ đạo để bài có xương sống âm thanh. [QĐ-4b: phải tồn tại một kiểu nhịp phủ mọi dòng]",
-      "vao": 16391,
-      "qua": 16391,
+      "vao": 24366,
+      "qua": 24366,
       "chan_tai_day": 0,
-      "khong_chay": 45643
+      "khong_chay": 37668,
+      "ghi_nhan_nhung_khong_chan": 0,
+      "ty_le_qua": 100.0,
+      "ty_le_chan": 0.0,
+      "ty_le_con_lai": 39.28
     },
     {
       "so": 7,
@@ -110,37 +137,40 @@
         "S20",
         "S21"
       ],
+      "muc": "chan",
       "trich_luat": "Số dòng trong bài không hạn định; có thể viết liên hoàn, không chia khổ.",
-      "vao": 16391,
-      "qua": 16391,
+      "vao": 24366,
+      "qua": 24366,
       "chan_tai_day": 0,
-      "khong_chay": 45643
+      "khong_chay": 37668,
+      "ghi_nhan_nhung_khong_chan": 0,
+      "ty_le_qua": 100.0,
+      "ty_le_chan": 0.0,
+      "ty_le_con_lai": 39.28
     }
   ],
   "ly_do_truot_theo_tang": {
     "1": {
-      "H3: văn bản có phân dòng, từ 2 dòng trở lên": 2
+      "H4: số dòng là bội của 4": 4668,
+      "H3: văn bản có phân dòng, từ 4 dòng trở lên": 655
     },
     "2": {
-      "H1: 7 tiếng": 9015
-    },
-    "3": {
-      "F3: không phải Đường luật": 4288
+      "H1: 7 tiếng": 7645
     },
     "4": {
-      "S2: P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)": 177405
+      "S2: P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)": 160828
     },
     "5": {
-      "S11: ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)": 4983
+      "S11: ít nhất 4 dòng liên tiếp có vần chân — trong cụm đó phải có ít nhất một cặp tiếng cuối hiệp vần": 360
     }
   },
   "ket_qua": {
-    "bai_thuoc_the_theo_tai_lieu": 59437,
-    "bai_dat": 16391,
-    "bai_truot": 45643,
+    "bai_thuoc_the_theo_tai_lieu": 55297,
+    "bai_dat": 24366,
+    "bai_truot": 37668,
     "khong_co_noi_dung": 5116,
     "tong": 67150,
-    "ty_le_dat_tren_bai_co_noi_dung": 26.42
+    "ty_le_dat_tren_bai_co_noi_dung": 39.28
   },
   "ly_do_truot_theo_nhom": {
     "A. Thơ 8 chữ bị gán nhãn 7 chữ": 135,
@@ -149,15 +179,188 @@
     "D. Đúng một dòng thiếu một tiếng": 1060,
     "E. Đúng một dòng thừa một tiếng": 338,
     "F. Đúng một dòng lệch nhiều tiếng": 242,
-    "G. Hai dòng lệch": 43287,
+    "G. Hai dòng lệch": 35312,
     "H. Lệch nhiều dòng": 525
   },
   "ma_luat_bi_vi_pham": {
-    "F3": 4288,
-    "S2": 177405,
-    "H1": 9015,
-    "S11": 4983,
-    "H3": 2
+    "S2": 160828,
+    "H4": 4668,
+    "H1": 7645,
+    "S11": 360,
+    "H3": 655
+  },
+  "to_hop_khuon_cum_bon_dong": {
+    "tong_so_cum": 73106,
+    "tren_tap": "bai_dat",
+    "theo_ma": {
+      "1": 180,
+      "2": 328,
+      "3": 159,
+      "4": 216,
+      "5": 213,
+      "6": 999,
+      "7": 27982,
+      "8": 178,
+      "9": 326,
+      "10": 41227,
+      "11": 561,
+      "12": 180,
+      "13": 207,
+      "14": 195,
+      "15": 88,
+      "16": 67
+    },
+    "ma_co_dien": 7,
+    "ma_dao": 10
+  },
+  "pha_khuon_cua_bai_truot_tang4": {
+    "tong_bai": 30571,
+    "tong_dong_pha": 160828,
+    "theo_so_dong_pha": {
+      "1": 6162,
+      "2": 4295,
+      "3": 3626,
+      "4": 3005,
+      "5": 2382,
+      "6": 2032,
+      "7": 1666,
+      "8": 1452,
+      "9": 1221,
+      "10": 987,
+      "11": 814,
+      "12": 758,
+      "13": 511,
+      "14": 414,
+      "15": 261,
+      "16": 182,
+      "17": 152,
+      "18": 126,
+      "19": 98,
+      "20": 74,
+      "21": 75,
+      "22": 56,
+      "23": 33,
+      "24": 32,
+      "25": 25,
+      "26": 23,
+      "27": 14,
+      "28": 9,
+      "29": 10,
+      "30": 6,
+      "31": 5,
+      "32": 3,
+      "33": 17,
+      "34": 12,
+      "36": 1,
+      "37": 6,
+      "38": 4,
+      "39": 3,
+      "40": 4,
+      "42": 1,
+      "43": 6,
+      "50": 2,
+      "52": 1,
+      "66": 2,
+      "85": 1,
+      "98": 2
+    }
+  },
+  "vi_sao_cong5_chan_it": {
+    "xxxx_tren_toan_bo_bai_thuoc_the": 1636,
+    "trong_do_bi_cong4_vet_truoc": 1276,
+    "con_lai_cho_cong5": 360
+  },
+  "phan_bo_score": {
+    "0": {
+      "so_bai": 4,
+      "thuoc_the": 1,
+      "dat": 1
+    },
+    "1": {
+      "so_bai": 24,
+      "thuoc_the": 16,
+      "dat": 6
+    },
+    "2": {
+      "so_bai": 100,
+      "thuoc_the": 60,
+      "dat": 24
+    },
+    "3": {
+      "so_bai": 457,
+      "thuoc_the": 281,
+      "dat": 122
+    },
+    "3.5": {
+      "so_bai": 1,
+      "thuoc_the": 1,
+      "dat": 0
+    },
+    "4": {
+      "so_bai": 3168,
+      "thuoc_the": 2210,
+      "dat": 774
+    },
+    "4.5": {
+      "so_bai": 1,
+      "thuoc_the": 1,
+      "dat": 0
+    },
+    "5": {
+      "so_bai": 9167,
+      "thuoc_the": 7562,
+      "dat": 2233
+    },
+    "5.5": {
+      "so_bai": 49,
+      "thuoc_the": 41,
+      "dat": 22
+    },
+    "6": {
+      "so_bai": 2907,
+      "thuoc_the": 2675,
+      "dat": 1012
+    },
+    "6.5": {
+      "so_bai": 24394,
+      "thuoc_the": 22136,
+      "dat": 9219
+    },
+    "7": {
+      "so_bai": 2182,
+      "thuoc_the": 2106,
+      "dat": 1034
+    },
+    "7.5": {
+      "so_bai": 17407,
+      "thuoc_the": 16386,
+      "dat": 8928
+    },
+    "8": {
+      "so_bai": 929,
+      "thuoc_the": 852,
+      "dat": 536
+    },
+    "8.5": {
+      "so_bai": 1191,
+      "thuoc_the": 938,
+      "dat": 448
+    },
+    "9.0": {
+      "so_bai": 14,
+      "thuoc_the": 6,
+      "dat": 2
+    },
+    "9.5": {
+      "so_bai": 14,
+      "thuoc_the": 6,
+      "dat": 2
+    },
+    "10": {
+      "so_bai": 25,
+      "thuoc_the": 19,
+      "dat": 3
+    }
   },
   "bai_rong_co_the_cuu": 1934
 }

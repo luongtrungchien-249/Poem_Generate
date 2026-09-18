@@ -197,7 +197,13 @@ def test_mot_dong_lech_bay_tieng_thi_bai_KHONG_thuoc_the():
 
 
 def test_dong_thieu_tieng_cung_bi_bat_va_goi_y_them_tieng():
-    v = kiem_tra_bai_tho("Chiều rơi chậm xuống mái rêu xanh\nGió về")
+    # Bài đủ 4 dòng cho H4; dòng 2 là dòng hỏng cần bắt.
+    v = kiem_tra_bai_tho(
+        "Chiều rơi chậm xuống mái rêu xanh\n"
+        "Gió về\n"
+        "Người xưa đứng lặng bên hàng chanh\n"
+        "Nghe gió lùa qua những nhánh tre"
+    )
     assert v.dat is False
     vp = [x for x in v.vi_pham if x.dong == 2][0]
     assert vp.thuc_te == "2 tiếng"
@@ -211,7 +217,13 @@ def test_khoi_lien_mach_khong_xuong_dong_vi_pham_H3():
 
 
 def test_H2_khong_co_ngoai_le_moi_dong_sai_deu_bi_ghi_nhan():
-    bai = "Một hai ba bốn năm sáu\nBảy tám\nChín mười một hai ba bốn năm sáu bảy"
+    # Dòng 4 ĐÚNG 7 tiếng, thêm vào để bài đủ bội 4 theo H4.
+    bai = (
+        "Một hai ba bốn năm sáu\n"
+        "Bảy tám\n"
+        "Chín mười một hai ba bốn năm sáu bảy\n"
+        "Một hai ba bốn năm sáu bảy"
+    )
     v = kiem_tra_bai_tho(bai)
     assert {vp.dong for vp in v.vi_pham if vp.ma == "H1"} == {1, 2, 3}
 
@@ -249,7 +261,7 @@ def test_pha_khuon_van_THUOC_THE_nhung_KHONG_dat_chuan_du_an():
     Test này trước đây ghim chính sách cũ (`dat is True`); QĐ-2 đã đổi chính sách,
     nên nó được viết lại chứ không phải bị nới ra.
     """
-    bai = "Ta đi ta đi ta đi ta\nTa đi ta đi ta đi ta"
+    bai = "\n".join(["Ta đi ta đi ta đi ta"] * 4)  # 4 dòng cho H4
     v = kiem_tra_bai_tho(bai)
 
     assert v.thuoc_the is True, "H1–H3 đều đạt nên bài vẫn thuộc thể"
@@ -259,7 +271,7 @@ def test_pha_khuon_van_THUOC_THE_nhung_KHONG_dat_chuan_du_an():
 
     tang4 = v.tang[3]
     assert tang4.da_chay and not tang4.dat
-    assert "2/2 dòng phá khuôn" in tang4.bang_chung
+    assert "4/4 dòng phá khuôn" in tang4.bang_chung
     assert {vp.ma for vp in tang4.vi_pham} == {"S2"}
 
 
@@ -295,7 +307,12 @@ def test_gach_ngang_dai_va_ngan_KHONG_duoc_tinh_la_tieng():
 
 def test_dong_sau_dau_KHONG_lot_qua_H1():
     """Kiểm ở mức cả bài, không chỉ ở hàm đếm."""
-    v = kiem_tra_bai_tho("Chiều rơi — chậm xuống mái rêu\nGọi một mùa xa chẳng dám về")
+    v = kiem_tra_bai_tho(
+        "Chiều rơi — chậm xuống mái rêu\n"   # 6 tiếng: gạch ngang không tính
+        "Gọi một mùa xa chẳng dám về\n"
+        "Người xưa đứng lặng bên hàng chanh\n"
+        "Nghe gió lùa qua những nhánh tre"
+    )
     assert v.dat is False
     assert v.vi_pham[0].dong == 1
     assert v.vi_pham[0].thuc_te == "6 tiếng"

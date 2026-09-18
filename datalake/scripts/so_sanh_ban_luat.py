@@ -36,7 +36,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 sys.path.insert(0, str(GOC / "src"))
-from application.rule import doc_so, kiem_tra_bai_tho, tach_kho, tach_tieng  # noqa: E402
+from application.rule import dem_tieng, doc_so, tach_kho, tach_tieng  # noqa: E402
 
 NGUON = GOC / "datalake/dataraw/final_data_7_chu.jsonl"
 
@@ -63,12 +63,39 @@ def tach_tieng_ban_dau(dong: str) -> list[str]:
     return ra
 
 
-def dat_theo_ban_dau(tho: str) -> bool:
-    """Phán quyết của bản đầu: H3 (>=2 dòng) và H1 (mọi dòng đúng 7 tiếng)."""
-    dong = [d for k in tach_kho(tho) for d in k]
+def _tieu_chi_17_09(dong: list[str], dem) -> bool:
+    """Tiêu chí NGÀY 17/09: H3 (>=2 dòng) và H1 (mọi dòng đúng 7 tiếng).
+
+    `dem` là hàm đếm tiếng — tham số hoá đúng chỗ khác nhau giữa hai bản.
+    """
     if len(dong) < 2:
         return False
-    return all(len(tach_tieng_ban_dau(d)) == 7 for d in dong)
+    return all(dem(d) == 7 for d in dong)
+
+
+def dat_theo_ban_dau(tho: str) -> bool:
+    """Phán quyết 17/09 với BỘ ĐẾM CŨ (thiếu gạch ngang, chưa đọc số thập phân)."""
+    dong = [d for k in tach_kho(tho) for d in k]
+    return _tieu_chi_17_09(dong, lambda d: len(tach_tieng_ban_dau(d)))
+
+
+def dat_theo_bo_dem_moi(tho: str) -> bool:
+    """Phán quyết 17/09 với BỘ ĐẾM MỚI — giữ nguyên tiêu chí, chỉ đổi phép đếm.
+
+    ⚠️ ĐÂY MỚI LÀ ĐƯỜNG SO SÁNH ĐÚNG, và nó từng bị hỏng.
+
+    Bản trước so `dat_theo_ban_dau()` với `kiem_tra_bai_tho(tho).dat`. Khi viết
+    (17/09) hai vế ấy chỉ khác nhau ở phép đếm, nên phép so đúng. Nhưng sang
+    18/09, `.dat` đã thành phán quyết của CẢ BẢY TẦNG (thêm H4, sửa tầng 3, thêm
+    QĐ-1/QĐ-2/QĐ-7b), trong khi đường cơ sở vẫn là H1+H3. Phép so lặng lẽ biến
+    thành "bộ luật cũ vs bộ luật mới" — đo hai biến cùng lúc, ra 35.065 bài đổi
+    phán quyết thay vì 8, và tệp báo cáo phình từ 2 KB lên 1,2 MB.
+
+    Đó đúng là sai lầm mà docstring đầu tệp này cảnh báo. Nay đường cơ sở và
+    đường so sánh dùng CHUNG một tiêu chí, chỉ khác đúng hàm đếm.
+    """
+    dong = [d for k in tach_kho(tho) for d in k]
+    return _tieu_chi_17_09(dong, dem_tieng)
 
 
 def main() -> int:
@@ -87,7 +114,7 @@ def main() -> int:
                 continue
 
             cu = dat_theo_ban_dau(tho)
-            moi = kiem_tra_bai_tho(tho).dat
+            moi = dat_theo_bo_dem_moi(tho)
             n_cu += cu
             n_moi += moi
 

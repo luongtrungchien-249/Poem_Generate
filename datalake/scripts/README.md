@@ -63,3 +63,30 @@ tệp đó thì sao lưu trước khi chạy lại.
 `bai_dat.jsonl` khoảng 33 MB và tệp nguồn khoảng 60 MB. Cân nhắc đưa
 `datalake/dataraw/` cùng các tệp `.jsonl` trong `datalake/analysis/` vào
 `.gitignore`, chỉ giữ lại `TONG_HOP.md` và `tong_hop.json`.
+
+---
+
+## `doi_soat_tai_lieu.py` — chặn số liệu bịa trong tài liệu
+
+Đối chiếu **mọi con số** trong ba tài liệu phân tích với nguồn sinh ra chúng:
+`tong_hop.json`, các tệp `.jsonl` kết quả, và bảng `LUAT` trong `rule.py`.
+
+```
+python datalake/scripts/doi_soat_tai_lieu.py
+```
+
+Trả mã thoát khác 0 nếu có sai lệch, nên cắm được vào CI.
+
+**Vì sao có script này.** Ngày 18/09/2026 một lệnh thay-thế-hàng-loạt đã đưa con số
+`3.975` vào ba tài liệu — con số đó **chưa từng được đo**, tôi gõ ra theo cảm tính.
+Số liệu gõ tay thì sớm muộn cũng lệch; cách chặn duy nhất là đối chiếu bằng máy.
+
+Script báo hai loại lỗi:
+
+| Loại | Nghĩa |
+|---|---|
+| **THIẾU** | Tài liệu không nhắc một điều luật hoặc mã tiêu chí lẽ ra phải có — tài liệu cũ |
+| **LẠC** | Tài liệu chứa một con số không khớp nguồn nào — **nghi là bịa** |
+
+Con số lịch sử có thật (ví dụ *"giảm 59.437 → 55.297"*) được miễn qua `SO_LICH_SU`,
+và **mỗi mục bắt buộc kèm lý do**.
