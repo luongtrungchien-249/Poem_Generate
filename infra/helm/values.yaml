@@ -1,0 +1,45 @@
+global:
+  environment: production
+
+api:
+  replicaCount: 4
+  image:
+    repository: ai-platform/api
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8000
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+worker:
+  replicaCount: 2
+  image:
+    repository: ai-platform/worker
+    tag: latest
+  resources:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+
+vllm:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: vllm/vllm-openai
+    tag: latest
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+      memory: 32Gi

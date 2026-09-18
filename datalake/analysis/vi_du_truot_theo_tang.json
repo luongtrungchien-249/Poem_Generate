@@ -1,0 +1,784 @@
+{
+  "1": {
+    "ten": "Hình thức",
+    "trich_luat": "Văn bản phải được phân dòng. Một khối liền mạch không xuống dòng không thuộc thể này.",
+    "so_bai_bi_chan": 2,
+    "vi_du": [
+      {
+        "id": 351237,
+        "tieu_de": "",
+        "bang_chung": "chỉ 1 dòng — không đủ để coi là có phân dòng",
+        "vi_pham": [
+          {
+            "ma": "H3",
+            "dong": null,
+            "ky_vong": "văn bản có phân dòng, từ 2 dòng trở lên",
+            "thuc_te": "1 dòng",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 351272,
+        "tieu_de": "",
+        "bang_chung": "chỉ 1 dòng — không đủ để coi là có phân dòng",
+        "vi_pham": [
+          {
+            "ma": "H3",
+            "dong": null,
+            "ky_vong": "văn bản có phân dòng, từ 2 dòng trở lên",
+            "thuc_te": "1 dòng",
+            "noi_dung_dong": null
+          }
+        ]
+      }
+    ]
+  },
+  "2": {
+    "ten": "Độ dài dòng",
+    "trich_luat": "Mỗi dòng phải có đúng 7 tiếng. Ràng buộc này áp dụng cho toàn bộ các dòng của bài, không có ngoại lệ.",
+    "so_bai_bi_chan": 2595,
+    "vi_du": [
+      {
+        "id": 13,
+        "tieu_de": "QUA TÌM BẬU BẬU NƠI ĐÂU",
+        "bang_chung": "1/20 dòng sai số tiếng: D17=8",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 17,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Đường về ngơ ngác hỏi bậu vì đâu?"
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "tieu_de": "THÀNH CỔ",
+        "bang_chung": "1/5 dòng sai số tiếng: D5=3",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 5,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "3 tiếng",
+            "noi_dung_dong": "— Lê Bá Dương"
+          }
+        ]
+      },
+      {
+        "id": 39,
+        "tieu_de": "THƯƠNG MẸ LẮM MẸ ƠI",
+        "bang_chung": "1/28 dòng sai số tiếng: D3=8",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 3,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Mắt mẹ loà rồi, mẹ nghỉ đi thôi,"
+          }
+        ]
+      },
+      {
+        "id": 2728,
+        "tieu_de": "",
+        "bang_chung": "8/12 dòng sai số tiếng: D1=8, D2=8, D3=8, D4=8, D5=8, D6=8…",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 1,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Bài thơ viết nửa đời còn dang dở,"
+          },
+          {
+            "ma": "H1",
+            "dong": 2,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Bởi anh quên tóc em chẻ bên nào."
+          },
+          {
+            "ma": "H1",
+            "dong": 3,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Tìm nhau theo dấu mòn ngày tháng cũ,"
+          }
+        ]
+      },
+      {
+        "id": 2729,
+        "tieu_de": "",
+        "bang_chung": "1/16 dòng sai số tiếng: D7=6",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 7,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "6 tiếng",
+            "noi_dung_dong": "Bao giờ nước sông ngừng chảy,"
+          }
+        ]
+      },
+      {
+        "id": 2947,
+        "tieu_de": "",
+        "bang_chung": "1/32 dòng sai số tiếng: D28=6",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 28,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "6 tiếng",
+            "noi_dung_dong": "Rồi núi sông mộng cũng tan."
+          }
+        ]
+      },
+      {
+        "id": 3039,
+        "tieu_de": "",
+        "bang_chung": "1/32 dòng sai số tiếng: D28=6",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 28,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "6 tiếng",
+            "noi_dung_dong": "Bạn con chưa hẳn bạn con."
+          }
+        ]
+      },
+      {
+        "id": 3111,
+        "tieu_de": "",
+        "bang_chung": "8/12 dòng sai số tiếng: D1=8, D2=8, D3=8, D4=8, D5=8, D6=8…",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 1,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Bài thơ viết nửa đời còn dang dở,"
+          },
+          {
+            "ma": "H1",
+            "dong": 2,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Bởi anh quên tóc em chẻ bên nào."
+          },
+          {
+            "ma": "H1",
+            "dong": 3,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Tìm nhau theo dấu mòn ngày tháng cũ,"
+          }
+        ]
+      },
+      {
+        "id": 3174,
+        "tieu_de": "",
+        "bang_chung": "4/24 dòng sai số tiếng: D1=8, D2=8, D3=8, D4=8",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 1,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Gọi đủ mặt cho những đêm kỳ ngộ,"
+          },
+          {
+            "ma": "H1",
+            "dong": 2,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Ta thông đồng ăn ở với chiêm bao."
+          },
+          {
+            "ma": "H1",
+            "dong": 3,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Bè bạn cũ từ trăm miền quá cố,"
+          }
+        ]
+      },
+      {
+        "id": 3213,
+        "tieu_de": "",
+        "bang_chung": "8/12 dòng sai số tiếng: D1=8, D2=8, D3=8, D4=8, D5=8, D6=8…",
+        "vi_pham": [
+          {
+            "ma": "H1",
+            "dong": 1,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Tuổi con gái Mạ từng uống nước sông,"
+          },
+          {
+            "ma": "H1",
+            "dong": 2,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Đến bây giờ giọng Huế nghe còn ướt."
+          },
+          {
+            "ma": "H1",
+            "dong": 3,
+            "ky_vong": "7 tiếng",
+            "thuc_te": "8 tiếng",
+            "noi_dung_dong": "Giọng Huế nghe còn một chút gì trong,"
+          }
+        ]
+      }
+    ]
+  },
+  "3": {
+    "ten": "Loại trừ Đường luật",
+    "trich_luat": "Nếu bài có đúng 4 hoặc 8 dòng, độc vận, có niêm, có đối theo mẫu: bài thuộc Đường luật, không phải thất ngôn tự do. (§9 Bước 2)",
+    "so_bai_bi_chan": 4288,
+    "vi_du": [
+      {
+        "id": 1,
+        "tieu_de": "BÂNG KHUÂNG",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 36,
+        "tieu_de": "NGÔI NHÀ HẠNH PHÚC",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2803,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2873,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2895,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2945,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2970,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2981,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 3000,
+        "tieu_de": "",
+        "bang_chung": "8 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "8 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 3209,
+        "tieu_de": "",
+        "bang_chung": "4 dòng, độc vận và có niêm — khớp khuôn Đường luật",
+        "vi_pham": [
+          {
+            "ma": "F3",
+            "dong": null,
+            "ky_vong": "không phải Đường luật",
+            "thuc_te": "4 dòng, độc vận, có niêm — khớp khuôn Đường luật",
+            "noi_dung_dong": null
+          }
+        ]
+      }
+    ]
+  },
+  "4": {
+    "ten": "Thanh luật",
+    "trich_luat": "P2, P4, P6 nên luân phiên bằng – trắc để tạo nhạc tính. [QĐ-1: áp lên TOÀN BỘ dòng; QĐ-2: không cho phá khuôn]",
+    "so_bai_bi_chan": 33775,
+    "vi_du": [
+      {
+        "id": 2,
+        "tieu_de": "ANH GỬI CHO EM",
+        "bang_chung": "13/32 dòng phá khuôn: D1, D3, D4, D5, D8, D17, D20, D21…",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 1,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Anh gửi cho em gửi bông vàng,"
+          },
+          {
+            "ma": "S2",
+            "dong": 3,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Gửi con đò nhỏ khua sóng nước,"
+          },
+          {
+            "ma": "S2",
+            "dong": 4,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Gửi tiếng chim đa hót sau làng."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "tieu_de": "LỜI EM MUỐN HỎI",
+        "bang_chung": "10/20 dòng phá khuôn: D2, D3, D4, D8, D11, D12, D13, D14…",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 2,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Xem mùa hoa cúc đã trổ bông."
+          },
+          {
+            "ma": "S2",
+            "dong": 3,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Nghe tiếng sáo chiều ai vừa thổi,"
+          },
+          {
+            "ma": "S2",
+            "dong": 4,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B B B",
+            "noi_dung_dong": "Con bìm bịp kêu nước tràn đồng."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "tieu_de": "NHỮNG BÓNG NGƯỜI TRÊN SÂN GA",
+        "bang_chung": "2/24 dòng phá khuôn: D1, D6",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 1,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Những cuộc chia ly khởi từ đây,"
+          },
+          {
+            "ma": "S2",
+            "dong": 6,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B B T",
+            "noi_dung_dong": "Thẹn thùng đưa nhau bóng chạy dài."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "tieu_de": "RÁNG CHIỀU",
+        "bang_chung": "8/16 dòng phá khuôn: D1, D3, D4, D5, D6, D7, D9, D12",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 1,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Bao năm mê mải những cuộc yêu,"
+          },
+          {
+            "ma": "S2",
+            "dong": 3,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Mấy độ nhớ thương còn lưu luyến,"
+          },
+          {
+            "ma": "S2",
+            "dong": 4,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Chợt thấy lòng như nắng qua đèo."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "tieu_de": "MỘT BÀI THƠ KỲ LẠ",
+        "bang_chung": "1/17 dòng phá khuôn: D9",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 9,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T T T",
+            "noi_dung_dong": "Đọc ngược bài gốc từ dưới lên:"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "tieu_de": "",
+        "bang_chung": "6/12 dòng phá khuôn: D5, D7, D8, D10, D11, D12",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 5,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Mỗi bông nở hướng về một phía,"
+          },
+          {
+            "ma": "S2",
+            "dong": 7,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Sợ nhất lúc buông nhau mùa gió,"
+          },
+          {
+            "ma": "S2",
+            "dong": 8,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Bao nhiêu chăn phủ chẳng ấm đời."
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "tieu_de": "BÁC ƠI",
+        "bang_chung": "1/48 dòng phá khuôn: D24",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 24,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B B B",
+            "noi_dung_dong": "Cho hôm nay và cho mai sau."
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "tieu_de": "",
+        "bang_chung": "4/8 dòng phá khuôn: D2, D3, D6, D7",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 2,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Ngoảnh đầu nhìn lại đã mấy đông."
+          },
+          {
+            "ma": "S2",
+            "dong": 3,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B B T",
+            "noi_dung_dong": "Nắng chiều soi người chênh chếch bóng,"
+          },
+          {
+            "ma": "S2",
+            "dong": 6,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B B T",
+            "noi_dung_dong": "Trải qua bao phen nhuốm bụi hồng."
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "tieu_de": "VỀ MÁI TRƯỜNG XƯA",
+        "bang_chung": "3/10 dòng phá khuôn: D1, D3, D8",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 1,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Vẫn nhớ như in thuở ban đầu,"
+          },
+          {
+            "ma": "S2",
+            "dong": 3,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Dăm ba mái lá nhà lớp học,"
+          },
+          {
+            "ma": "S2",
+            "dong": 8,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = T B B",
+            "noi_dung_dong": "Đêm muộn cho nhau mượn đèn dầu."
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "tieu_de": "",
+        "bang_chung": "1/4 dòng phá khuôn: D1",
+        "vi_pham": [
+          {
+            "ma": "S2",
+            "dong": 1,
+            "ky_vong": "P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)",
+            "thuc_te": "P2/P4/P6 = B T T",
+            "noi_dung_dong": "Mang thơ tình cũ ra hỏa táng,"
+          }
+        ]
+      }
+    ]
+  },
+  "5": {
+    "ten": "Vần",
+    "trich_luat": "Sơ đồ vần nên nhất quán trong phạm vi một khổ. [QĐ-3: so vần theo âm chính + âm cuối, không theo chuỗi ký tự]",
+    "so_bai_bi_chan": 4983,
+    "vi_du": [
+      {
+        "id": 28,
+        "tieu_de": "TĨNH VẬT",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xxxx; dòng 2–5: xaxa; dòng 3–6: axax",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xxxx; dòng 2–5: xaxa; dòng 3–6: axax",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 52,
+        "tieu_de": "DUYÊN XA",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xxxx",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xxxx",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 72,
+        "tieu_de": "TRẢ HƯƠNG",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: aaaa; dòng 2–5: aaaa; dòng 3–6: aaaa",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: aaaa; dòng 2–5: aaaa; dòng 3–6: aaaa",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 144,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xxxx",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xxxx",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2695,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xaxa; dòng 2–5: axaa; dòng 3–6: xaax",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xaxa; dòng 2–5: axaa; dòng 3–6: xaax",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2757,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xxxx",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xxxx",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2767,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: aaxx; dòng 2–5: xxxx; dòng 3–6: xxxx",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: aaxx; dòng 2–5: xxxx; dòng 3–6: xxxx",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2769,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: axxa; dòng 2–5: xxxx; dòng 3–6: xxxx",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: axxa; dòng 2–5: xxxx; dòng 3–6: xxxx",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2774,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xaxa",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xaxa",
+            "noi_dung_dong": null
+          }
+        ]
+      },
+      {
+        "id": 2779,
+        "tieu_de": "",
+        "bang_chung": "không cụm bốn dòng liên tiếp nào khớp §5.2 — dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xaxa",
+        "vi_pham": [
+          {
+            "ma": "S11",
+            "dong": null,
+            "ky_vong": "ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)",
+            "thuc_te": "dòng 1–4: xaxa; dòng 2–5: axax; dòng 3–6: xaxa",
+            "noi_dung_dong": null
+          }
+        ]
+      }
+    ]
+  },
+  "6": {
+    "ten": "Nhịp",
+    "trich_luat": "Nên có một nhịp chủ đạo để bài có xương sống âm thanh. [QĐ-4b: phải tồn tại một kiểu nhịp phủ mọi dòng]",
+    "so_bai_bi_chan": 0,
+    "vi_du": []
+  },
+  "7": {
+    "ten": "Khổ và bố cục",
+    "trich_luat": "Số dòng trong bài không hạn định; có thể viết liên hoàn, không chia khổ.",
+    "so_bai_bi_chan": 0,
+    "vi_du": []
+  }
+}

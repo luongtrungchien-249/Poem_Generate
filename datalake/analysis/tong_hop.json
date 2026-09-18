@@ -1,0 +1,163 @@
+{
+  "nguon": "datalake/dataraw/final_data_7_chu.jsonl",
+  "bo_luat": "src/application/rule.py",
+  "doi_soat": {
+    "so_dong_doc_tu_tep": 67150,
+    "so_ban_ghi_parse_duoc": 67150,
+    "so_lan_goi_kiem_tra_bai_tho": 62034,
+    "so_id_duy_nhat": 67150,
+    "khop": true,
+    "loi_doi_soat": []
+  },
+  "pheu_theo_cong": [
+    {
+      "so": 1,
+      "ten": "Hình thức",
+      "ma_luat": [
+        "H3"
+      ],
+      "trich_luat": "Văn bản phải được phân dòng. Một khối liền mạch không xuống dòng không thuộc thể này.",
+      "vao": 62034,
+      "qua": 62032,
+      "chan_tai_day": 2,
+      "khong_chay": 0
+    },
+    {
+      "so": 2,
+      "ten": "Độ dài dòng",
+      "ma_luat": [
+        "H1",
+        "H2"
+      ],
+      "trich_luat": "Mỗi dòng phải có đúng 7 tiếng. Ràng buộc này áp dụng cho toàn bộ các dòng của bài, không có ngoại lệ.",
+      "vao": 62032,
+      "qua": 59437,
+      "chan_tai_day": 2595,
+      "khong_chay": 2
+    },
+    {
+      "so": 3,
+      "ten": "Loại trừ Đường luật",
+      "ma_luat": [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5"
+      ],
+      "trich_luat": "Nếu bài có đúng 4 hoặc 8 dòng, độc vận, có niêm, có đối theo mẫu: bài thuộc Đường luật, không phải thất ngôn tự do. (§9 Bước 2)",
+      "vao": 59437,
+      "qua": 55149,
+      "chan_tai_day": 4288,
+      "khong_chay": 2597
+    },
+    {
+      "so": 4,
+      "ten": "Thanh luật",
+      "ma_luat": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "trich_luat": "P2, P4, P6 nên luân phiên bằng – trắc để tạo nhạc tính. [QĐ-1: áp lên TOÀN BỘ dòng; QĐ-2: không cho phá khuôn]",
+      "vao": 55149,
+      "qua": 21374,
+      "chan_tai_day": 33775,
+      "khong_chay": 6885
+    },
+    {
+      "so": 5,
+      "ten": "Vần",
+      "ma_luat": [
+        "S6",
+        "S7",
+        "S8",
+        "S9",
+        "S10",
+        "S11",
+        "S12"
+      ],
+      "trich_luat": "Sơ đồ vần nên nhất quán trong phạm vi một khổ. [QĐ-3: so vần theo âm chính + âm cuối, không theo chuỗi ký tự]",
+      "vao": 21374,
+      "qua": 16391,
+      "chan_tai_day": 4983,
+      "khong_chay": 40660
+    },
+    {
+      "so": 6,
+      "ten": "Nhịp",
+      "ma_luat": [
+        "S13",
+        "S14",
+        "S15"
+      ],
+      "trich_luat": "Nên có một nhịp chủ đạo để bài có xương sống âm thanh. [QĐ-4b: phải tồn tại một kiểu nhịp phủ mọi dòng]",
+      "vao": 16391,
+      "qua": 16391,
+      "chan_tai_day": 0,
+      "khong_chay": 45643
+    },
+    {
+      "so": 7,
+      "ten": "Khổ và bố cục",
+      "ma_luat": [
+        "S16",
+        "S17",
+        "S18",
+        "S19",
+        "S20",
+        "S21"
+      ],
+      "trich_luat": "Số dòng trong bài không hạn định; có thể viết liên hoàn, không chia khổ.",
+      "vao": 16391,
+      "qua": 16391,
+      "chan_tai_day": 0,
+      "khong_chay": 45643
+    }
+  ],
+  "ly_do_truot_theo_tang": {
+    "1": {
+      "H3: văn bản có phân dòng, từ 2 dòng trở lên": 2
+    },
+    "2": {
+      "H1: 7 tiếng": 9015
+    },
+    "3": {
+      "F3: không phải Đường luật": 4288
+    },
+    "4": {
+      "S2: P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)": 177405
+    },
+    "5": {
+      "S11: ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)": 4983
+    }
+  },
+  "ket_qua": {
+    "bai_thuoc_the_theo_tai_lieu": 59437,
+    "bai_dat": 16391,
+    "bai_truot": 45643,
+    "khong_co_noi_dung": 5116,
+    "tong": 67150,
+    "ty_le_dat_tren_bai_co_noi_dung": 26.42
+  },
+  "ly_do_truot_theo_nhom": {
+    "A. Thơ 8 chữ bị gán nhãn 7 chữ": 135,
+    "B. Lẫn văn xuôi trong trường thơ": 22,
+    "C. Có dòng phân cách không chứa tiếng": 34,
+    "D. Đúng một dòng thiếu một tiếng": 1060,
+    "E. Đúng một dòng thừa một tiếng": 338,
+    "F. Đúng một dòng lệch nhiều tiếng": 242,
+    "G. Hai dòng lệch": 43287,
+    "H. Lệch nhiều dòng": 525
+  },
+  "ma_luat_bi_vi_pham": {
+    "F3": 4288,
+    "S2": 177405,
+    "H1": 9015,
+    "S11": 4983,
+    "H3": 2
+  },
+  "bai_rong_co_the_cuu": 1934
+}

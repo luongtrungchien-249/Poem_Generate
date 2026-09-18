@@ -1,0 +1,13 @@
+app:
+  env: "staging"
+  debug: false
+
+server:
+  workers: 4
+
+llm:
+  default_provider: "openai"
+
+storage:
+  type: "postgres"
+  vector_db: "qdrant"

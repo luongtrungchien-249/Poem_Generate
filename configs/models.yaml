@@ -1,0 +1,87 @@
+models:
+  # Mock model for test & local dev
+  mock-gpt:
+    provider: "mock"
+    tier: "cheap"
+    context_window: 8192
+    max_output_tokens: 2048
+    input_cost_per_million: 0.0
+    output_cost_per_million: 0.0
+    cached_input_cost_per_million: 0.0
+
+  # OpenAI Models
+  gpt-4o-mini:
+    provider: "openai"
+    tier: "cheap"
+    context_window: 128000
+    max_output_tokens: 16384
+    input_cost_per_million: 0.15
+    output_cost_per_million: 0.60
+    cached_input_cost_per_million: 0.075
+
+  gpt-4o:
+    provider: "openai"
+    tier: "standard"
+    context_window: 128000
+    max_output_tokens: 4096
+    input_cost_per_million: 5.00
+    output_cost_per_million: 15.00
+    cached_input_cost_per_million: 2.50
+
+  o1-preview:
+    provider: "openai"
+    tier: "reasoning"
+    context_window: 128000
+    max_output_tokens: 32768
+    input_cost_per_million: 15.00
+    output_cost_per_million: 60.00
+    cached_input_cost_per_million: 7.50
+
+  # Anthropic Models
+  claude-3-5-haiku:
+    provider: "anthropic"
+    tier: "cheap"
+    context_window: 200000
+    max_output_tokens: 8192
+    input_cost_per_million: 0.80
+    output_cost_per_million: 4.00
+    cached_input_cost_per_million: 0.08
+
+  claude-3-5-sonnet:
+    provider: "anthropic"
+    tier: "standard"
+    context_window: 200000
+    max_output_tokens: 8192
+    input_cost_per_million: 3.00
+    output_cost_per_million: 15.00
+    cached_input_cost_per_million: 0.30
+
+  # vLLM / Self-hosted
+  meta-llama-3.1-8b-instruct:
+    provider: "vllm"
+    tier: "cheap"
+    context_window: 131072
+    max_output_tokens: 4096
+    input_cost_per_million: 0.10
+    output_cost_per_million: 0.10
+    cached_input_cost_per_million: 0.05
+
+  meta-llama-3.1-70b-instruct:
+    provider: "vllm"
+    tier: "standard"
+    context_window: 131072
+    max_output_tokens: 4096
+    input_cost_per_million: 0.60
+    output_cost_per_million: 0.80
+    cached_input_cost_per_million: 0.30
+
+tiers:
+  cheap:
+    primary: "gpt-4o-mini"
+    fallback: ["claude-3-5-haiku", "mock-gpt"]
+  standard:
+    primary: "gpt-4o"
+    fallback: ["claude-3-5-sonnet", "mock-gpt"]
+  reasoning:
+    primary: "o1-preview"
+    fallback: ["gpt-4o", "mock-gpt"]

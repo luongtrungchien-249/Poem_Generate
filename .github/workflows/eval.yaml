@@ -1,0 +1,28 @@
+name: AI Evaluation Quality Gate
+
+on:
+  pull_request:
+    paths:
+      - "src/ai_platform/domain/**"
+      - "src/ai_platform/application/**"
+      - "configs/models.yaml"
+      - "evals/**"
+
+jobs:
+  evaluation-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[api,dev]"
+
+      - name: Run Evals Gatekeeper
+        run: |
+          python evals/run.py --dataset evals/datasets/golden_qa.jsonl --baseline 0.70

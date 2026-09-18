@@ -1,0 +1,49 @@
+"""Port lưu trữ. Application chỉ biết các Protocol này, không biết ai hiện thực chúng."""
+
+from __future__ import annotations
+
+from typing import Any, Protocol
+
+from contracts.chat import Message
+from contracts.chunk import Document, EnrichedChunk, RetrievalResult
+from contracts.feedback import FeedbackRecord
+
+
+class RelationalRepository(Protocol):
+    async def save_message(self, session_id: str, message: Message) -> None: ...
+    async def get_messages(self, session_id: str, limit: int = 50) -> list[Message]: ...
+    async def save_document_meta(self, doc: Document) -> None: ...
+    async def get_document_meta(self, doc_id: str) -> Document | None: ...
+    async def save_feedback(self, feedback: FeedbackRecord) -> None: ...
+    async def get_feedbacks(self, limit: int = 100) -> list[FeedbackRecord]: ...
+
+
+class VectorRepository(Protocol):
+    async def insert_chunks(self, chunks: list[EnrichedChunk]) -> None: ...
+    async def search_vector(
+        self,
+        query_vector: list[float],
+        top_k: int = 5,
+        filters: dict[str, Any] | None = None,
+    ) -> list[RetrievalResult]: ...
+    async def search_bm25(
+        self,
+        query_text: str,
+        top_k: int = 5,
+        filters: dict[str, Any] | None = None,
+    ) -> list[RetrievalResult]: ...
+
+
+class BlobRepository(Protocol):
+    async def put_object(self, key: str, data: bytes, content_type: str = "text/plain") -> str: ...
+    async def get_object(self, key: str) -> bytes | None: ...
+    async def delete_object(self, key: str) -> bool: ...
+
+
+class CacheRepository(Protocol):
+    async def get(self, key: str) -> str | None: ...
+    async def set(self, key: str, value: str, ttl_seconds: int = 3600) -> None: ...
+    async def delete(self, key: str) -> bool: ...
+
+
+__all__ = ["RelationalRepository", "VectorRepository", "BlobRepository", "CacheRepository"]

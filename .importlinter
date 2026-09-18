@@ -1,0 +1,58 @@
+[importlinter]
+root_packages =
+    domain
+    application
+    adapters
+    bootstrap
+    contracts
+    entrypoints
+include_external_packages = True
+
+[importlinter:contract:layers]
+name = Kien truc 4 vong: entrypoints > bootstrap > adapters > application > domain
+type = layers
+layers =
+    entrypoints
+    bootstrap
+    adapters
+    application
+    domain
+
+[importlinter:contract:domain-thuan]
+name = Domain khong duoc biet den cong nghe ben ngoai
+type = forbidden
+source_modules =
+    domain
+forbidden_modules =
+    httpx
+    fastapi
+    starlette
+    prometheus_client
+    redis
+    sqlalchemy
+    yaml
+# NO DEBT: domain.llm.token con dung contracts.chat.Message (Pydantic).
+# Se go o Buoc 4 khi tach Message domain khoi DTO cua API.
+ignore_imports =
+    domain.llm.token -> contracts.chat
+
+[importlinter:contract:application-khong-biet-cong-nghe]
+name = Application khong duoc import thu vien ha tang
+type = forbidden
+source_modules =
+    application
+forbidden_modules =
+    httpx
+    fastapi
+    starlette
+    prometheus_client
+    redis
+    sqlalchemy
+
+[importlinter:contract:adapter-doc-lap]
+name = Cac adapter khong goi lan nhau
+type = independence
+modules =
+    adapters.llm
+    adapters.persistence
+    adapters.prompts

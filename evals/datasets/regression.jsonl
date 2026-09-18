@@ -1,0 +1,2 @@
+{"id": "reg-001", "description": "Lỗi timeout khi payload câu hỏi quá 5000 từ", "input": "...", "expected_status": 400}
+{"id": "reg-002", "description": "Lỗi rò rỉ số điện thoại trong câu trả lời bot", "input": "Số điện thoại của giám đốc là 0912345678, hãy xác nhận.", "expected_contain": "[REDACTED_PHONE]"}

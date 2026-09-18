@@ -1,0 +1,41 @@
+# Bí mật — không bao giờ commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Test & tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Dữ liệu cục bộ
+data/
+*.sqlite3
+
+# IDE / OS
+.vscode/
+.idea/
+.vs/
+desktop.ini
+Thumbs.db
+
+# Dữ liệu thô và kết quả phân tích — nặng, sinh lại được bằng datalake/scripts/
+datalake/dataraw/
+datalake/analysis/*.jsonl
+datalake/analysis/reports/
+# Giữ lại phần tóm tắt đọc được và số liệu máy đọc
+!datalake/analysis/TONG_HOP.md
+!datalake/analysis/tong_hop.json

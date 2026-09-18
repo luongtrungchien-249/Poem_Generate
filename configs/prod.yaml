@@ -1,0 +1,13 @@
+app:
+  env: "production"
+  debug: false
+
+server:
+  workers: 8
+  timeout_keep_alive: 60
+
+llm:
+  default_provider: "anthropic"
+
+observability:
+  tracing_sample_rate: 0.2

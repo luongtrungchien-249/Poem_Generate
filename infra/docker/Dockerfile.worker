@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* \
+    && useradd --create-home --uid 10001 appuser
+
+COPY pyproject.toml README.md ./
+COPY src ./src
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir ".[worker]"
+
+COPY configs ./configs
+
+USER appuser
+ENV PYTHONUNBUFFERED=1 ENV=production
+
+# Bước 5 của lộ trình sẽ thay bằng Celery/ARQ worker thật:
+#   CMD ["celery", "-A", "ai_platform.entrypoints.worker.app", "worker", "-l", "info"]
+CMD ["python", "-c", "from ai_platform.entrypoints.worker.schedules import BEAT_SCHEDULE; print(BEAT_SCHEDULE)"]

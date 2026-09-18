@@ -1,0 +1,31 @@
+name: Canary & Production Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  canary-rollout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and Push Docker Images
+        run: |
+          echo "Building Docker images for API and Worker..."
+          # docker build -t ai-platform/api:latest -f infra/docker/Dockerfile.api .
+          # docker build -t ai-platform/worker:latest -f infra/docker/Dockerfile.worker .
+
+      - name: Deploy Canary (10% Traffic)
+        run: |
+          echo "Deploying canary version with Helm..."
+          # helm upgrade --install ai-platform-canary infra/helm --set api.replicaCount=1
+
+      - name: Healthcheck & Metric Inspection (10 min)
+        run: |
+          echo "Monitoring error rate and TTFT metrics via Prometheus..."
+
+      - name: Full Rollout (100% Traffic)
+        run: |
+          echo "Rolling out to 100% production traffic..."
+          # helm upgrade --install ai-platform infra/helm

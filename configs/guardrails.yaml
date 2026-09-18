@@ -1,0 +1,23 @@
+guardrails:
+  input:
+    max_length_chars: 10000
+    min_length_chars: 1
+    injection:
+      action: "reject" # reject, log_only, sanitize
+      sensitivity: 0.85
+    pii:
+      action: "mask" # mask, reject, allow
+      entities: ["phone_vn", "email", "credit_card", "id_number"]
+    topic:
+      action: "reject"
+      forbidden_categories: ["hate_speech", "extremism", "malware", "system_prompt_extraction"]
+
+  output:
+    toxicity:
+      action: "block"
+      threshold: 0.7
+    citation:
+      action: "warn" # block, warn, log_only
+      require_citations_for_rag: true
+    pii_leakage:
+      action: "mask"

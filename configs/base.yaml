@@ -1,0 +1,52 @@
+app:
+  name: "ai-platform"
+  version: "1.0.0"
+  env: "base"
+  timezone: "Asia/Ho_Chi_Minh"
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 2
+  timeout_keep_alive: 30
+
+llm:
+  default_provider: "openai" # options: openai, anthropic, vllm, mock
+  default_model: "gpt-4o-mini"
+  router:
+    strategy: "tier" # tier, cost_optimized, performance
+    default_tier: "cheap"
+  fallback:
+    max_retries: 3
+    initial_backoff_sec: 1.0
+    backoff_factor: 2.0
+    circuit_breaker:
+      failure_threshold: 5
+      recovery_timeout_sec: 60
+
+cache:
+  exact_cache_enabled: true
+  semantic_cache_enabled: true
+  semantic_similarity_threshold: 0.92
+  ttl_seconds: 3600
+
+guardrails:
+  enabled: true
+  policy_file: "packages/core/guardrails/policy.yaml"
+
+rag:
+  hybrid:
+    bm25_weight: 0.3
+    vector_weight: 0.7
+    rrf_k: 60
+  rerank:
+    enabled: true
+    top_n: 5
+  context:
+    max_tokens: 4000
+
+observability:
+  service_name: "ai-platform"
+  tracing_enabled: true
+  metrics_enabled: true
+  cost_tracking_enabled: true

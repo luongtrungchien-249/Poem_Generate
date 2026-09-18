@@ -1,0 +1,3 @@
+{"id": "qa-001", "question": "Chính sách bảo mật mật khẩu của hệ thống là gì?", "ground_truth_answer": "Mật khẩu phải có tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường và số.", "expected_chunks": ["sec-001", "sec-002"]}
+{"id": "qa-002", "question": "Làm thế nào để đăng ký tài khoản API doanh nghiệp?", "ground_truth_answer": "Truy cập cổng portal và xác thực thông qua email công ty.", "expected_chunks": ["portal-010"]}
+{"id": "qa-003", "question": "Hạn mức gọi API cho gói tiêu chuẩn là bao nhiêu?", "ground_truth_answer": "Gói tiêu chuẩn có giới hạn 100 requests mỗi phút.", "expected_chunks": ["rate-005"]}

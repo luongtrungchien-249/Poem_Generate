@@ -1,0 +1,18 @@
+app:
+  env: "dev"
+  debug: true
+
+server:
+  host: "127.0.0.1"
+  port: 8000
+  workers: 1
+  reload: true
+
+llm:
+  default_provider: "openai"
+  default_model: "gpt-4o-mini"
+  mock_fallback_on_missing_key: true # Auto fallback to mock if OPENAI_API_KEY is not supplied in dev
+
+storage:
+  type: "in_memory"
+  vector_db: "in_memory"
