@@ -1,41 +1,12 @@
 # BÁO CÁO PHÂN TÍCH CORPUS — BÀI ĐẠT / BÀI KHÔNG ĐẠT LUẬT
 
-**Tệp phân tích:** `datalake/dataraw/final_data_7_chu.jsonl`
-**Ngày:** 17/09/2026
-**Bộ luật áp dụng:** `src/application/rule.py` (bản thi hành được của `docs/Luat_Tho_That_Ngon_Tu_Do.md`)
+**Tệp phân tích:** `datalake/dataraw/final_data_7_chu.jsonl` — 67.150 bản ghi
+**Ngày đo:** 18/09/2026 · **Bộ luật:** `src/application/rule.py`, bảy tầng
+**Sinh lại:** `python datalake/scripts/kiem_tra_toan_bo.py`
 
----
-
-> ## ⚠️ SỐ LIỆU TRONG BÁO CÁO NÀY ĐÃ CŨ — đo lại ngày 18/09/2026
->
-> Hai thay đổi sau lần đo 17/09 làm đổi kết quả, và báo cáo này **chưa được viết lại**:
->
-> 1. **QĐ-5** — bảng vần thông thay bằng bảng có nguồn (Trần Trọng Kim, *Việt thi* I-6).
->    Bảng cũ là do tôi tự liệt kê.
-> 2. **QĐ-7** — tầng 5 bắt đầu **chặn thật**: bài phải có ít nhất một cụm 4 dòng liên tiếp
->    khớp một trong bốn sơ đồ §5.2. Trước đó tầng 5 cho qua tất cả.
->
-> **Phễu mới, đo lại từ đầu trên toàn bộ 67.150 bản ghi (18/09/2026):**
->
-> | Cổng | Vào | Qua | Chặn tại đây |
-> |---|---:|---:|---:|
-> | 1. Hình thức (H3) | 62.034 | 62.032 | 2 |
-> | 2. Độ dài dòng (H1, H2) | 62.032 | 59.437 | 2.595 |
-> | 3. Loại trừ Đường luật (F1–F5) | 59.437 | 55.149 | 4.288 |
-> | 4. Thanh luật (S1–S5) | 55.149 | 21.374 | 33.775 |
-> | **5. Vần (S6–S12)** | 21.374 | **16.391** | **4.983** ← QĐ-7 |
-> | 6. Nhịp (S13–S15) | 16.391 | 16.391 | 0 |
-> | 7. Khổ và bố cục (S16–S21) | 16.391 | 16.391 | 0 |
->
-> - Thuộc thể theo **tài liệu** (chỉ H1–H3): **59.437**
-> - Đạt theo **chuẩn dự án** (cả 7 tầng): **16.391** — 26,42% trên 62.034 bài có nội dung
-> - Không có nội dung: 5.116 · Đối soát: `67.150 dòng = 67.150 bản ghi = 67.150 id duy nhất` ✅
->
-> **Cổng 6 chặn 0 bài, và đó KHÔNG phải vì thơ đạt nhịp.** Chưa có bộ tách từ tiếng Việt nên
-> mọi dòng 7 tiếng đều "cắt được" theo cả bảy kiểu nhịp — phép kiểm rỗng nghĩa, đã ghi ở
-> QĐ-6b của `Plan_Rule_Phan_Tang.md`. Con số 16.391 là **chưa qua kiểm nhịp thật sự**.
->
-> Số liệu chi tiết từng bài: `datalake/analysis/` · Sinh lại: `datalake/scripts/kiem_tra_toan_bo.py`
+> Bản 17/09 của báo cáo này đo bằng một bộ luật chỉ chặn ở H1–H3. Toàn bộ số liệu
+> phán quyết dưới đây đã **đo lại từ đầu**, từng bài một, qua đủ bảy tầng. Không con
+> số nào được mang sang từ bản cũ.
 
 ---
 
@@ -43,393 +14,338 @@
 
 > ### ĐƠN VỊ PHÁN QUYẾT LÀ **BÀI**, KHÔNG PHẢI DÒNG
 >
-> Chỉ cần **một** dòng lệch khỏi 7 tiếng là **cả bài** rời khỏi thể thất ngôn tự do — tài liệu luật §10 nói rõ điều này, và `rule.py` cài đúng như vậy.
+> Chỉ cần **một** dòng lệch là **cả bài** trượt. Một bài 32 dòng có 31 dòng hoàn hảo
+> và 1 dòng 6 tiếng là **bài hỏng**, không phải "bài đạt 97%".
 >
-> Hệ quả khi đọc báo cáo: mọi số liệu **mức dòng** trong tài liệu này chỉ dùng để **chẩn đoán nguyên nhân**, tuyệt đối không dùng làm thước đo chất lượng corpus. Một bài 32 dòng có 31 dòng hoàn hảo và 1 dòng 6 tiếng thì vẫn là **bài hỏng**, không phải "bài đạt 97%".
+> Hệ quả khi đọc: mọi số liệu **mức dòng** trong báo cáo này chỉ để **chẩn đoán
+> nguyên nhân**, tuyệt đối không dùng làm thước đo chất lượng corpus.
 
-### Bảng A — Tình trạng dữ liệu, đo bằng `rule.py`
+### 0.1. Hai con số, cố ý không gộp
 
-Đây là **sự thật về corpus**. Không con số nào ở đây phụ thuộc vào quyết định xử lý của ai.
-
-**Phán quyết — mức BÀI (con số chính thức):**
-
-| Chỉ số | Giá trị | Nghĩa là gì |
+| | Số bài | Trả lời câu hỏi gì |
 |---|---:|---|
-| Bản ghi | 67.150 | Số dòng JSON trong tệp, không phải số bài thơ |
-| Dung lượng | 60,5 MB | Đọc hết mất khoảng 40 giây |
-| Bài có nội dung thơ | 62.034 | 5.116 bản ghi còn lại có trường thơ rỗng |
-| **BÀI ĐẠT luật H1–H3** | **59.437 — 95,81%** | Mọi dòng đúng 7 tiếng, không sót dòng nào |
-| **BÀI TRƯỢT** | **2.597 — 4,19%** | Có ít nhất một dòng lệch → cả bài bị loại |
+| **Thuộc thể** — theo tài liệu luật (chỉ H1–H3) | **59.437** | *"Bài này có phải thất ngôn tự do không?"* — câu trả lời của `Luat_Tho_That_Ngon_Tu_Do.md` §2 |
+| **Đạt** — theo chuẩn dự án (cả bảy tầng) | **16.391** | *"Bài này có tuân thủ toàn bộ Rule không?"* — câu trả lời của dự án, sau QĐ-1 → QĐ-7 |
 
-**Chẩn đoán — mức DÒNG (không phải thước đo chất lượng):**
+Khoảng cách 43.046 bài giữa hai con số **không phải lỗi**. Nó là hệ quả đo được của
+các quyết định đã chốt, chủ yếu là QĐ-1 và QĐ-2 (không cho phá khuôn thanh luật).
 
-| Chỉ số | Giá trị | Vì sao KHÔNG được dùng làm thước đo |
-|---|---:|---|
-| Dòng đúng 7 tiếng | 806.220 / 815.235 — 98,89% | Con số này **luôn đẹp hơn sự thật**: 9.015 dòng hỏng chỉ chiếm 1,11% số dòng nhưng đủ giết 2.597 bài |
-| **Dòng tốt bị mất theo bài hỏng** | **42.956 — 5,27% corpus** | Đây mới là thiệt hại thật: những dòng **đúng 7 tiếng** nhưng nằm trong bài hỏng nên bị loại cùng |
+Tỉ lệ đạt: **16.391 / 62.034 bài có nội dung = 26,42%**.
 
-> **Đọc hai bảng cạnh nhau:** ở mức dòng chỉ 1,11% hỏng, nhưng vì bài là đơn vị nguyên khối nên **5,27% số dòng của corpus bị loại** — gấp gần năm lần. Đó là cái giá của tính nguyên khối, và là lý do 1.679 bài chỉ hỏng đúng một dòng vẫn đáng công sửa tay.
+### 0.2. Phễu bảy cổng
 
-### Bảng B — Dữ liệu dùng được sau xử lý
+Bài phải qua cổng N mới sang cổng N+1. Cột *chưa chạy* là số bài **chưa được kiểm** ở
+cổng đó vì đã bị chặn trước — chưa kiểm, không phải đạt.
 
-> **Bảng B KHÔNG phải tỷ lệ vượt luật.** Tỷ lệ vượt luật là **59.437 — 95,81%** ở bảng A và chỉ có một con số đó. Bảng B đếm thứ khác: sau khi khử trùng lặp và thu hồi nội dung bị ghi sai chỗ thì còn lại bao nhiêu bài dùng được. Hai bảng có mẫu số khác nhau, **không cộng chung được**.
+| Cổng | Điều luật | Vào | Qua | Chặn tại đây | Chưa chạy |
+|---|---|---:|---:|---:|---:|
+| 1. Hình thức | H3 | 62.034 | 62.032 | 2 | 0 |
+| 2. Độ dài dòng | H1, H2 | 62.032 | 59.437 | 2.595 | 2 |
+| 3. Loại trừ Đường luật | F1–F5 | 59.437 | 55.149 | 4.288 | 2.597 |
+| **4. Thanh luật** | S1–S5 | 55.149 | 21.374 | **33.775** | 6.885 |
+| 5. Vần | S6–S12 | 21.374 | **16.391** | 4.983 | 40.660 |
+| 6. Nhịp | S13–S15 | 16.391 | 16.391 | 0 | 45.643 |
+| 7. Khổ và bố cục | S16–S21 | 16.391 | 16.391 | 0 | 45.643 |
 
-| Chỉ số | Giá trị | Nguồn gốc |
-|---|---:|---|
-| Đạt luật + không trùng lặp | 43.911 | Từ 59.437 bài đạt, khử 15.526 bản sao nội dung |
-| Thu hồi từ khoá ghi sai | +1.244 | **Chưa từng nằm trong mẫu số nào** — vốn thuộc nhóm 5.116 bài có `markdown_poem` rỗng; lấy nội dung ở khoá khác ra rồi đưa qua **đúng bộ luật đó** (§5.1.1) |
-| **Tổng dùng được ngay** | **45.155** | Không cần sửa tay, không cần gọi mô hình |
+**Cổng 4 là nút cổ chai thật sự** — một mình nó loại 33.775 bài, gấp 6,8 lần cổng đứng
+thứ hai.
 
-1.244 bài ở hàng giữa **không phải bài mới được cho qua luật**. Việc có chấp nhận nội dung lấy từ khoá phi chuẩn (`content_fix`, `markdown_poem_content`…) làm dữ liệu hợp lệ hay không là **quyết định quản trị dữ liệu**, thuộc quyền chủ dự án — vì vậy nó đứng thành một dòng riêng có nhãn rõ, không gộp vào con số chính.
+### 0.3. Đối soát
 
-**Kết luận một câu:** corpus sạch hơn mong đợi về mặt luật thơ; phần trượt **không phải do văn bản bẩn mà do lẫn thể loại khác** — 93,4% dòng hỏng là dòng thơ thật, chữ Việt thuần, chỉ không phải 7 tiếng.
+```
+67.150 dòng đọc = 67.150 bản ghi parse được = 67.150 id duy nhất       ✅
+67.150 bản ghi  = 16.391 đạt + 45.643 trượt + 5.116 không có nội dung  ✅
+62.034 lần gọi rule.py = 16.391 đạt + 45.643 trượt                     ✅
+```
+
+Không bản ghi nào bị bỏ sót, trùng, hay đếm hai lần.
+
+### 0.4. ⚠️ Ba điều phải biết trước khi dùng con số 16.391
+
+**1. Cổng 6 chặn 0 bài, và đó KHÔNG phải vì thơ đạt nhịp.**
+Ngắt nhịp là ngắt theo *ranh giới từ*. Chưa có bộ tách từ tiếng Việt nên mọi dòng 7
+tiếng đều "cắt được" theo cả bảy kiểu — phép kiểm rỗng nghĩa. Bằng chứng trực tiếp:
+**100,00% bài đạt được gán nhịp chủ đạo `4/3`** — không phải vì thơ Việt toàn nhịp
+4/3, mà vì giao của bảy kiểu luôn khác rỗng và `4/3` đứng đầu bảng. **16.391 là con số
+chưa qua kiểm nhịp thật sự.**
+
+**2. Cổng 7 chặn 0 bài, nhưng đây là đúng.**
+S16–S21 phần lớn là *quyền* (*"không hạn định"*, *"có thể"*). Nguyên tắc N2 cấm dùng
+điều loại quyền để đánh trượt — loại một bài vì tác giả dùng đúng cái quyền tài liệu
+cho phép là mâu thuẫn tự thân.
+
+**3. Ba điều luật không kiểm được bằng máy, đã ghi công khai trong từng biên bản.**
+S3 (*P7 chọn có chủ đích*), S15 (*đổi nhịp trùng chỗ chuyển ý*), S19 (*mạch cảm xúc*)
+đòi ý đồ tác giả hoặc ngữ nghĩa. F2 (*phép đối*) và F4 (*bố cục Khai–Thừa–Chuyển–Hợp*)
+cũng vậy — nên cổng 3 chỉ xét ba trong bốn vế và hàm mang tên `nghi_la_duong_luat`.
 
 ---
 
 ## 1. Phương pháp
 
-Một lượt duy nhất qua toàn bộ tệp, mỗi bài đưa qua `kiem_tra_bai_tho()`. Phán quyết `dat` chỉ phụ thuộc ba ràng buộc cứng:
+Một lượt duy nhất qua toàn bộ tệp, mỗi bài đưa qua `kiem_tra_bai_tho()`, chạy **tuần
+tự** qua bảy tầng. Trượt tầng nào thì **dừng ngay**; các tầng sau mang `da_chay=False`.
 
-| Mã | Nội dung |
+Dừng sớm không phải để nhanh mà để **đúng**: tính khuôn thanh trên một dòng 6 tiếng là
+gán cho tác giả một lựa chọn phong cách mà họ chưa hề thực hiện.
+
+### 1.1. Bảy tầng và tiêu chí chặn
+
+| Tầng | Điều luật | Tiêu chí chặn | Nguồn quyết định |
+|---|---|---|---|
+| 1. Hình thức | H3 | Từ 2 dòng trở lên | Tài liệu §2 |
+| 2. Độ dài dòng | H1, H2 | **Mọi** dòng đúng 7 tiếng | Tài liệu §2, §10 |
+| 3. Loại trừ Đường luật | F1–F5 | Không khớp khuôn Đường luật | Tài liệu §9 Bước 2 |
+| 4. Thanh luật | S1–S5 | **Mọi** dòng khớp khuôn `B T B` hoặc `T B T` | QĐ-1, QĐ-2 |
+| 5. Vần | S6–S12 | ≥1 cụm **4 dòng liên tiếp** khớp một sơ đồ §5.2 | QĐ-3, QĐ-5, QĐ-7 |
+| 6. Nhịp | S13–S15 | Mọi dòng thuộc bảy kiểu, và có nhịp chủ đạo phủ cả bài | QĐ-4, QĐ-4b, QĐ-6b |
+| 7. Khổ và bố cục | S16–S21 | Không có khổ rỗng | Tài liệu §7 |
+
+### 1.2. Ba chỗ dự án chặt hơn tài liệu — nêu minh bạch
+
+| Tài liệu nói | Dự án quyết |
 |---|---|
-| H1 | Mỗi dòng đúng 7 tiếng |
-| H2 | H1 áp dụng cho toàn bộ dòng, không ngoại lệ |
-| H3 | Văn bản phải được phân dòng |
+| S2: P2/P4/P6 ***nên*** luân phiên — chữ *nên*, nói ở mức dòng | **QĐ-1**: bắt buộc, áp lên **mọi** dòng |
+| S4: ***có thể*** phá khuôn ở bất kỳ dòng nào khi dụng ý đòi hỏi | **QĐ-2**: không cho phá khuôn |
+| S13: nhịp ***không cố định*** cho toàn bài | **QĐ-4b**: phải có một nhịp chủ đạo phủ mọi dòng |
 
-Mọi quy tắc mềm (S1–S21) chỉ được ghi nhận để mô tả, **không dùng để loại bài** — đúng §9 Bước 4 của tài liệu luật.
+Đây là **chính sách của dự án**, không phải cách đọc tài liệu. Văn bản
+`Luat_Tho_That_Ngon_Tu_Do.md` giữ nguyên, không sửa một chữ. Vì vậy báo cáo luôn nêu
+song song hai con số ở §0.1.
 
-**Đơn vị phán quyết là bài.** `kiem_tra_bai_tho()` trả `dat = True` chỉ khi **mọi** dòng đạt; một dòng lệch là `dat = False` cho cả bài, không có điểm thành phần, không có ngưỡng phần trăm. Đây là cài đặt trực tiếp của §10 tài liệu luật: *"chỉ cần một dòng lệch khỏi 7 tiếng, bài rời khỏi thất ngôn tự do"*.
+### 1.3. Bảng vần có nguồn
 
-Vì vậy báo cáo phân biệt hai loại số liệu:
+Tầng 5 dùng bảng vần thông của **Trần Trọng Kim, *Việt thi*, mục I-6**, bản số hoá
+Wikisource; đối chiếu với **Bùi Kỷ, *Quốc văn cụ thể*, Tân Việt 1950**. Hồ sơ nguồn đầy
+đủ: `docs/Nguon_Bang_Van_Thong.md`.
 
-| Loại | Dùng để | Ví dụ |
+Bảng gồm **73 cạnh từ nguồn + 4 cạnh suy diễn = 77 cạnh, 62 vần**, và là **đồ thị,
+không phải phân hoạch**: quan hệ hiệp vần **không bắc cầu**. Chính tác giả viết
+*"ang thông với ương (không thông được với uông…)"* rồi vài dòng sau *"uông thông với
+ương"*. Ép bảng này thành các lớp tương đương sẽ bịa thêm 16 cặp hiệp vần mà nguồn
+không cho.
+
+### 1.4. Hai mức số liệu
+
+| Loại | Dùng để | Ví dụ trong báo cáo này |
 |---|---|---|
-| **Mức bài** | Ra quyết định: nhận, loại, sửa, đổi nhãn | 59.437 bài đạt · 2.597 bài trượt |
-| Mức dòng | Chỉ chẩn đoán nguyên nhân | 9.015 dòng hỏng, phân theo độ dài và vị trí |
+| **Mức bài** | Ra quyết định: nhận, loại, sửa, đổi nhãn | 16.391 đạt · 45.643 trượt |
+| Mức dòng | Chỉ chẩn đoán nguyên nhân | 177.405 lần vi phạm S2 |
 
-**Một chỉ số đã bị loại bỏ khỏi báo cáo:** lần đo đầu tiên có mục "dòng hỏng có chữ Latin — 99,19%". Đây là rác đo đạc, vì tiếng Việt viết bằng chữ Latin nên `[a-zA-Z]` khớp mọi dòng. Số liệu trong báo cáo này là bản đo lại, dùng dấu hiệu `f, j, w, z` (các chữ ngoài bảng chữ tiếng Việt) để nhận diện tên riêng ngoại ngữ thật sự.
+Một bài có thể phạm cùng một điều ở nhiều dòng, nên **số lần vi phạm luôn lớn hơn số
+bài** và hai loại số này không so sánh trực tiếp được.
+
+**Một chỉ số đã bị loại khỏi báo cáo:** lần đo đầu có mục *"dòng hỏng có chữ Latin —
+99,19%"*. Đó là rác đo đạc, vì tiếng Việt viết bằng chữ Latin nên `[a-zA-Z]` khớp mọi
+dòng. Bản này dùng dấu hiệu `f, j, w, z` để nhận diện tên riêng ngoại ngữ thật.
 
 ---
 
-## 2. Cấu trúc bản ghi
+## 2. Cấu trúc bản ghi kết quả
 
-```json
-{
-  "status": "success",
-  "id": 1,
-  "original_title": "BÂNG KHUÂNG",
-  "result": {
-    "markdown_poem": "...",
-    "score": 8,
-    "score_reason": "...",
-    "poem_type": "thơ 7 chữ"
-  },
-  "source_file": "libosa_results.jsonl"
-}
+Mỗi bài xuất ra một dòng JSON mang **dấu vết đầy đủ bảy tầng**, để câu trả lời *"vì sao
+pass"* và *"vì sao trượt"* đều kiểm lại được từng vế.
+
+### 2.1. Bài đạt — `datalake/analysis/bai_dat.jsonl`
+
+Trường `ly_do_dat` ghép bằng chứng của **cả bảy cổng**:
+
+```
+T1 Hình thức: 8 dòng — văn bản có phân dòng
+T2 Độ dài dòng: 8/8 dòng đúng 7 tiếng; nhỏ nhất = lớn nhất = 7
+T3 Loại trừ Đường luật: 8 dòng, không đủ ba vế số dòng + độc vận + niêm
+T4 Thanh luật: 8/8 dòng khớp khuôn; 0 dòng phá khuôn
+T5 Vần: dòng 1–4 khớp sơ đồ aaxa (vần ba dòng): mài / nhai / kín / dài
+T6 Nhịp: nhịp chủ đạo 4/3 phủ cả 8/8 dòng — KHÔNG có khai báo nhịp nên chỉ
+   kiểm được số học
+T7 Khổ và bố cục: 1 khổ, kích thước [8], không khổ rỗng
 ```
 
-- `status`: 100% là `"success"`
-- `poem_type`: 100% là `"thơ 7 chữ"` — **nhãn này không đáng tin, xem §5**
-- JSON hỏng: 0
+### 2.2. Bài trượt — `datalake/analysis/bai_truot.jsonl`
+
+Mang thêm `tang_dung_lai` và `ly_do_truot` có **địa chỉ dòng**:
+
+```
+tang_dung_lai: 4
+ly_do_truot: [{ma_luat: "S2", dong: 1,
+               ky_vong: "P2/P4/P6 luân phiên theo khuôn bằng (B T B)",
+               thuc_te: "P2/P4/P6 = T B B",
+               goi_y: "Đổi thanh ở P2, P4 hoặc P6"}]
+```
+
+Các tầng sau tầng dừng đều mang `da_chay: false` — **chưa kiểm**, khác hẳn *đã kiểm và
+đạt*.
 
 ---
 
-## 3. BÀI VƯỢT QUA ĐƯỢC LUẬT — chân dung
+## 3. BÀI ĐẠT — chân dung 16.391 bài qua đủ bảy tầng
 
-**59.437 bài (95,81%)**
+### 3.1. Độ dài
 
-### 3.1. Hình thức
-
-| Số dòng | Số bài | Tỷ lệ | Hình dung |
+| Số dòng | Số bài | Tỷ lệ | Dáng |
 |---:|---:|---:|---|
-| 8 | 20.625 | 34,70% | Dáng **bát cú** — khuôn khổ cổ điển nhất, một khối tám dòng liền |
-| 4 | 10.141 | 17,06% | Dáng **tứ tuyệt** — một khổ trọn vẹn, ngắn gọn |
-| 16 | 9.243 | 15,55% | **4 khổ × 4 dòng** |
-| 12 | 4.705 | 7,92% | **3 khổ × 4 dòng** |
-| 20 | 3.926 | 6,61% | **5 khổ × 4 dòng** |
-| 24 | 2.166 | 3,64% | **6 khổ × 4 dòng** |
+| 8 | 8.818 | 53,80% | **Bát cú** — một khối tám dòng liền, dáng cổ điển nhất |
+| 16 | 2.443 | 14,90% | 4 khổ × 4 dòng |
+| 28 | 915 | 5,58% | 7 khổ × 4 dòng |
+| 20 | 785 | 4,79% | 5 khổ × 4 dòng |
+| 12 | 776 | 4,73% | 3 khổ × 4 dòng |
+| 24 | 544 | 3,32% | 6 khổ × 4 dòng |
+| 4 | 480 | 2,93% | **Tứ tuyệt** — một khổ trọn vẹn |
+| 56 | 286 | 1,74% | Trường thiên |
 
-**Đọc bảng này thế nào:** mọi mốc phổ biến đều là **bội số của 4**, trừ mốc 8 dòng. Nghĩa là corpus có hai dáng chủ đạo — khối bát cú liền mạch, và bài xếp thành nhiều khổ tứ tuyệt. Không có mốc lẻ nào chen vào top.
+Hơn **một nửa** bài đạt là bát cú 8 dòng. Phần còn lại gần như đều là bội số của 4 —
+dấu hiệu corpus nghiêng mạnh về cấu trúc khổ tứ tuyệt.
 
-**65,4% số bài chia khổ 4 dòng hoàn toàn**; 26,8% là khối 8 dòng liền không chia khổ. Hai dáng này gộp lại đã chiếm hơn 92% corpus.
+### 3.2. Cấu trúc khổ
 
-### 3.2. Vần — họ sơ đồ của khổ 4 dòng
-
-| Sơ đồ | Tỷ lệ | Tên gọi theo §5.2 | Nghe ra sao |
-|---|---:|---|---|
-| `aaxa` | 31,45% | **vần ba dòng, kế thừa Đường luật** | Dòng 1, 2, 4 cùng vần; dòng 3 buông ra rồi quay về — tạo cảm giác lửng rồi khép |
-| `xxxx` | 16,71% | khổ không gieo vần (S8) | Không có tiếng vọng nào giữa các dòng; nhạc tính dồn hết vào nhịp |
-| `xaxa` | 16,60% | vần cách, hai dòng lẻ buông | Chỉ dòng chẵn bắt vần — nhịp đôi rõ, dòng lẻ tự do |
-| `aaxx` | 9,61% | hai dòng đầu hiệp | Mở bằng một cặp vần rồi thả trôi nửa sau |
-| `axxa` | 6,66% | vần ôm hở | Dòng đầu và dòng cuối ôm nhau, giữa để trống |
-| `aaaa` | 5,61% | độc vận cả khổ | Bốn dòng cùng một vần — nặng, trang trọng, dễ đơn điệu |
-| `abab` | 2,51% | vần cách đầy đủ | Hai lớp vần đan nhau, đặc trưng thơ mới |
-| `aabb` | 0,94% | vần liền | Từng cặp một, gần với đồng dao |
-
-**Nhận định:** corpus nghiêng mạnh về truyền thống Đường luật. Sơ đồ `aaxa` — đúng mẫu tài liệu gọi là "vần ba dòng, kế thừa Đường luật" — chiếm gần một phần ba, trong khi `abab` và `aabb` của thơ mới cộng lại chưa tới 3,5%.
-
-### 3.3. Thanh luật (S2, §4.2)
-
-| Khuôn | Số dòng | Tỷ lệ | Nghĩa là gì |
-|---|---:|---:|---|
-| bằng (P2 B, P4 T, P6 B) | 306.153 | 40,11% | Dòng mở bằng thanh ngang/huyền ở tiếng thứ 2 — êm, trôi |
-| trắc (P2 T, P4 B, P6 T) | 279.706 | 36,65% | Mở bằng thanh trắc — gắt, dứt khoát |
-| phá khuôn | 177.405 | 23,24% | Đủ 7 tiếng nhưng P2/P4/P6 không luân phiên — **được phép** theo S4 |
-
-**Đọc bảng này thế nào:** hai khuôn chia nhau gần đều (40% và 37%), cho thấy người viết dùng cả hai chứ không nghiêng hẳn về một phía. Gần một phần tư số dòng phá khuôn — đây là **lựa chọn phong cách, không phải lỗi**, nên không dòng nào trong số 177.405 dòng đó làm bài trượt.
-
-**76,8% số dòng tuân thủ khuôn luân phiên.** Phá khuôn được S4 cho phép nên không ảnh hưởng tới phán quyết.
-
-### 3.4. Các quan sát khác trên bài đạt
-
-| Chỉ số | Giá trị | Nghĩa là gì |
-|---|---:|---|
-| Nghi là Đường luật (đủ 4/8 dòng + độc vận + niêm) | 3.599 — 6,06% | Bài chặt tới mức gần như Đường luật thật — nằm sát ranh giới bị loại khỏi thể |
-| Có ít nhất một cặp vần lệch lớp thanh | 18.561 — 31,23% | Hai tiếng cùng vần nhưng khác bằng/trắc, ví dụ `xanh` (B) hiệp `mảnh` (T) — S9 cho phép |
-| Có vần lưng ở P4/P5 (S7) | 23.432 — 39,42% | Có tiếng giữa dòng bắt vần với tiếng cuối dòng — làm dòng thơ dính chặt hơn |
-
-3.599 bài đứng ngay **ranh giới §9 Bước 2**. Theo quyết định cài đặt Đ1, chúng chỉ bị cảnh báo chứ không bị loại — vì phép "đối" chưa kiểm được tự động, và báo nhầm ở đây nghĩa là loại oan một bài hợp lệ.
-
----
-
-## 4. BÀI KHÔNG VƯỢT QUA — nguyên nhân
-
-**2.597 bài (4,19%), gồm 9.015 dòng hỏng**
-
-### 4.0. Một dòng hỏng là đủ
-
-Trước khi đọc bất kỳ bảng nào bên dưới, cần nắm con số này:
-
-| Bài trượt vì… | Số bài | Tỷ lệ số bài trượt |
-|---|---:|---:|
-| **đúng 1 dòng hỏng** | **1.679** | **64,65%** |
-| 2 dòng hỏng | 243 | 9,36% |
-| 3 dòng hỏng | 95 | 3,66% |
-| 4 dòng hỏng | 218 | 8,39% |
-| 5 dòng hỏng trở lên | 360 | 13,86% |
-| 0 dòng hỏng (vi phạm H3 — không phân dòng) | 2 | 0,08% |
-
-**Gần hai phần ba số bài trượt chỉ vì một dòng duy nhất.** Một bài 32 dòng có 31 dòng hoàn hảo vẫn bị loại nguyên bài — đó là điều mà mọi thống kê mức dòng che mất.
-
-Đây cũng là lý do thứ tự ưu tiên xử lý ở §7 đặt nhóm "sửa một dòng" lên đầu: chi phí sửa thấp nhất, số bài thu hồi lớn nhất.
-
-### 4.1. Phát hiện chính
-
-> **93,39% dòng hỏng KHÔNG mang bất kỳ dấu hiệu nhiễu nào.**
-> Chúng là dòng thơ thật, chữ Việt thuần, chỉ đơn giản không phải 7 tiếng.
-
-Bảng dưới đếm theo **cả hai đơn vị**. Cột "Số bài" là con số dùng để ra quyết định, vì bài mới là thứ bị loại; cột "Số dòng" chỉ cho thấy mức độ tập trung của từng loại nhiễu.
-
-| Nguyên nhân | **Số bài** | **% bài trượt** | Số dòng | % dòng hỏng | Đây là loại dòng nào | Ví dụ thật từ corpus |
-|---|---:|---:|---:|---:|---|---|
-| **Dòng thơ thật, chỉ sai số tiếng** | **2.237** | **86,14%** | **8.419** | **93,39%** | Câu thơ hoàn chỉnh, chữ Việt thuần, chỉ không phải 7 tiếng | `Đường về ngơ ngác hỏi bậu vì đâu?` — 8 tiếng |
-| Dòng phụ chú mở bằng ngoặc/dấu sao | 168 | 6,47% | 235 | 2,61% | Ghi chú của người biên tập, bị gộp vào trường thơ | `*(Gửi chị Trúc)*` — 3 tiếng |
-| Đề tặng, lời đề từ | 160 | 6,16% | 165 | 1,83% | Dòng "tặng ai", thường nằm ngay dưới tiêu đề | `Gửi theo Thanh Nam,` — 4 tiếng |
-| Tên riêng ngoài bảng chữ tiếng Việt | 131 | 5,04% | 163 | 1,81% | Địa danh, tên người nước ngoài viết nguyên dạng | `Buổi chiều hiu hắt góc Whitlam.` — 6 tiếng |
-| Có chữ số (năm tháng, địa danh) | 47 | 1,81% | 65 | 0,72% | Dòng ghi nơi chốn và thời điểm sáng tác | `Bát Tràng, 1973` — 9 tiếng |
-| Dòng phân cách `*` | 35 | 1,35% | 58 | 0,64% | Ký hiệu ngắt phần của bản in gốc | `*` — 0 tiếng |
-| Tên phiên âm có gạch nối | 27 | 1,04% | 36 | 0,40% | Tên nước ngoài phiên âm, mỗi gạch nối là một âm tiết | `Nắng êm đềm trắng đêm Lê-nin-grát,` — 8 tiếng |
-| Văn xuôi lẫn vào (tiểu dẫn, chú thích) | 22 | 0,85% | 22 | 0,24% | Cả đoạn văn xuôi nằm trong trường thơ | `Xóm Ngự Viên ở cạnh đường Gia Hội (Huế)…` — 16 tiếng |
-| Ký tên tác giả | 10 | 0,39% | 10 | 0,11% | Chữ ký cuối bài | `— Lê Bá Dương` — 3 tiếng |
-
-*Một bài có thể dính nhiều loại nên tổng cột "Số bài" vượt 2.597.*
-
-### Cách đọc bảng này
-
-**Hàng đầu tiên là toàn bộ câu chuyện, ở cả hai đơn vị đếm.** 86,14% số bài trượt (và 93,39% số dòng hỏng) không mang dấu hiệu bất thường nào — chúng là câu thơ thật sự, đọc lên vẫn ra thơ, chỉ là không đúng 7 tiếng.
-
-**Chênh lệch giữa hai cột nói lên điều gì.** Nhiễu siêu dữ liệu chiếm 6,61% số dòng hỏng nhưng tới 13,86% số bài trượt — vì mỗi bài thường chỉ dính **một** dòng nhiễu, và một dòng là đủ giết cả bài. Ngược lại, lỗi "dòng thơ thật" tập trung dày trong ít bài hơn (một bài thơ 8 chữ hỏng cả 66 dòng).
-
-> Bóc nhiễu siêu dữ liệu chỉ chạm tới **596 / 9.015 dòng**, nhưng lại **cứu được tới 360 bài** — hiệu suất trên đơn vị bài cao hơn nhiều so với vẻ ngoài của cột "số dòng".
-
-**Tám hàng dưới có một điểm chung:** chúng đều là **siêu dữ liệu bị gộp nhầm vào trường nội dung** — lời đề tặng, năm sáng tác, chữ ký, ký hiệu ngắt phần. Không có dòng nào trong đó là lỗi của người làm thơ; tất cả là lỗi của khâu thu thập. Vì vậy chúng **bóc ra được bằng máy** (xem bộ lọc L1–L4 ở §6.4), khác hẳn hàng đầu vốn phải sửa bằng tay hoặc đổi nhãn thể loại.
-
-**Hai hàng dễ hiểu nhầm:**
-
-- *Tên phiên âm có gạch nối* — `Lê-nin-grát` đếm 3 tiếng là **đúng theo §2.1** của tài liệu luật ("ra-đi-ô" = 3 tiếng). Dòng vẫn hỏng thật, không phải bộ đếm sai.
-- *Đề tặng, lời đề từ* — hàng này chỉ đáng tin **vì nó được đo trên các dòng đã sai số tiếng**. Áp đúng mẫu đó lên dòng đủ 7 tiếng thì báo nhầm hàng loạt, xem §6.3.
-
-**Hệ quả cho kế hoạch xử lý:** đây không phải bài toán *làm sạch văn bản* mà là bài toán *phân loại thể loại*. Viết bộ lọc dấu câu, bộ bóc chú thích… chỉ chạm tới chưa đầy 7% khối lượng vấn đề.
-
-### 4.2. Hỏng theo độ dài dòng *(chẩn đoán mức dòng)*
-
-| Độ dài | Số dòng | Tỷ lệ | Thường là chuyện gì |
-|---:|---:|---:|---|
-| 6 tiếng (thiếu 1) | 1.935 | 21,46% | **Rơi mất một chữ** khi sao chép — đọc lên nghe hụt hẳn một nhịp |
-| **8 tiếng (thừa 1)** | **6.372** | **70,68%** | Phần lớn là **thơ 8 chữ bị gán nhãn nhầm**, không phải thơ 7 chữ viết lỗi |
-| 0–5 tiếng | 557 | 6,18% | Dòng siêu dữ liệu: chữ ký, đề tặng, ký hiệu ngắt phần |
-| ≥ 9 tiếng | 151 | 1,68% | Văn xuôi lẫn vào — có dòng dài tới **75 tiếng** |
-
-**Đọc bảng này thế nào:** hai hàng đầu chiếm 92% và chúng nói hai câu chuyện ngược nhau. Thiếu một tiếng thường là **lỗi dữ liệu** nên sửa được. Thừa một tiếng thường là **thể loại khác** nên không sửa được, chỉ đổi nhãn.
-
-### 4.3. Hỏng theo vị trí *(chẩn đoán mức dòng)*
-
-| Vị trí | Số dòng | Tỷ lệ | Ý nghĩa chẩn đoán |
-|---|---:|---:|---|
-| Giữa bài | 7.501 | 83,21% | Lỗi nằm trong thân bài → là chuyện của **bản thân bài thơ** (sai thể, rơi chữ) |
-| Dòng đầu bài | 1.095 | 12,15% | Gần như luôn là **siêu dữ liệu**: đề tặng, tiểu dẫn, năm sáng tác |
-| Dòng cuối bài | 419 | 4,65% | Thường là **chữ ký tác giả** hoặc nơi chốn – ngày tháng |
-
-**Đọc bảng này thế nào:** vị trí của dòng hỏng gần như quyết định cách xử lý. Hỏng ở **đầu hoặc cuối** (16,8%) thì chỉ cần cắt bỏ dòng đó là xong — đó chính là căn cứ cho quy tắc L3 ở §6.4. Hỏng ở **giữa bài** thì phải đọc mới biết là rơi chữ hay sai thể loại.
-
-### 4.4. Hai quần thể thất bại hoàn toàn khác nhau
-
-#### Quần thể 1 — lệch đúng MỘT dòng: 1.679 bài (64,7% số bài trượt)
-
-Độ dài của dòng lệch đó:
-
-| Độ dài | Số bài | Tỷ lệ |
+| Số khổ | Số bài | Tỷ lệ |
 |---:|---:|---:|
-| **6 tiếng** | **1.060** | **63,1%** |
-| 8 tiếng | 338 | 20,1% |
-| khác | 281 | 16,8% |
+| 1 | 8.677 | 52,94% |
+| 4 | 1.812 | 11,05% |
+| 2 | 1.617 | 9,87% |
+| 7 | 936 | 5,71% |
+| 3 | 840 | 5,12% |
+| 5 | 827 | 5,05% |
 
-Ví dụ:
+### 3.3. Sơ đồ vần — cụm bốn dòng nào đã khớp
 
-```
-id=2729  D7 (6 tiếng): Bao giờ nước sông ngừng chảy,
-id=2947 D28 (6 tiếng): Rồi núi sông mộng cũng tan.
-id=3039 D28 (6 tiếng): Bạn con chưa hẳn bạn con.
-```
+Đếm theo **cụm**, không theo bài: một bài dài có nhiều cụm bốn dòng liên tiếp cùng
+khớp. Tổng **38.514 cụm khớp** trên 16.391 bài, trung bình 2,35 cụm mỗi bài.
 
-Đọc lên nghe hụt hẳn một nhịp. Nguyên nhân gần như chắc chắn là **rơi chữ khi sao chép hoặc OCR**, không phải chủ ý tác giả. **Quần thể này cứu được** — chỉ cần bổ sung một tiếng, và `rule.py` đã chỉ sẵn dòng nào, thiếu bao nhiêu.
-
-#### Quần thể 2 — lệch trên 3 dòng: 578 bài, đóng góp 5.819 dòng 8 tiếng
-
-```
-Bài thơ viết nửa đời còn dang dở,      (8 tiếng)
-Bởi anh quên tóc em chẻ bên nào.       (8 tiếng)
-Tìm nhau theo dấu mòn ngày tháng cũ,   (8 tiếng)
-Trăng quên tròn biết tóc chẻ về đâu.   (8 tiếng)
-```
-
-Đây là **thơ 8 chữ chuẩn mực, bị gán nhãn `poem_type: "thơ 7 chữ"`**.
-
-| Tỷ lệ dòng 8 tiếng trong bài | Số bài |
-|---:|---:|
-| 100% | 111 |
-| 90% | 13 |
-| 80% | 33 |
-
-**Quần thể này không cứu được và cũng không nên xoá** — nên tách sang bộ dữ liệu thơ 8 chữ.
-
-#### Giải thích một nghịch lý số liệu
-
-67% *số bài* trượt không có dòng 8 tiếng nào, nhưng 70% *số dòng* hỏng lại là 8 tiếng. Lý do: quần thể 2 ít bài nhưng mỗi bài hỏng hàng chục dòng; quần thể 1 nhiều bài nhưng mỗi bài chỉ hỏng một dòng.
-
-> Hai quần thể trên là cách nhìn theo *số dòng hỏng*. Mục 4.5 dưới đây phân nhóm theo *nguyên nhân*, dùng bảng mã riêng A–H — hai cách phân loại độc lập với nhau.
-
-### 4.5. Phân nhóm chi tiết kèm tên bài
-
-Toàn bộ 2.597 bài trượt đã được xuất ra `datalake/analysis/bai_truot_chi_tiet.jsonl`, mỗi bản ghi gồm `id`, `tieu_de`, `nguyen_nhan`, và danh sách dòng hỏng kèm số tiếng. 1.452 bài có tiêu đề; số còn lại để trống.
-
-| Nhóm | Số bài | Tỷ lệ | Xử lý đề xuất |
+| Sơ đồ | Số cụm | Tỷ lệ | Tên tài liệu gọi |
 |---|---:|---:|---|
-| **D. Đúng một dòng thiếu một tiếng** | **1.060** | **40,8%** | Sửa tay — nghi rơi chữ |
-| H. Lệch nhiều dòng, thể không thuần nhất | 525 | 20,2% | Rà từng bài |
-| E. Đúng một dòng thừa một tiếng | 338 | 13,0% | Sửa tay |
-| F. Đúng một dòng lệch nhiều tiếng | 242 | 9,3% | Thường là dòng đề tặng — bóc ra |
-| G. Hai dòng lệch | 241 | 9,3% | Sửa tay |
-| A. Thơ 8 chữ bị gán nhãn 7 chữ | 135 | 5,2% | Chuyển sang bộ 8 chữ |
-| C. Có dòng phân cách không chứa tiếng | 34 | 1,3% | Bóc dòng `*` |
-| B. Lẫn văn xuôi trong trường thơ | 22 | 0,8% | Bóc tiểu dẫn khỏi trường thơ |
+| `aaxa` | 30.625 | **79,52%** | **Vần ba dòng, kế thừa Đường luật** — D1, D2, D4 cùng vần, D3 buông ra rồi quay về |
+| `abab` | 4.171 | 10,83% | **Vần cách** — hai lớp vần đan nhau, đặc trưng thơ mới |
+| `aabb` | 2.512 | 6,52% | **Vần liền** — từng cặp một, gần với đồng dao |
+| `abba` | 1.206 | 3,13% | **Vần ôm** — dòng đầu và dòng cuối ôm lấy cặp giữa |
 
-#### Nhóm A — thơ 8 chữ bị gán nhãn sai
+Bốn phần năm số cụm là `aaxa`. Corpus này, ở phần đạt luật, mang **quán tính Đường
+luật rất mạnh** — dù cổng 3 đã loại 4.288 bài Đường luật thật sự ra rồi.
 
-| id | Tên bài | Số dòng | Dòng hỏng |
-|---:|---|---:|---:|
-| 3449 | Người như sự sống mãi sinh sôi | 66 | 66 |
-| 4277 | 67, Khúc thêm cho Huyền Châu | 26 | 26 |
-| 3330 | Gửi Tây Thi | 16 | 13 |
-| 4382 | Nhớ lắm rừng ơi | 14 | 12 |
-| 4256 | Trăng mật | 12 | 12 |
-| 4441 | Trà một mình | 4 | 4 |
+### 3.4. Đặc điểm mềm — ghi nhận, không dùng để loại
 
-```
-id=4441 "Trà một mình"
-  D1 (8 tiếng): Bạn ở xa, nơi đài vừa báo bão,
-  D2 (8 tiếng): Ly rót rồi, chưa thể đặt lên môi.
-  D3 (8 tiếng): Ly lật sẵn, chờ tay ai gõ cửa,
-```
+| Đặc điểm | Số bài | Tỷ lệ | Ghi chú |
+|---|---:|---:|---|
+| Có vần lưng ở P4/P5 | 10.230 | 62,41% | S7 là **quyền** — làm dòng thơ dính chặt hơn |
+| Có cặp vần lệch lớp thanh | 5.560 | 33,92% | S9 **cho phép** — ví dụ `xanh` (B) hiệp `mảnh` (T) |
 
-Nhịp 3/5 đặc trưng của thơ 8 chữ, không phải thơ 7 chữ bị lỗi.
+### 3.5. Nhịp — số liệu này KHÔNG dùng được
 
-#### Nhóm B — văn xuôi lẫn vào, luôn ở dòng đầu
+| Nhịp chủ đạo | Số bài | Tỷ lệ |
+|---|---:|---:|
+| `4/3` | 16.391 | **100,00%** |
 
-| id | Tên bài | Tổng dòng | Dòng hỏng | Độ dài dòng hỏng |
-|---:|---|---:|---:|---:|
-| 3811 | Hai con chó | 51 | 1 | **75 tiếng** |
-| 4513 | Các vị La Hán chùa Tây Phương | 61 | 1 | 63 tiếng |
-| 4631 | Đôi lời tâm sự | 41 | 1 | 23 tiếng |
-| 3513 | Thơ tặng Béc-tôn Bờ-re-sơ | 17 | 1 | 21 tiếng |
-| 3530 | Thăm thầy giáo | 21 | 1 | 17 tiếng |
-| 3308 | Xóm Ngự Viên | 61 | 1 | 16 tiếng |
+**Đừng đọc bảng này là "toàn bộ thơ đạt đều nhịp 4/3".** Nó là hiện vật đo đạc: không
+có bộ tách từ thì mọi dòng 7 tiếng đều cắt được theo cả bảy kiểu, giao luôn khác rỗng,
+và `4/3` là phần tử đầu bảng. Con số 100,00% chính là **bằng chứng tầng 6 đang rỗng
+nghĩa**, không phải một phát hiện về thơ.
 
-Cả sáu bài đều chỉ hỏng **đúng dòng 1** — đó là lời tiểu dẫn bị gộp vào trường thơ. Bóc dòng đầu ra là bài hợp lệ ngay.
+---
 
-#### Nhóm C — dòng phân cách `*` giữa các phần
+## 4. BÀI TRƯỢT — 45.643 bài, dừng ở cổng nào
 
-| id | Tên bài | Tổng dòng | Số dòng `*` |
-|---:|---|---:|---:|
-| 3310 | Xuân tha hương | 108 | 8 |
-| 3317 | Oan nghiệt | 76 | 4 |
-| 4259 | Hai sắc hoa tigôn | 46 | 2 |
-| 3329 | Mưa xuân (I) | 45 | 1 |
-| 4213 | Lá thư thành phố | 49 | 1 (`***`) |
-| 3328 | Những bóng người trên sân ga | 37 | 1 |
+### 4.1. Phân bố theo cổng dừng
 
-Đây là quy ước trình bày của bản in gốc, không phải dòng thơ. Xoá là bài hợp lệ.
+| Cổng dừng | Số bài | Tỷ lệ | Ví dụ |
+|---|---:|---:|---|
+| 1. Hình thức | 2 | 0,00% | id=351237 — chỉ 1 dòng, không có phân dòng |
+| 2. Độ dài dòng | 2.595 | 5,69% | id=13 *"QUA TÌM BẬU BẬU NƠI ĐÂU"* |
+| 3. Loại trừ Đường luật | 4.288 | 9,39% | id=1 *"BÂNG KHUÂNG"* |
+| **4. Thanh luật** | **33.775** | **74,00%** | id=2 *"ANH GỬI CHO EM"* |
+| 5. Vần | 4.983 | 10,92% | id=28 *"TĨNH VẬT"* |
+| 6. Nhịp | 0 | 0,00% | — |
+| 7. Khổ và bố cục | 0 | 0,00% | — |
 
-#### Nhóm D — thiếu đúng một tiếng, nghi rơi chữ
+### 4.2. Số lần vi phạm theo điều luật
 
-| id | Tên bài | Dòng | Nội dung |
-|---:|---|---:|---|
-| 3382 | Hành quân thần tốc | D10 | Nấu chưa chín, lệnh hành quân. |
-| 3446 | Đem cả tình yêu làm vũ khí | D23 | Nay giặc đến nhà ta đó |
-| 3494 | Nằm bệnh viện gửi Diệu | D21 | Yêu bạn, Montaigne tự giải lời: |
-| 2729 | *(không tiêu đề)* | D7 | Bao giờ nước sông ngừng chảy, |
-| 2947 | *(không tiêu đề)* | D28 | Rồi núi sông mộng cũng tan. |
-| 3039 | *(không tiêu đề)* | D28 | Bạn con chưa hẳn bạn con. |
+| Mã | Số lần | Điều luật |
+|---|---:|---|
+| S2 | 177.405 | P2/P4/P6 nên luân phiên bằng – trắc |
+| H1 | 9.015 | Mỗi dòng phải có đúng 7 tiếng |
+| S11 | 4.983 | Sơ đồ vần nên nhất quán trong phạm vi một khổ |
+| F3 | 4.288 | Không yêu cầu độc vận cho toàn bài |
+| H3 | 2 | Văn bản phải được phân dòng |
 
-#### Nhóm E — thừa đúng một tiếng
+Nhắc lại: đây là **số lần vi phạm**, không phải số bài. 177.405 lần phạm S2 rải trên
+33.775 bài — trung bình 5,25 dòng phá khuôn mỗi bài.
 
-| id | Tên bài | Dòng | Nội dung |
-|---:|---|---:|---|
-| 13 | QUA TÌM BẬU BẬU NƠI ĐÂU | D17 | Đường về ngơ ngác hỏi bậu vì đâu? |
-| 39 | THƯƠNG MẸ LẮM MẸ ƠI | D3 | Mắt mẹ loà rồi, mẹ nghỉ đi thôi, |
-| 3298 | Khăn hồng | D1 | Gửi chị, chị cho em chiếc khăn thêu, |
-| 3518 | Những cái chết | D33 | Người chẳng ra người, ma chẳng ra ma! |
-| 3699 | Sinh nhật | D1 | Hôm nay là ngày sinh nhật của anh, |
+### 4.3. Cổng 2 — dòng sai số tiếng
 
-#### Nhóm F — dòng lệch là lời đề tặng, không phải thơ
-
-| id | Tên bài | Dòng | Nội dung |
-|---:|---|---:|---|
-| 17 | THÀNH CỔ | D5 | — Lê Bá Dương |
-| 3273 | Tiễn một người | D1 | Gửi theo Thanh Nam, |
-| 3323 | Xây lại cuộc đời | D1 | Gửi chị Trúc, |
-| 3345 | Nuôi bướm | D1 | *Tặng Vương Ý Nhi* |
-| 3398 | Lòng chiến sĩ | D1 | *(Kính dâng Phạm Ngũ Lão)* |
-
-Nhóm này **không phải lỗi thơ** — chỉ là siêu dữ liệu bị gộp vào trường nội dung.
-
-#### Nhóm G — hai dòng lệch, có ca đặc biệt
+**2.595 bài, 9.015 dòng hỏng.** Ví dụ có bằng chứng:
 
 ```
-id=4208 "Bên hàng rào Ái Tử"  10 dòng
-  D1 (1 tiếng): I
-  D6 (1 tiếng): II
+id=13 "QUA TÌM BẬU BẬU NƠI ĐÂU": 1/20 dòng sai
+    D17: Đường về ngơ ngác hỏi bậu vì đâu?     cần 7 tiếng | đang 8
+
+id=17 "THÀNH CỔ": 1/5 dòng sai
+    D5: — Lê Bá Dương                          cần 7 tiếng | đang 3
 ```
 
-Đây là **số thứ tự phần**, không phải dòng thơ. Bài thực chất gồm hai phần 4 dòng hợp lệ.
+Ca `id=17` là **siêu dữ liệu lẫn vào thơ**: dòng ký tên tác giả bị gộp vào trường nội
+dung. Đây là lỗi dữ liệu, không phải lỗi bài thơ — xem §5 và §7.
 
-#### Một quan sát về trùng lặp trong nhóm trượt
+### 4.4. Cổng 3 — nghi là Đường luật
 
-Các bài `id=2728`, `id=3111`, `id=3213` có nội dung khác nhau nhưng cùng một dạng lỗi, và `id=3741 "Thơ ghé bến người"` có D1 và D17 **giống hệt nhau** — dấu hiệu lặp khổ khi thu thập. Tiêu đề lặp nhiều nhất trong nhóm trượt: `HỒ CHÍ MINH SÁNG MÃI TÊN NGƯỜI` (5 lần), `Sinh nhật`, `XUÂN`, `TÔI ĐI TÌM TÔI` (4 lần mỗi tiêu đề).
+**4.288 bài.** Bài đủ 4 hoặc 8 dòng, độc vận, có niêm.
+
+```
+id=1 "BÂNG KHUÂNG": 8 dòng, độc vận và có niêm — khớp khuôn Đường luật
+```
+
+Nhắc lại giới hạn ở §0.4: tài liệu đòi **bốn** vế, máy chỉ kiểm được **ba**. Vế thứ tư
+là phép đối, đòi so từ loại và ngữ nghĩa. Vì vậy 4.288 là con số **nghi ngờ**, và cách
+xử lý an toàn là rà tay trước khi loại hẳn.
+
+### 4.5. Cổng 4 — phá khuôn thanh luật (nút cổ chai)
+
+**33.775 bài — 74% toàn bộ bài trượt.**
+
+```
+id=2 "ANH GỬI CHO EM": 13/32 dòng phá khuôn: D1, D3, D4, D5, D8, D17, D20, D21…
+    D1: Anh gửi cho em gửi bông vàng,
+    cần P2/P4/P6 luân phiên theo khuôn bằng (B T B) | đang P2/P4/P6 = T B B
+```
+
+**Đây là chỗ cần đọc kỹ nhất của cả báo cáo.** Tài liệu luật dùng chữ ***nên*** ở S2 và
+cho phép phá khuôn ở S4. Nếu đọc theo đúng câu chữ tài liệu, phần lớn trong 33.775 bài
+này **không sai gì cả**. Chúng trượt vì **QĐ-1 và QĐ-2** — hai quyết định của dự án,
+chặt hơn tài liệu.
+
+Con số này là cái giá đo được của yêu cầu *"tuân thủ toàn bộ Rule"*. Báo cáo nêu thẳng
+để chủ dự án cân nhắc, **không** đề xuất nới luật.
+
+### 4.6. Cổng 5 — không cụm bốn dòng nào khớp §5.2
+
+**4.983 bài.** Sơ đồ **thực tế** của cụm bốn dòng đầu:
+
+| Sơ đồ thật | Số bài | Tỷ lệ | Vì sao không khớp |
+|---|---:|---:|---|
+| `xaxa` | 1.579 | 31,69% | Chỉ D2 và D4 hiệp; D1, D3 buông. Gần `abab` nhưng thiếu lớp vần thứ hai |
+| `aaxx` | 1.002 | 20,11% | Mở bằng một cặp vần rồi thả trôi nửa sau |
+| `axxa` | 711 | 14,27% | Vần ôm **hở** — D1 và D4 ôm nhau nhưng giữa để trống |
+| `xxxx` | 657 | 13,18% | Không dòng nào hiệp dòng nào |
+| `aaaa` | 403 | 8,09% | **Độc vận cả khổ** — bốn dòng cùng một vần |
+| `axax` | 236 | 4,74% | Chỉ D1 và D3 hiệp |
+| *(bài dưới 4 dòng)* | 122 | 2,45% | Không đủ một cụm bốn dòng để xét |
+
+Hai nhóm đáng chú ý:
+
+- **`xaxa` (31,69%)** là dạng hỏng phổ biến nhất, và nó **rất gần** `abab`. Chỉ cần sửa
+  tiếng cuối của một trong hai dòng lẻ là bài khớp vần cách.
+- **`aaaa` (8,09%)** là độc vận — một lựa chọn cổ điển hợp lệ trong nhiều thể thơ,
+  nhưng **không nằm trong bốn sơ đồ §5.2**. Nếu chủ dự án muốn nhận độc vận, đó là một
+  quyết định bổ sung cho §5.2, không phải sửa mã.
+- **122 bài dưới 4 dòng** trượt vì QĐ-7 đòi một cụm bốn dòng, trong khi H3 chỉ đòi từ
+  hai dòng. Những bài này `thuoc_the = True` nhưng `dat = False`.
 
 ---
 
 ## 5. Vấn đề chất lượng dữ liệu ngoài luật thơ
+
+> **Phạm vi mục này:** các con số dưới đây nói về **chất lượng bản ghi**, không phải về
+> phán quyết luật thơ. Chúng không đổi khi bộ luật đổi, nên được giữ nguyên từ lượt đo
+> 17/09. Các số ở dạng "x/67.150" vẫn đúng vì mẫu số là toàn corpus.
+
 
 | Vấn đề | Số lượng | Tỷ lệ | Hậu quả thực tế |
 |---|---:|---:|---|
@@ -510,6 +426,10 @@ Toàn bộ đã xuất ra `datalake/analysis/bai_rong_cuu_duoc.jsonl`.
 
 ## 6. Điểm mù của H1 — đã đo, và khuyến nghị
 
+> **Phạm vi mục này:** đo trên toàn corpus ở mức DÒNG, độc lập với bảy tầng. Giữ nguyên
+> từ lượt đo 17/09.
+
+
 ### 6.1. Điểm mù là gì
 
 ```
@@ -528,7 +448,7 @@ Dòng chỉ ghi năm có thể **tình cờ đủ 7 tiếng** và lọt qua H1. 
 
 Hai dòng 7 tiếng đó đều nằm trong bài vốn đã trượt vì lý do khác. **Điểm mù có thật về nguyên tắc nhưng tần suất bằng không trong corpus này.**
 
-Mở rộng phép đo sang mọi dấu hiệu cấu trúc phi thơ trên 59.437 bài đạt:
+Mở rộng phép đo sang mọi dấu hiệu cấu trúc phi thơ trên 59.437 bài **thuộc thể** (qua H1–H3):
 
 | Dấu hiệu | Số bài đạt dính | Độ tin cậy của dấu hiệu |
 |---|---:|---|
@@ -589,30 +509,36 @@ Bốn quy tắc này đều dựa vào **hình thức và vị trí**, không đ
 
 ## 7. Dữ liệu dùng được và đề xuất hành động
 
+Bảng này trả lời câu hỏi thực dụng: **lấy được bao nhiêu bài để huấn luyện.**
+
 | Tập | Số bài | Trạng thái |
 |---|---:|---|
-| **Đạt luật + không trùng lặp** | **43.911** | dùng được ngay |
-| **Thu hồi từ khoá sai, đạt luật ngay** | **1.244** | dùng được ngay |
-| Đạt luật nhưng trùng nội dung | 15.526 | khử trùng |
+| **Đạt cả bảy tầng** | **16.391** | dùng được, nhưng còn trùng lặp — xem §5 |
+| Thuộc thể nhưng chưa đạt chuẩn dự án | 43.046 | rà theo cổng dừng, phần lớn ở cổng 4 |
 | Cứu bằng bóc dòng siêu dữ liệu (nhóm B, C, F) | 298 | tự động hoá được |
-| Cứu bằng sửa tay (nhóm D, E, G) | 1.639 | cần người |
-| Thu hồi được nhưng chưa đạt luật | 690 | rà tiếp |
-| Tách sang bộ 8 chữ | 135 | đổi nhãn |
-| Rỗng thật, không cứu được | 3.182 | truy ngược đường ống |
+| Cứu bằng sửa tay (nhóm D, E) | 1.398 | cần người |
+| Bản ghi rỗng nhưng thu hồi được nội dung | 1.934 | chạy `datalake/scripts/ba_viec.py` |
+| Tách sang bộ 8 chữ | 135 | đổi nhãn, không phải sửa |
 
-**Tổng dùng được ngay: 45.155 bài.**
+### 7.1. Ba việc đáng làm, xếp theo tỉ lệ đổi lại
 
-### Năm việc theo thứ tự ưu tiên
+1. **`xaxa` → `abab` ở cổng 5** — 1.579 bài, mỗi bài chỉ cần sửa **một tiếng cuối**.
+   Đây là tỉ lệ đổi lại tốt nhất trong cả corpus.
+2. **Thu hồi 1.934 bản ghi rỗng** — nội dung nằm ở khoá sai, thu hồi bằng script, không
+   cần người.
+3. **Bóc 298 dòng siêu dữ liệu** khỏi trường thơ — dòng ký tên, dòng ghi chú.
 
-1. **Dựng `datalake/datasilver/`** gộp 43.911 bài đạt + 1.244 bài thu hồi = **45.155 bài**. Đây là tập dùng được ngay làm ví dụ few-shot cho bộ sinh và ngữ liệu vàng cho eval.
-2. **Chạy bộ lọc L1–L4** (§6.4) trên nhóm B, C, F — thu thêm khoảng 298 bài mà không cần người can thiệp.
-3. **Tách 135 bài 8 chữ** sang bộ riêng thay vì xoá. Chúng là dữ liệu tốt, chỉ sai nhãn.
-4. **Đưa 1.639 bài lệch 1–2 dòng vào hàng đợi sửa tay.** `rule.py` đã chỉ đúng dòng và số tiếng thiếu nên chi phí sửa rất thấp.
-5. **Truy ngược 3.182 bài rỗng thật** — chúng vẫn có `score`, nghĩa là đường ống đã chấm điểm cho nội dung không tồn tại.
+**Không** đề xuất nới QĐ-1/QĐ-2 để lấy lại 33.775 bài ở cổng 4. Đó là quyết định của
+chủ dự án, và báo cáo này chỉ có nhiệm vụ nêu đúng cái giá.
 
 ---
 
 ## 8. Ghi chú về độ tin cậy của bộ kiểm
+
+> **Phạm vi mục này:** nói về bản thân `rule.py`, không phải về corpus. §8.1 ghi lại hai
+> sửa chữa ngày 17/09; các thay đổi lớn hơn sau đó (QĐ-5 bảng vần có nguồn, QĐ-7 tầng 5
+> chặn thật) được ghi ở `docs/Plan_Rule_Phan_Tang.md` và `docs/Nguon_Bang_Van_Thong.md`.
+
 
 Trong quá trình phân tích, mọi dòng bị `rule.py` báo 8 tiếng đều được đối chiếu bằng mắt trên mẫu và **đều đúng là 8 tiếng**. Không tìm thấy trường hợp buộc tội oan.
 
@@ -674,9 +600,28 @@ for line in open("datalake/dataraw/final_data_7_chu.jsonl", encoding="utf-8"):
 
 Toàn bộ số liệu trong báo cáo đến từ hàm này. Phép kiểm là thuần và tất định: cùng đầu vào luôn cho cùng kết quả.
 
-`v.dat` là **một giá trị bool cho cả bài**, không phải điểm số. Muốn đếm đúng thì đếm số bài có `v.dat == True`, đừng đếm tỷ lệ dòng đạt rồi lấy trung bình — hai cách cho ra hai bức tranh khác hẳn nhau (98,89% so với 95,81%).
+`v.dat` là **một giá trị bool cho cả bài**, không phải điểm số. Muốn đếm đúng thì đếm
+số bài có `v.dat == True`; đừng đếm tỷ lệ dòng đạt rồi lấy trung bình — hai cách cho ra
+hai bức tranh khác hẳn nhau.
 
-Toàn bộ số liệu trong bản này được đo lại từ đầu bằng `rule.py` hiện tại vào ngày 17/09/2026, và tái lập chính xác các con số của lần chạy trước.
+Hai cờ, đọc cho đúng:
+
+```python
+v.thuoc_the   # chỉ H1-H3   -> 59.437 bài
+v.dat         # cả bảy tầng -> 16.391 bài
+v.tang_dung_lai   # bài trượt dừng ở cổng nào
+v.tang            # dấu vết đủ bảy tầng, mỗi tầng có bang_chung
+```
+
+Cách chạy lại toàn bộ và sinh lại mọi tệp kết quả:
+
+```
+python datalake/scripts/kiem_tra_toan_bo.py
+```
+
+Toàn bộ số liệu phán quyết trong bản này được **đo lại từ đầu ngày 18/09/2026** bằng
+`rule.py` hiện tại. Chạy hai lần liên tiếp cho kết quả trùng khít — phép kiểm là thuần
+và tất định.
 
 ---
 
@@ -686,8 +631,14 @@ Thư mục `datalake/analysis/`:
 
 | Tệp | Số bản ghi | Nội dung |
 |---|---:|---|
-| `bai_truot_chi_tiet.jsonl` | 2.597 | Mọi bài trượt: `id`, `tieu_de`, `nguyen_nhan`, từng dòng hỏng kèm số tiếng |
-| `bai_rong_cuu_duoc.jsonl` | 1.934 | Bài thu hồi từ khoá sai: `khoa_nguon`, `dat_luat`, toàn văn thơ |
-| `dong_nghi_ngo_trong_bai_dat.jsonl` | 42 | Bài đạt luật nhưng còn dòng siêu dữ liệu lẫn vào |
+| `TONG_HOP.md` | — | Bản tóm tắt người đọc được, **do máy sinh** — đừng sửa tay |
+| `tong_hop.json` | — | Chính số liệu đó, dạng máy đọc |
+| `bai_dat.jsonl` | 16.391 | Bài đạt, `ly_do_dat` ghép bằng chứng **cả bảy cổng** |
+| `bai_truot.jsonl` | 45.643 | Bài trượt, kèm `tang_dung_lai` và `ly_do_truot` có địa chỉ dòng |
+| `bai_khong_co_noi_dung.jsonl` | 5.116 | Bản ghi rỗng |
+| `bai_truot_chi_tiet.jsonl` | 2.597 | Bài trượt ở cổng 2: từng dòng hỏng kèm số tiếng |
+| `bai_rong_cuu_duoc.jsonl` | 1.934 | Bài thu hồi từ khoá sai: `khoa_nguon`, `dat_luat`, toàn văn |
+| `vi_du_truot_theo_tang.json` | — | Ví dụ thật kèm bằng chứng cho từng cổng |
+| `dong_nghi_ngo_trong_bai_dat.jsonl` | 42 | Bài đạt nhưng còn dòng siêu dữ liệu lẫn vào |
 
 Cả ba tệp dùng trực tiếp làm đầu vào cho hàng đợi sửa tay hoặc bước tiền xử lý.

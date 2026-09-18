@@ -1203,7 +1203,47 @@ def _bo_qua(t: DinhNghiaTang, tang_chan: int) -> KetQuaTang:
     )
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# §9. BẢY TẦNG KIỂM  —  phần thi hành của bảng `TANG` ở §2
+#
+# Mỗi tầng là MỘT hàm, ứng với MỘT nhóm điều luật, và tuân đúng bốn quy ước sau.
+# Đọc bốn quy ước này một lần thì đọc được cả bảy hàm.
+#
+#   1. CHỮ KÝ GIỐNG NHAU. Nhận dữ liệu đã phân tích sẵn, trả về một `KetQuaTang`.
+#      Tầng không tự tách tiếng, không tự đọc văn bản gốc — phân tích làm một
+#      lần ở `kiem_tra_bai_tho` rồi dùng chung, để bảy tầng không thể hiểu khác
+#      nhau về cùng một dòng thơ.
+#
+#   2. KHÔNG TẦNG NÀO GỌI TẦNG KHÁC. Thứ tự do `kiem_tra_bai_tho` điều khiển.
+#      Nhờ vậy đổi thứ tự hay bỏ một tầng không làm gãy các tầng còn lại.
+#
+#   3. LUÔN NỘP BẰNG CHỨNG, kể cả khi đạt. `bang_chung` là một câu người đọc
+#      kiểm lại được bằng mắt; `chi_tiet` là số liệu máy đọc được. Yêu cầu của
+#      chủ dự án: "từng bài thơ cần thể hiện rõ xem vượt qua từng tầng thế nào".
+#
+#   4. GHI CÔNG KHAI ĐIỀU KHÔNG KIỂM ĐƯỢC (nguyên tắc N3). Điều nào đòi ý đồ tác
+#      giả hoặc ngữ nghĩa thì ghi thẳng khoá `<mã>_khong_kiem_duoc` vào
+#      `chi_tiet`, thay vì lặng lẽ cho qua và để người đọc tưởng đã kiểm.
+#
+# Tầng trượt thì `kiem_tra_bai_tho` DỪNG; các tầng sau nhận `da_chay=False` qua
+# `_bo_qua()`, nghĩa là CHƯA KIỂM — khác hẳn "đã kiểm và đạt".
+# ══════════════════════════════════════════════════════════════════════════════
+
+
 def _tang1_hinh_thuc(cac_dong: list[str]) -> KetQuaTang:
+    """TẦNG 1 — HÌNH THỨC. Điều luật: H3.
+
+    Trích luật: *"Văn bản phải được phân dòng. Một khối liền mạch không xuống
+    dòng không thuộc thể này."*
+
+    TIÊU CHÍ CHẶN: bài phải có **từ 2 dòng trở lên**.
+
+    Vì sao tầng này đứng đầu: mọi tầng sau đều nói về quan hệ GIỮA các dòng —
+    độ dài dòng, khuôn thanh, sơ đồ vần, khổ. Một khối văn bản không xuống dòng
+    thì không có "dòng" nào để nói, nên hỏi tiếp là vô nghĩa.
+
+    Bằng chứng: số dòng đếm được.
+    """
     t = TANG_THEO_SO[1]
     n = len(cac_dong)
     dat = n >= 2
@@ -1226,6 +1266,26 @@ def _tang1_hinh_thuc(cac_dong: list[str]) -> KetQuaTang:
 
 
 def _tang2_do_dai(bao_cao: tuple[BaoCaoDong, ...]) -> KetQuaTang:
+    """TẦNG 2 — ĐỘ DÀI DÒNG. Điều luật: H1, H2.
+
+    Trích luật: *"Mỗi dòng phải có đúng 7 tiếng. Ràng buộc này áp dụng cho toàn
+    bộ các dòng của bài, không có ngoại lệ."*
+
+    TIÊU CHÍ CHẶN: **mọi** dòng phải có đúng 7 tiếng. Chỉ một dòng lệch là cả
+    bài trượt — đây là chỗ chủ dự án đã đính chính rõ: *"Chỉ cần một dòng 6 đến
+    8 tiếng sẽ làm hỏng cả bài thơ nên là bài này hỏng."*
+
+    Đếm tiếng KHÔNG phải đếm từ cách nhau bởi dấu cách. Theo §2.1 tài liệu, dấu
+    câu không tính là tiếng và chữ số phải quy về cách đọc — `tach_tieng()` lo
+    việc đó. Một dòng kết thúc bằng "—" hay chứa "1975" từng bị đếm sai vì hai
+    chuyện này.
+
+    Vì sao đứng trước tầng 4: P2/P4/P6 chỉ có nghĩa trên dòng đủ 7 tiếng. Tính
+    khuôn thanh cho dòng 6 tiếng là gán cho tác giả một lựa chọn phong cách mà
+    họ chưa hề thực hiện.
+
+    Bằng chứng: số tiếng từng dòng, dòng nào lệch và lệch bao nhiêu.
+    """
     t = TANG_THEO_SO[2]
     hong = [bc for bc in bao_cao if bc.so_tieng != SO_TIENG_MOI_DONG]
     do_dai = [bc.so_tieng for bc in bao_cao]
@@ -1262,6 +1322,30 @@ def _tang2_do_dai(bao_cao: tuple[BaoCaoDong, ...]) -> KetQuaTang:
 
 
 def _tang3_loai_tru_duong_luat(bao_cao: tuple[BaoCaoDong, ...]) -> KetQuaTang:
+    """TẦNG 3 — LOẠI TRỪ ĐƯỜNG LUẬT. Điều luật: F1–F5.
+
+    Trích luật (§9 Bước 2): *"Nếu bài có đúng 4 hoặc 8 dòng, độc vận, có niêm,
+    có đối theo mẫu: bài thuộc Đường luật, không phải thất ngôn tự do."*
+
+    TIÊU CHÍ CHẶN: bài **không được** khớp khuôn Đường luật.
+
+    Đây là tầng duy nhất mang điều kiện PHỦ ĐỊNH: các tầng khác hỏi "có đủ
+    không", tầng này hỏi "có trót giống thể khác không".
+
+    CHỖ HAI PHẦN TÀI LIỆU MÂU THUẪN NHAU: §2 nói H1–H3 là "điều kiện cần và đủ",
+    nhưng §9 Bước 2 lại thêm điều kiện phủ định này. Đ1 chốt cách xử lý, và đó
+    là lý do dự án giữ hai cờ tách rời: `thuoc_the` trả lời theo §2 (chỉ H1–H3,
+    nên bài Đường luật vẫn "thuộc thể"), còn `dat` trả lời theo toàn bộ tầng.
+
+    🔶 KHÔNG KIỂM ĐƯỢC ĐỦ BỐN VẾ. Tài liệu đòi bốn vế: số dòng, độc vận, niêm,
+    **và có đối theo mẫu**. Phép đối là quan hệ từ loại và ngữ nghĩa giữa hai
+    dòng — kiểm tự động sẽ báo nhầm, mà báo nhầm ở đây nghĩa là loại oan một bài
+    hợp lệ. `nghi_la_duong_luat()` vì vậy chỉ xét ba vế đầu, và tên hàm cố ý
+    dùng chữ *nghi*. F2 (đối) và F4 (bố cục Khai–Thừa–Chuyển–Hợp) được ghi thẳng
+    vào `chi_tiet` là không kiểm được.
+
+    Bằng chứng: số dòng, và bài có khớp ba vế kiểm được hay không.
+    """
     t = TANG_THEO_SO[3]
     nghi = nghi_la_duong_luat(bao_cao)
     n = len(bao_cao)
@@ -1292,7 +1376,33 @@ def _tang3_loai_tru_duong_luat(bao_cao: tuple[BaoCaoDong, ...]) -> KetQuaTang:
 
 
 def _tang4_thanh_luat(bao_cao: tuple[BaoCaoDong, ...]) -> KetQuaTang:
-    """QĐ-1: S2 áp lên TOÀN BỘ dòng. QĐ-2: không cho phá khuôn."""
+    """TẦNG 4 — THANH LUẬT. Điều luật: S1–S5.
+
+    Trích luật (S2): *"P2, P4, P6 **nên** luân phiên bằng – trắc để tạo nhạc
+    tính."*
+
+    TIÊU CHÍ CHẶN: **mọi** dòng phải khớp một trong hai khuôn —
+    khuôn bằng `B T B` hoặc khuôn trắc `T B T` ở vị trí P2/P4/P6.
+    Dòng không khớp khuôn nào gọi là *phá khuôn*.
+
+    HAI CHỖ DỰ ÁN CHẶT HƠN TÀI LIỆU, ghi ra để mã và tài liệu không nói hai
+    điều khác nhau (xem §6.5 docs/Plan_Rule_Phan_Tang.md):
+
+        QĐ-1  Tài liệu dùng chữ "nên" và nói ở mức dòng. Chủ dự án chốt:
+              *"phải áp dụng lên toàn bộ dòng của một bài thơ"* — thành bắt buộc.
+        QĐ-2  S4 cho phép *"có thể phá khuôn ở bất kỳ dòng nào khi dụng ý biểu
+              đạt đòi hỏi"*. Chủ dự án chốt: *"Không được phá khuôn phải tuân
+              thủ toàn bộ Rule đã có"*.
+
+    ĐÂY LÀ TẦNG LOẠI NHIỀU BÀI NHẤT trong corpus — 33.775 bài, gấp gần 7 lần
+    tầng đứng thứ hai. Con số đó là hệ quả trực tiếp của QĐ-1 và QĐ-2, không
+    phải do thước đo hỏng.
+
+    🔶 KHÔNG KIỂM ĐƯỢC: S3 *"P7 cần chọn có chủ đích"* đòi ý đồ tác giả. S5 nói
+    về phá khuôn tập trung — QĐ-2 đã cấm phá khuôn nên S5 không còn việc.
+
+    Bằng chứng: khuôn của từng dòng, và dòng nào phá khuôn kèm P2/P4/P6 thực tế.
+    """
     t = TANG_THEO_SO[4]
     pha = [bc for bc in bao_cao if bc.khuon == "pha"]
     n = len(bao_cao)
@@ -1414,7 +1524,38 @@ def _tang5_van(
 def _tang6_nhip(
     bao_cao: tuple[BaoCaoDong, ...], nhip_khai_bao: Sequence[str | None] | None
 ) -> KetQuaTang:
-    """QĐ-4, QĐ-4b, QĐ-6."""
+    """TẦNG 6 — NHỊP. Điều luật: S13–S15.
+
+    Trích luật (S14): *"Nên có một nhịp chủ đạo để bài có xương sống âm thanh."*
+
+    TIÊU CHÍ CHẶN, hai bước:
+        6a  mỗi dòng phải ngắt được theo ít nhất một trong **bảy** kiểu nhịp
+            của §6 tài liệu (QĐ-6b)
+        6b  phải tồn tại **một** kiểu tương thích với **mọi** dòng — *nhịp chủ
+            đạo* (QĐ-4b). Về mặt cài đặt, đó là GIAO của các tập nhịp khả dĩ.
+
+    Tập bảy kiểu là tập ĐÓNG: `4/3, 3/4, 2/2/3, 2/5, 5/2, 1/6, 3/2/2`. QĐ-6 chốt
+    lấy đúng §6 tài liệu, không tra thêm nguồn ngoài.
+
+    Cách dùng giao thay vì "đa số dòng" là cố ý: nói "đa số" thì phải định nghĩa
+    đa số là bao nhiêu, mà tài liệu không nói — đặt con số ở đó là tự chế luật,
+    điều nguyên tắc N1 cấm. Phép giao là kiểm nhị phân, không có chỗ cho ngưỡng.
+
+    ⚠️ CẢNH BÁO BẮT BUỘC ĐỌC — TẦNG NÀY HIỆN RỖNG NGHĨA VỚI THƠ KHÔNG KHAI BÁO.
+    Ngắt nhịp là ngắt theo RANH GIỚI TỪ, không phải theo vị trí tiếng. Chưa có
+    bộ tách từ tiếng Việt thì mọi dòng 7 tiếng đều "cắt được" thành 4/3, 3/4,
+    2/5… vì phép cắt chỉ là đếm số. Hệ quả: `nhip_kha_di_cua_dong` trả về cả bảy
+    kiểu cho mọi dòng đủ 7 tiếng, giao khác rỗng, tầng luôn đạt.
+
+    Đo trên corpus: tầng này chặn **0/16.391** bài — và đó KHÔNG phải vì thơ đạt
+    nhịp. `chi_tiet["nguon_nhip"]` ghi `"khong_khai_bao"` để biên bản nói thật.
+    Tầng chỉ chặn được thật khi `nhip_khai_bao` có giá trị, tức là với thơ do mô
+    hình sinh ra kèm khai báo nhịp từng dòng.
+
+    🔶 KHÔNG KIỂM ĐƯỢC: S15 *"đổi nhịp nên trùng chỗ chuyển ý"* đòi ngữ nghĩa.
+
+    Bằng chứng: nhịp chủ đạo, nguồn nhịp, và tập nhịp khả dĩ của từng dòng.
+    """
     t = TANG_THEO_SO[6]
     khai = list(nhip_khai_bao) if nhip_khai_bao else [None] * len(bao_cao)
     if len(khai) < len(bao_cao):
@@ -1454,6 +1595,28 @@ def _tang6_nhip(
 
 
 def _tang7_kho_bo_cuc(kho: tuple[tuple[str, ...], ...]) -> KetQuaTang:
+    """TẦNG 7 — KHỔ VÀ BỐ CỤC. Điều luật: S16–S21.
+
+    Trích luật (S16): *"Số dòng trong bài không hạn định; có thể viết liên hoàn,
+    không chia khổ."*
+
+    TIÊU CHÍ CHẶN: không có khổ rỗng. Chỉ vậy thôi — và điều đó là ĐÚNG, không
+    phải thiếu sót.
+
+    VÌ SAO TẦNG NÀY GẦN NHƯ LUÔN ĐẠT: trong sáu điều S16–S21, phần lớn là QUYỀN
+    (*"không hạn định"*, *"có thể"*). Theo nguyên tắc N2 của plan, điều loại
+    quyền KHÔNG BAO GIỜ được dùng làm tiêu chí đánh trượt — đánh trượt một bài
+    vì tác giả dùng đúng cái quyền tài liệu cho phép là mâu thuẫn tự thân. Test
+    `test_khong_dieu_QUYEN_nao_lam_tieu_chi_chan` cưỡng chế điều này.
+
+    Nên đừng đọc "tầng 7 chặn 0 bài" là tầng thừa. Nó vẫn chạy, vẫn nộp bằng
+    chứng về cấu trúc khổ, và vẫn bắt được khổ rỗng — thứ duy nhất ở đây thực sự
+    sai chứ không phải lựa chọn phong cách.
+
+    🔶 KHÔNG KIỂM ĐƯỢC: S19 mạch cảm xúc / mạch tự sự đòi hiểu nội dung.
+
+    Bằng chứng: số khổ và kích thước từng khổ.
+    """
     t = TANG_THEO_SO[7]
     kich_thuoc = [len(k) for k in kho]
     rong = [i + 1 for i, k in enumerate(kho) if not k]

@@ -65,6 +65,105 @@ def phan_nhom_nguyen_nhan(do_dai: list[int], hong: list) -> str:
     return "H. Lệch nhiều dòng"
 
 
+
+def _ghi_tong_hop_md(duong_dan, th) -> None:
+    """Sinh bản tóm tắt người đọc được, TỪ CHÍNH số liệu vừa đo.
+
+    VÌ SAO PHẢI SINH RA CHỨ KHÔNG VIẾT TAY: bản viết tay trước đây đã cũ đi mà
+    không ai biết — nó còn ghi "59.437 đạt" từ thời chưa phân tầng, trong khi số
+    thật đã đổi. Số liệu viết tay thì lần nào sửa luật cũng phải nhớ sửa theo, và
+    sớm muộn sẽ quên. Sinh ra thì không thể lệch.
+    """
+    ds = th["doi_soat"]
+    kq = th["ket_qua"]
+    d = []
+    A = d.append
+    A("# TỔNG HỢP KIỂM TRA TỪNG BÀI")
+    A("")
+    A(f"**Nguồn:** `{th['nguon']}` · **Bộ luật:** `{th['bo_luat']}`")
+    A("")
+    A("> ⚙️ **Tệp này do máy sinh ra — đừng sửa tay.**")
+    A("> Sinh lại: `python datalake/scripts/kiem_tra_toan_bo.py`")
+    A("")
+    A("---")
+    A("")
+    A("## 1. Đối soát — mọi bản ghi đều đã đi qua rule.py")
+    A("")
+    A("| Phép đếm | Giá trị |")
+    A("|---|---:|")
+    A(f"| Dòng đọc từ tệp nguồn | {ds['so_dong_doc_tu_tep']:,} |")
+    A(f"| Bản ghi parse được | {ds['so_ban_ghi_parse_duoc']:,} |")
+    A(f"| **Số lần gọi `kiem_tra_bai_tho()`** | **{ds['so_lan_goi_kiem_tra_bai_tho']:,}** |")
+    A(f"| id duy nhất | {ds['so_id_duy_nhat']:,} |")
+    A(f"| Đối soát | {'✅ KHỚP' if ds['khop'] else '❌ LỆCH'} |")
+    A("")
+    A("```")
+    A(f"{kq['tong']:,} bản ghi = {kq['bai_dat']:,} đạt + {kq['bai_truot']:,} trượt "
+      f"+ {kq['khong_co_noi_dung']:,} không có nội dung")
+    A(f"{ds['so_lan_goi_kiem_tra_bai_tho']:,} lần gọi luật = "
+      f"{kq['bai_dat']:,} đạt + {kq['bai_truot']:,} trượt")
+    A("```")
+    for e in ds["loi_doi_soat"]:
+        A(f"- ❌ {e}")
+    A("")
+    A("---")
+    A("")
+    A("## 2. Phễu theo từng cổng")
+    A("")
+    A("Bài phải qua cổng N mới sang cổng N+1. Cột *chưa chạy* là số bài không được")
+    A("kiểm ở cổng này vì đã bị một cổng trước chặn — **chưa kiểm, không phải đạt**.")
+    A("")
+    A("| Cổng | Điều luật | Vào | Qua | Chặn tại đây | Chưa chạy |")
+    A("|---|---|---:|---:|---:|---:|")
+    for c in th["pheu_theo_cong"]:
+        A(f"| {c['so']}. {c['ten']} | {', '.join(c['ma_luat'])} | {c['vao']:,} | "
+          f"{c['qua']:,} | {c['chan_tai_day']:,} | {c['khong_chay']:,} |")
+    A("")
+    A("## 3. Kết quả")
+    A("")
+    A("| | Số bài |")
+    A("|---|---:|")
+    A(f"| Thuộc thể theo **tài liệu** (chỉ H1–H3) | {kq['bai_thuoc_the_theo_tai_lieu']:,} |")
+    A(f"| **Đạt theo chuẩn dự án** (cả 7 tầng) | **{kq['bai_dat']:,}** |")
+    A(f"| Trượt | {kq['bai_truot']:,} |")
+    A(f"| Không có nội dung | {kq['khong_co_noi_dung']:,} |")
+    A(f"| Tỉ lệ đạt trên bài có nội dung | {kq['ty_le_dat_tren_bai_co_noi_dung']}% |")
+    A("")
+    A("## 4. Vì sao trượt — theo từng cổng")
+    A("")
+    A("Số bên cạnh mã luật là **số lần vi phạm**, không phải số bài: một bài có thể")
+    A("phạm cùng một điều ở nhiều dòng.")
+    A("")
+    for so, cac in sorted(th["ly_do_truot_theo_tang"].items(), key=lambda x: int(x[0])):
+        ten = next(c["ten"] for c in th["pheu_theo_cong"] if str(c["so"]) == str(so))
+        A(f"**Cổng {so} — {ten}**")
+        A("")
+        for ly_do, n in cac.items():
+            A(f"- `{n:,}` {ly_do}")
+        A("")
+    A("## 5. Nhóm nguyên nhân trượt")
+    A("")
+    A("| Nhóm | Số bài |")
+    A("|---|---:|")
+    for k, v in th["ly_do_truot_theo_nhom"].items():
+        A(f"| {k} | {v:,} |")
+    A("")
+    A(f"Bài rỗng có thể cứu được: **{th['bai_rong_co_the_cuu']:,}**")
+    A("")
+    A("## 6. Tệp kết quả")
+    A("")
+    A("| Tệp | Nội dung |")
+    A("|---|---|")
+    A("| `bai_dat.jsonl` | Bài đạt, kèm dấu vết 7 tầng |")
+    A("| `bai_truot.jsonl` | Bài trượt, kèm tầng dừng và vi phạm |")
+    A("| `bai_truot_chi_tiet.jsonl` | Bản trích có bằng chứng từng dòng |")
+    A("| `bai_khong_co_noi_dung.jsonl` | Bản ghi rỗng |")
+    A("| `bai_rong_cuu_duoc.jsonl` | Bản ghi rỗng nhưng còn cứu được |")
+    A("| `tong_hop.json` | Chính số liệu của tệp này, dạng máy đọc |")
+    A("")
+    duong_dan.write_text("\n".join(d) + "\n", encoding="utf-8")
+
+
 def main() -> int:
     # Console Windows mặc định là cp1252, không in được tiếng Việt có dấu.
     # Ép UTF-8 ngay đầu để script chạy được trên mọi máy mà không cần biến môi trường.
@@ -187,9 +286,15 @@ def main() -> int:
             if v.dat:
                 n_dat += 1
                 so_do = " | ".join("".join(k) for k in v.so_do_van_theo_kho)
-                ly_do = (
-                    f"H1+H2: cả {v.so_dong}/{v.so_dong} dòng đều đúng "
-                    f"{SO_TIENG_MOI_DONG} tiếng. H3: văn bản có phân dòng."
+                # Lý do đạt phải kể ĐỦ BẢY CỔNG, không chỉ H1–H3.
+                # Bản trước chỉ ghi H1+H2+H3 nên đọc vào tưởng bài chỉ qua ba
+                # điều kiện cứng, trong khi nó đã qua cả bảy tầng. Ghép thẳng
+                # bằng chứng của từng tầng để câu trả lời "vì sao pass" là câu
+                # trả lời thật, kiểm lại được từng vế.
+                ly_do = " | ".join(
+                    f"T{kq.so} {kq.ten}: {kq.bang_chung}"
+                    for kq in v.tang
+                    if kq.da_chay
                 )
                 nhan = (
                     f"{v.so_kho} khổ" if v.so_kho > 1 else "một khối liền"
@@ -331,6 +436,7 @@ def main() -> int:
     (RA / "tong_hop.json").write_text(
         json.dumps(tong_hop, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    _ghi_tong_hop_md(RA / "TONG_HOP.md", tong_hop)
 
     print("=" * 66)
     print("ĐỐI SOÁT ĐẦU VÀO — ĐẦU RA")
