@@ -636,6 +636,13 @@ def main() -> int:
     )
     _ghi_tong_hop_md(RA / "TONG_HOP.md", tong_hop)
 
+    # Rút phân bố ra tệp nhỏ track được, NGAY TẠI ĐÂY chứ không để chạy tay:
+    # `doi_soat_tai_lieu.py` đọc tệp ấy, nên nó phải sinh cùng lượt với hai tệp
+    # .jsonl. Tách ra chạy tay thì sớm muộn hai bên lệch nhau mà không ai hay.
+    from xuat_phan_bo import xuat as _xuat_phan_bo
+
+    print(f"  phân bố                      : {_xuat_phan_bo().name}")
+
     print("=" * 66)
     print("ĐỐI SOÁT ĐẦU VÀO — ĐẦU RA")
     print("=" * 66)

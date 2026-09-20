@@ -184,84 +184,55 @@ def _so_tu_rule_py() -> dict[str, str]:
 def _so_tu_jsonl() -> dict[str, str]:
     """Các phân bố mà report trích dẫn nhưng tong_hop.json không chứa.
 
-    Tính lại từ chính hai tệp kết quả, để mọi bảng trong report đều truy được
-    về một phép đếm thật.
-    """
-    from collections import Counter
+    ĐỌC TỪ `phan_bo.json`, KHÔNG mở thẳng .jsonl. Lý do là một lần CI đỏ:
 
-    A = GOC / "datalake/analysis"
+        Bản trước mở `bai_dat.jsonl` (33 MB) và `bai_truot.jsonl` tại đây. Hai
+        tệp ấy nằm trong .gitignore — cố ý, vì quá lớn để đưa vào repo. Nên
+        script chạy xanh trên máy có sẵn dữ liệu, và chết bằng FileNotFoundError
+        trên mọi checkout sạch. Bước đối soát — thứ sinh ra để chặn số bịa —
+        thành bước duy nhất làm đỏ CI.
+
+    `xuat_phan_bo.py` rút các phân bố ấy ra một tệp 3 KB track được, nên phép
+    kiểm nay chạy ở mọi nơi mà KHÔNG phải bỏ bớt con số nào.
+    """
+    tep = GOC / "datalake/analysis/phan_bo.json"
+    if not tep.exists():
+        raise SystemExit(
+            f"❌ Thiếu {tep.relative_to(GOC)}.\n"
+            "   Sinh lại: python datalake/scripts/xuat_phan_bo.py\n"
+            "   (cần bai_dat.jsonl + bai_truot.jsonl; nếu chưa có thì chạy\n"
+            "    python datalake/scripts/kiem_tra_toan_bo.py trước)"
+        )
+    pb = json.loads(tep.read_text(encoding="utf-8"))
     ra: dict[str, str] = {}
 
     def them(x: int, ten: str) -> None:
         if x:
             ra.setdefault(f"{x:,}".replace(",", "."), ten)
 
-    dong, kho, sodo = Counter(), Counter(), Counter()
-    lung = lech = 0
-    for dg in (A / "bai_dat.jsonl").open(encoding="utf-8"):
-        r = json.loads(dg)
-        t = {k["so"]: k for k in r["tang"]}
-        dong[t[1]["chi_tiet"]["so_dong"]] += 1
-        kho[t[7]["chi_tiet"]["so_kho"]] += 1
-        # QĐ-7b (18/09/2026): khoá đổi từ "cum_bon_dong_khop" sang
-        # "cum_co_van_chan" — tiêu chí nay là CÓ vần chân, không phải khớp sơ đồ.
-        for c in t[5]["chi_tiet"]["cum_co_van_chan"]:
-            sodo[c["so_do"]] += 1
-        dm = r["dac_diem_mem"]
-        lung += dm["so_vi_tri_van_lung"] > 0
-        lech += dm["so_cap_van_lech_thanh"] > 0
-    for k, v in dong.items():
+    for k, v in pb["bai_dat_theo_so_dong"].items():
         them(v, f"bài đạt {k} dòng")
-    for k, v in kho.items():
+    for k, v in pb["bai_dat_theo_so_kho"].items():
         them(v, f"bài đạt {k} khổ")
-    for k, v in sodo.items():
+    for k, v in pb["cum_co_van_chan_theo_so_do"].items():
         them(v, f"cụm có vần chân, sơ đồ {k}")
-    them(sum(sodo.values()), "tổng cụm có vần chân")
-    them(lung, "bài đạt có vần lưng")
-    them(lech, "bài đạt có vần lệch thanh")
-
-    sd5, sd1, du1 = Counter(), Counter(), Counter()
-    cong = Counter()
-    for dg in (A / "bai_truot.jsonl").open(encoding="utf-8"):
-        r = json.loads(dg)
-        c = r["tang_dung_lai"]
-        cong[c] += 1
-        if c == 5:
-            bc = next(k for k in r["tang"] if k["so"] == 5)["bang_chung"]
-            if "dòng 1–4: " in bc:
-                sd5[bc.split("dòng 1–4: ")[1].split(";")[0]] += 1
-        elif c == 1:
-            sd = r["tong_quan"]["so_dong"]
-            sd1[sd] += 1
-            du1[sd % 4] += 1
-    for k, v in sd5.items():
+    for k, v in pb["truot_cong5_theo_so_do"].items():
         them(v, f"trượt cổng 5, sơ đồ {k}")
-    for k, v in sd1.items():
+    for k, v in pb["truot_cong1_theo_so_dong"].items():
         them(v, f"trượt cổng 1, {k} dòng")
-    for k, v in du1.items():
+    for k, v in pb["truot_cong1_theo_du"].items():
         them(v, f"trượt cổng 1, dư {k}")
-    for k, v in cong.items():
+    for k, v in pb["truot_theo_cong_dung_lai"].items():
         them(v, f"trượt dừng ở cổng {k}")
+    for k, v in pb["so_dong_tung_tep_ket_qua"].items():
+        them(v, f"số dòng {k}.jsonl")
 
-    # Số phận các bài bị cổng 3 đánh dấu
-    nghi_dat = sum(
-        1 for dg in (A / "bai_dat.jsonl").open(encoding="utf-8")
-        if next(k for k in json.loads(dg)["tang"] if k["so"] == 3)["chi_tiet"].get("nghi_duong_luat")
-    )
-    them(nghi_dat, "bài nghi Đường luật mà vẫn ĐẠT")
-    nghi_truot = sum(
-        1 for dg in (A / "bai_truot.jsonl").open(encoding="utf-8")
-        if "giống khuôn Đường luật"
-        in (next((k for k in json.loads(dg)["tang"] if k["so"] == 3), {}) or {}).get("bang_chung", "")
-    )
-    them(nghi_truot, "bài nghi Đường luật mà trượt")
-
-    # Số dòng của chính các tệp kết quả — report có trích ở bảng "Tệp kết quả".
-    for ten in ("bai_dat", "bai_truot", "bai_truot_chi_tiet", "bai_rong_cuu_duoc",
-                "bai_khong_co_noi_dung", "dong_nghi_ngo_trong_bai_dat"):
-        tep = A / f"{ten}.jsonl"
-        if tep.exists():
-            them(sum(1 for _ in tep.open(encoding="utf-8")), f"số dòng {ten}.jsonl")
+    t = pb["tong"]
+    them(t["cum_co_van_chan"], "tổng cụm có vần chân")
+    them(t["bai_dat_co_van_lung"], "bài đạt có vần lưng")
+    them(t["bai_dat_co_van_lech_thanh"], "bài đạt có vần lệch thanh")
+    them(t["nghi_duong_luat_ma_dat"], "bài nghi Đường luật mà vẫn ĐẠT")
+    them(t["nghi_duong_luat_ma_truot"], "bài nghi Đường luật mà trượt")
 
     # Quy mô mã nguồn — report có nêu "rule.py 1.816 dòng".
     rule = GOC / "src/application/rule.py"
