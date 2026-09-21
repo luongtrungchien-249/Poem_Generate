@@ -16,7 +16,7 @@ Yêu cầu của chủ dự án:
 3. Mọi số liệu phải **chạy lại từ đầu cho từng bài**, không tái sử dụng thống kê của bản trước.
 
 Vấn đề hiện tại: `ly_do_dat` chỉ ghi `"H1+H2: cả N/N dòng đúng 7 tiếng. H3: có phân dòng."`
-Bảng `LUAT` có 29 điều nhưng bằng chứng chỉ nhắc 3. Người đọc không biết 26 điều còn lại
+Bảng `LUAT` có 30 điều nhưng bằng chứng chỉ nhắc 3. Người đọc không biết 27 điều còn lại
 có được chạy hay không.
 
 ### 1.1. Một sai lầm của bản plan trước, ghi lại để không lặp
@@ -47,40 +47,188 @@ cho vừa dữ liệu. Đó là điều cấm.
 
 ---
 
-## 3. Kiểm kê 29 điều luật — điều nào chặn được
+## 3. Kiểm kê TỪNG ĐIỀU trong 30 điều luật
 
-Đã rà từng câu trong tài liệu. 21 điều S tách làm ba loại:
+Bảng dưới sinh ra từ chính `LUAT`, `LOAI_DIEU_MEM` và `TANG` trong `rule.py`, nên không
+thể lệch khỏi mã đang chạy.
 
-### 3.1. Bắt buộc mềm — *"nên"*, *"cần"* (6 điều)
+### 3.0. Bảng tổng — cả 30 điều
 
-| Mã | Nguyên văn                                                                                                         | Đo được?                                                              |
-| --- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| S2  | "P2, P4, P6**nên** luân phiên bằng – trắc để tạo nhạc tính"                                         | Được ở mức dòng;**không có ngưỡng ở mức bài** → QĐ-1 |
-| S3  | "P7 là vị trí gắn với vần,**cần được chọn có chủ đích**"                                        | ❌ đòi ý đồ tác giả (N3)                                           |
-| S5  | "Việc phá khuôn**nên tập trung** ở dòng cần nhấn, **tránh phá rải rác không chủ đích**" | Cần định nghĩa "tập trung" → QĐ-2                                  |
-| S11 | "Sơ đồ vần**nên nhất quán** trong phạm vi một khổ"                                                   | Cần định nghĩa "nhất quán" → QĐ-3                                 |
-| S14 | "**Nên có** một nhịp chủ đạo để bài có xương sống âm thanh"                                     | Chỉ khi nhịp được khai báo → QĐ-4                                 |
-| S15 | "Đổi nhịp**nên** trùng với chỗ chuyển ý hoặc chỗ cần nhấn"                                        | ❌ đòi ngữ nghĩa (N3)                                                 |
+| Mã | Nguyên văn | Tầng | Loại | Phân loại mềm | Vai trò trong bộ kiểm |
+|---|---|:---:|---|---|---|
+| **H1** | Mỗi dòng phải có đúng 7 tiếng | 2 | cứng | — | ⛔ **TIÊU CHÍ CHẶN** |
+| **H2** | H1 áp dụng cho toàn bộ các dòng, không ngoại lệ | 2 | cứng | — | ⛔ **TIÊU CHÍ CHẶN** |
+| **H3** | Văn bản phải được phân dòng, từ 4 dòng trở lên | 1 | cứng | — | ⛔ **TIÊU CHÍ CHẶN** |
+| **H4** | Số dòng trong bài phải là bội của 4 | 1 | cứng | — | ⛔ **TIÊU CHÍ CHẶN** |
+| **F1** | Không áp dụng luật niêm giữa các dòng | 3 | đã gỡ bỏ | — | 📋 chỉ ghi nhận |
+| **F2** | Không yêu cầu cặp đối bắt buộc | 3 | đã gỡ bỏ | — | 🚫 không kiểm được |
+| **F3** | Không yêu cầu độc vận cho toàn bài | 3 | đã gỡ bỏ | — | 📋 chỉ ghi nhận |
+| **F4** | Không yêu cầu Khai – Thừa – Chuyển – Hợp | 3 | đã gỡ bỏ | — | 🚫 không kiểm được |
+| **F5** | Số dòng không giới hạn về lượng, nhưng phải là bội của 4 | 3 | đã gỡ bỏ | — | 📋 chỉ ghi nhận |
+| **S1** | P1, P3, P5 có thể tự do về thanh; có thể dùng thêm vần lưng ở P4 hoặc P5 | 4 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S2** | P2, P4, P6 nên luân phiên bằng – trắc | 4 | mềm | bắt buộc | ⛔ **TIÊU CHÍ CHẶN** |
+| **S3** | P7 gắn với vần, cần chọn có chủ đích | 4 | mềm | bắt buộc | 🚫 không kiểm được |
+| **S6** | Vần chủ đạo là vần chân, đặt ở P7 | 5 | mềm | mô tả | 📋 chỉ ghi nhận |
+| **S8** | Bài có thể không gieo vần | 5 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S9** | Có thể dùng vần bằng, vần trắc hoặc phối hợp | 5 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S10** | Chấp nhận vần thông, không yêu cầu vần chính tuyệt đối | 5 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S11** | Sơ đồ vần nên nhất quán trong phạm vi một khổ | 5 | mềm | bắt buộc | ⛔ **TIÊU CHÍ CHẶN** |
+| **S12** | Có thể đổi vần khi sang khổ mới | 5 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S13** | Nhịp do nghĩa của dòng quyết định | 6 | mềm | mô tả | 📋 chỉ ghi nhận 🔻 |
+| **S14** | Nên có một nhịp chủ đạo | 6 | mềm | bắt buộc | ⛔ **TIÊU CHÍ CHẶN** |
+| **S15** | Đổi nhịp nên trùng chỗ chuyển ý | 6 | mềm | bắt buộc | 🚫 không kiểm được 🔻 |
+| **S16** | Số dòng trong bài không hạn định về lượng, nhưng phải là bội của 4 | 7 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S17** | Khổ phổ biến là 4 dòng; dùng được 2, 3, 5, 6 dòng | 7 | mềm | mô tả | 📋 chỉ ghi nhận |
+| **S18** | Có thể viết liên hoàn, không chia khổ | 7 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S19** | Triển khai theo mạch cảm xúc hoặc mạch tự sự | 7 | mềm | mô tả | 🚫 không kiểm được |
+| **S20** | Có thể dùng điệp dòng, điệp khổ, điệp cấu trúc | 7 | mềm | **quyền** | 📋 chỉ ghi nhận |
+| **S21** | Có thể kết mở | 7 | mềm | **quyền** | 📋 chỉ ghi nhận |
 
-### 3.2. Quyền — *"có thể"*, *"chấp nhận"*, *"tự do"* (11 điều)
+**Ký hiệu:** ⛔ đánh trượt được · 🚫 máy không kiểm được (N3) · 📋 đo và ghi, không phán
+quyết · 🔻 bị một quyết định dự án ghi đè · **quyền** = N2 cấm dùng để đánh trượt.
 
-S1 · S4 · S7 · S8 · S9 · S10 · S12 · S16 · S18 · S20 · S21
+**Tổng kết một câu: chỉ 7 trong 30 điều thực sự đánh trượt bài.** 23 điều còn lại vẫn
+được đo và ghi vào biên bản từng bài, nhưng không loại ai.
 
-**Không điều nào trong nhóm này được phép đánh trượt bài** (N2). Ví dụ cụ thể:
+---
 
-- S8 *"Bài có thể không gieo vần"* → tầng vần **không được** đòi bài phải có vần.
-- S4 *"Có thể phá khuôn ở bất kỳ dòng nào"* → tầng thanh luật **không được** đòi mọi dòng theo khuôn.
+### 3.1. Bốn điều CỨNG — H1, H2, H3, H4
 
-### 3.3. Mô tả (4 điều)
+| Mã | Nguyên văn | Tầng | Phân tích |
+|---|---|:---:|---|
+| `H3` | Văn bản phải được phân dòng, từ 4 dòng trở lên | 1 | ⛔ Đo trực tiếp: đếm số dòng, đòi ≥ 4. Đứng đầu vì mọi tầng sau đều nói về quan hệ **giữa** các dòng |
+| `H4` | Số dòng trong bài phải là bội của 4 | 1 | ⛔ **Bổ sung 18/09/2026**, nguyên văn chủ dự án: *"đây là Rule cứng không có ngoại lệ"*. Phép kiểm: `n % 4 == 0`. Lưu ý **0 chia hết cho 4** nên H4 một mình không bắt được bài rỗng — H3 mới bắt |
+| `H1` | Mỗi dòng phải có đúng 7 tiếng | 2 | ⛔ Đo được, nhưng **phép đếm tiếng mới là chỗ khó**: §2.1 nói dấu câu không tính, chữ số phải quy về cách đọc |
+| `H2` | H1 áp dụng cho toàn bộ các dòng, không ngoại lệ | 2 | ⛔ Không phải một phép kiểm riêng mà là **lượng từ** của H1. Nó biến H1 thành "mọi dòng", và là căn cứ cho phán quyết ở mức BÀI |
 
-S6 · S13 · S17 · S19 — phát biểu về thông lệ, không phải yêu cầu.
+Tài liệu §2 gọi bốn điều này là *"điều kiện cần và đủ"* để nhận diện thể. Vì vậy cờ
+`thuoc_the` chỉ hỏi bốn điều này — **55.297 bài**.
 
-### 3.4. Ràng buộc cứng và điều loại bỏ
+> **H4 làm `thuoc_the` giảm 59.437 → 55.297.** Vì H4 là ràng buộc **cứng**, nó vào cả cờ
+> `thuoc_the` chứ không chỉ `dat`. Một bài 6 dòng nay **không còn thuộc thể** thất ngôn tự
+> do, chứ không phải chỉ "không đạt chuẩn dự án".
 
-| Mã            | Loại     | Chặn                                                                             |
-| -------------- | --------- | --------------------------------------------------------------------------------- |
-| H1 · H2 · H3 | cứng     | ⛔ có — điều kiện nhận diện thể (§2)                                     |
-| F1–F5         | loại bỏ | không sinh phép kiểm; riêng §9 Bước 2 sinh phép loại trừ Đường luật |
+---
+
+### 3.2. Năm điều F — ĐÃ GỠ BỎ, không phải điều kiện loại trừ
+
+> ⚠️ **Đây là chỗ bản plan trước sai, và nó làm loại oan 4.288 bài.**
+
+§3 tài liệu mang tiêu đề *"Điều bị loại bỏ khỏi thể"*. F1–F5 là các **ràng buộc đã được
+gỡ**, và câu chốt của §3 nói thẳng:
+
+> *"Việc một bài thất ngôn tự do vẫn có niêm, có đối, có độc vận là **được phép**. Nhưng
+> đó là **lựa chọn của tác giả, không phải tiêu chí nhận diện thể**."*
+
+| Mã | Nguyên văn | Phân tích |
+|---|---|---|
+| `F1` | Không áp dụng luật niêm giữa các dòng | 📋 Niêm **được đo** để báo cáo, nhưng có niêm không làm bài trượt |
+| `F2` | Không yêu cầu cặp đối bắt buộc | 🚫 Phép đối là quan hệ **từ loại + ngữ nghĩa** giữa hai dòng — máy không kiểm được |
+| `F3` | Không yêu cầu độc vận cho toàn bài | 📋 Độc vận **được đo**, không làm bài trượt. Bản trước dựng `ViPham(ma="F3")` — sai, vì không ai "vi phạm" được một câu nới |
+| `F4` | Không yêu cầu Khai – Thừa – Chuyển – Hợp | 🚫 Bố cục đòi **hiểu nội dung** |
+| `F5` | Số dòng không giới hạn về lượng, nhưng phải là bội của 4 | 📋 **Hợp nhất với S16 và H4 ngày 18/09.** Hai vế nói hai chuyện: *không giới hạn* là về **lượng**, *bội của 4* là về **hình dạng**. Tập hợp lệ `{4, 8, 12, …}` vừa vô hạn vừa chia hết cho 4 |
+
+**§3 và §9 Bước 2 của tài liệu mâu thuẫn nhau:**
+
+| | |
+|---|---|
+| §3 | có niêm/đối/độc vận là được phép, **không phải tiêu chí nhận diện** |
+| §9 Bước 2 | nếu 4 hoặc 8 dòng + độc vận + niêm + đối thì thuộc Đường luật |
+
+**Chọn theo §3** vì: (1) §3 nói thẳng về *tiêu chí nhận diện thể*; (2) F5 phủ định trực
+tiếp con số 4/8 mà §9 Bước 2 dựa vào; (3) chủ dự án — tác giả tài liệu — đã xác nhận.
+
+Ngay cả nếu theo §9 Bước 2 thì tầng 3 cũng **không được chặn**, vì tài liệu đòi **bốn** vế
+mà máy chỉ kiểm được **ba** (F2 đối không kiểm được). Chặn dựa trên ba phần tư điều kiện
+là loại oan.
+
+⇒ **Tầng 3 là tầng GHI NHẬN**, `tieu_chi_tu = ()`, không dựng `ViPham` nào.
+
+---
+
+### 3.3. Ba điều thanh luật — S1, S2, S3
+
+| Mã | Nguyên văn | Phân loại | Phân tích |
+|---|---|---|---|
+| `S1` | P1, P3, P5 có thể tự do về thanh; có thể dùng thêm vần lưng ở P4 hoặc P5 | **quyền** | 📋 Một câu **nới**. Nó nói rõ chỉ P2/P4/P6 mới có ràng buộc — tức là giới hạn phạm vi của S2 |
+| `S2` | P2, P4, P6 nên luân phiên bằng – trắc | bắt buộc | ⛔ **Đo được ở mức dòng**, nhưng tài liệu không cho ngưỡng ở mức bài → **QĐ-1** |
+| `S3` | P7 gắn với vần, cần chọn có chủ đích | bắt buộc | 🚫 *"có chủ đích"* đòi **ý đồ tác giả** — N3 |
+
+**Cái giá đo được:** tầng 4 chặn **30.571 bài — 55,29%** số bài đi vào nó, và **69,66%**
+toàn bộ bài trượt. Nếu đọc đúng câu chữ tài liệu (chữ *"nên"* ở S2), phần lớn
+số bài này **không sai gì cả**. Chúng trượt vì QĐ-1 và QĐ-2.
+
+---
+
+### 3.4. Bảy điều vần — S6 đến S12
+
+| Mã | Nguyên văn | Phân loại | Phân tích |
+|---|---|---|---|
+| `S6` | Vần chủ đạo là vần chân, đặt ở P7 | mô tả | 📋 Phát biểu về thông lệ. Nó **định nghĩa chỗ nhìn**: so vần là so tiếng thứ 7 |
+| `S8` | Bài có thể không gieo vần | **quyền** | 📋 **Điều quan trọng nhất của tầng 5.** Nó cấm mọi tiêu chí dạng *"bài phải có vần"* |
+| `S9` | Có thể dùng vần bằng, vần trắc hoặc phối hợp | **quyền** | 📋 Cặp vần **lệch lớp thanh vẫn là hiệp vần**. Được đo (`so_cap_van_lech_thanh`): 33,27% bài đạt có |
+| `S10` | Chấp nhận vần thông, không yêu cầu vần chính tuyệt đối | **quyền** | 📋 Sinh ra nhu cầu **bảng vần thông** → QĐ-5, và bảng phải **có nguồn** |
+| `S11` | Sơ đồ vần nên nhất quán trong phạm vi một khổ | bắt buộc | ⛔ *"nhất quán"* không đo được nếu không có danh sách sơ đồ → **QĐ-7** dùng §5.2 |
+| `S12` | Có thể đổi vần khi sang khổ mới | **quyền** | 📋 Vì vậy sơ đồ vần tính **trong từng khổ**, và chữ cái đánh liên tục qua các khổ |
+
+**Chỗ tinh tế:** S8 (quyền không gieo vần) và S11 (nên nhất quán) kéo ngược nhau. Giải
+bằng QĐ-7: tiêu chí là *"tồn tại ít nhất một cụm 4 dòng liên tiếp khớp một sơ đồ §5.2"* —
+đây là điều kiện **tồn tại**, không phải điều kiện **phổ quát**, nên không mâu thuẫn S8.
+
+---
+
+### 3.5. Ba điều nhịp — S13 đến S15
+
+| Mã | Nguyên văn | Phân loại | Phân tích |
+|---|---|---|---|
+| `S13` | Nhịp do nghĩa của dòng quyết định | mô tả 🔻 | 📋 *"do nghĩa quyết định"* nghĩa là **máy không suy được từ hình thức**. **QĐ-4 ghi đè**: xét theo hình thức, khớp bảy kiểu §6 |
+| `S14` | Nên có một nhịp chủ đạo | bắt buộc | ⛔ *"nên"* → **QĐ-4b**: phải tồn tại một kiểu nhịp phủ **mọi** dòng. Dùng phép **giao**, không dùng ngưỡng phần trăm |
+| `S15` | Đổi nhịp nên trùng chỗ chuyển ý | bắt buộc 🔻 | 🚫 *"chỗ chuyển ý"* đòi **ngữ nghĩa** — N3. **QĐ-4b** cũng ghi đè phần cho phép đổi nhịp |
+
+> ⚠️ **Cả ba điều này hiện không chặn được bài nào.** Ngắt nhịp là ngắt theo **ranh giới
+> từ**; chưa có bộ tách từ tiếng Việt thì mọi dòng 7 tiếng đều "cắt được" theo cả bảy kiểu.
+> Bằng chứng: **100,00% bài đạt được gán nhịp chủ đạo `4/3`**. Đó là hiện vật đo đạc, không
+> phải phát hiện về thơ. Xem §6B.2.
+
+---
+
+### 3.6. Sáu điều khổ và bố cục — S16 đến S21
+
+| Mã | Nguyên văn | Phân loại | Phân tích |
+|---|---|---|---|
+| `S16` | Số dòng trong bài không hạn định về lượng, nhưng phải là bội của 4 | **quyền** | 📋 Cùng nội dung với F5 sau khi hợp nhất 18/09. Ràng buộc bội-4 do **H4** thi hành ở tầng 1, không phải ở đây |
+| `S17` | Khổ phổ biến là 4 dòng; dùng được 2, 3, 5, 6 dòng | mô tả | 📋 Chữ *"phổ biến"* là thống kê, không phải yêu cầu. Không được biến thành tiêu chí |
+| `S18` | Có thể viết liên hoàn, không chia khổ | **quyền** | 📋 Bài một khối liền vẫn hợp lệ — **58,02%** bài đạt là một khổ |
+| `S19` | Triển khai theo mạch cảm xúc hoặc mạch tự sự | mô tả | 🚫 Đòi **hiểu nội dung** — N3 |
+| `S20` | Có thể dùng điệp dòng, điệp khổ, điệp cấu trúc | **quyền** | 📋 Lặp lại **không phải lỗi**. Quan trọng: cấm mọi phép kiểm dạng "trùng lặp thì loại" |
+| `S21` | Có thể kết mở | **quyền** | 📋 Không đòi dòng kết quy tụ |
+
+**Năm trong sáu điều là quyền hoặc mô tả.** Vì vậy tầng 7 chỉ còn chặn được **một** thứ:
+khổ rỗng — thứ duy nhất ở đây thực sự sai chứ không phải lựa chọn phong cách.
+
+Tầng 7 chặn 0 bài, và **đó là đúng**, không phải tầng thừa.
+
+---
+
+### 3.7. Tổng kết kiểm kê
+
+| Nhóm | Số điều | Đánh trượt được |
+|---|---:|---:|
+| Cứng (H) | 4 | **4** |
+| Đã gỡ bỏ (F) | 5 | 0 |
+| Mềm — bắt buộc | 6 | **3** (S2, S11, S14) |
+| Mềm — quyền | 11 | 0 *(N2 cấm)* |
+| Mềm — mô tả | 4 | 0 |
+| **Tổng** | **30** | **7** |
+
+| Vai trò | Số điều | Mã |
+|---|---:|---|
+| ⛔ Tiêu chí chặn | 7 | H1, H2, H3, **H4**, S2, S11, S14 |
+| 🚫 Không kiểm được (N3) | 5 | F2, F4, S3, S15, S19 |
+| 🔻 Bị quyết định ghi đè | 2 | S13, S15 *(S4 đã xoá 18/09)* |
+| 📋 Chỉ ghi nhận | 18 | phần còn lại |
+
+**Tổng số điều luật: 30** (trước 18/09 là 29; H4 được chủ dự án bổ sung).
 
 ---
 
@@ -89,14 +237,15 @@ S6 · S13 · S17 · S19 — phát biểu về thông lệ, không phải yêu c�
 ```
 Tầng 0  CHUẨN HOÁ           tách khổ → dòng → tiếng               tiền đề, không phán
    │
-Tầng 1  H3      HÌNH THỨC    văn bản có phân dòng                  ⛔ CHẶN — trích §2
+Tầng 1  H3·H4   HÌNH THỨC +  ≥4 dòng VÀ số dòng là bội của 4      ⛔ CHẶN — trích §2
+   │            SỐ DÒNG      (H4 bổ sung 18/09, luật cứng)
    │            ↓ chưa có dòng thì không đếm tiếng được
 Tầng 2  H1+H2   ĐỘ DÀI       mọi dòng đúng 7 tiếng                 ⛔ CHẶN — trích §2
    │            ↓ dòng không đủ 7 tiếng thì P2/P4/P6 vô nghĩa
-Tầng 3  §9B2    LOẠI TRỪ     không phải Đường luật                 ⛔ CHẶN — trích §9 Bước 2
+Tầng 3  F1-F5    ĐỐI CHIẾU ĐL ghi nhận nghi_duong_luat, KHÔNG chặn  ℹ️ GHI NHẬN — §3
    │
-Tầng 4  S2·S3·S5  THANH LUẬT  MỌI dòng khớp khuôn bằng hoặc trắc    ⛔ CHẶN — QĐ-1, QĐ-2
-Tầng 5  S6–S12    VẦN         ≥1 cụm 4 dòng LIÊN TIẾP khớp một      ⛔ CHẶN — QĐ-3, QĐ-5,
+Tầng 4  S1·S2·S3  THANH LUẬT  MỌI dòng khớp khuôn bằng hoặc trắc    ⛔ CHẶN — QĐ-1, QĐ-2
+Tầng 5  S6,S8–S12 VẦN         ≥1 cụm 4 dòng LIÊN TIẾP khớp một      ⛔ CHẶN — QĐ-3, QĐ-5,
                               trong 4 sơ đồ §5.2                       QĐ-7
 Tầng 6  S13–S15   NHỊP        6a mọi dòng thuộc bảy kiểu; 6b có      ⛔ CHẶN — QĐ-4, QĐ-4b,
                               nhịp chủ đạo phủ mọi dòng                QĐ-6b (rỗng nghĩa nếu
@@ -117,27 +266,35 @@ Mỗi bài mang dấu vết đủ 8 tầng, **kể cả tầng bị bỏ qua**.
 
 ```json
 "tang": [
-  {"so": 1, "ma": ["H3"], "muc": "chan", "da_chay": true, "dat": true,
-   "trich_luat": "Văn bản phải được phân dòng",
-   "bang_chung": "20 dòng, 5 khổ — văn bản có phân dòng"},
+  {"so": 1, "ma": ["H3","H4"], "muc": "chan", "da_chay": true, "dat": true,
+   "trich_luat": "Văn bản phải được phân dòng, từ 4 dòng trở lên. [H4: số dòng phải là bội của 4]",
+   "bang_chung": "20 dòng — có phân dòng, và 20 = 4 × 5",
+   "chi_tiet": {"so_dong": 20, "du_khi_chia_4": 0, "la_boi_cua_4": true,
+                "co_phan_dong": true}},
 
   {"so": 2, "ma": ["H1","H2"], "muc": "chan", "da_chay": true, "dat": true,
    "trich_luat": "Mỗi dòng phải có đúng 7 tiếng; áp dụng toàn bộ dòng, không ngoại lệ",
    "bang_chung": "20/20 dòng đúng 7 tiếng; nhỏ nhất = lớn nhất = 7",
-   "chi_tiet": {"so_tieng_tung_dong": [7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7]}},
+   "chi_tiet": {"so_tieng_tung_dong": [7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7],
+                "so_dau_cau_da_loai": 14,
+                "quy_tac_dem": "chỉ tính tiếng; dấu câu loại theo phân loại Unicode"}},
 
-  {"so": 3, "ma": ["F1","F2","F3"], "muc": "chan", "da_chay": true, "dat": true,
-   "trich_luat": "Bài Đường luật không thuộc thất ngôn tự do (§9 Bước 2)",
-   "bang_chung": "20 dòng — không phải 4 hay 8 nên không thuộc khuôn Đường luật"},
+  {"so": 3, "ma": ["F1","F2","F3","F4","F5"], "muc": "ghi_nhan",
+   "da_chay": true, "dat": true,
+   "trich_luat": "Có niêm/đối/độc vận là được phép, không phải tiêu chí nhận diện thể (§3)",
+   "bang_chung": "20 dòng — không đủ ba vế số dòng + độc vận + niêm",
+   "chi_tiet": {"nghi_duong_luat": false,
+                "F2_khong_kiem_duoc": "phép đối đòi so từ loại và ngữ nghĩa",
+                "F4_khong_kiem_duoc": "bố cục Khai–Thừa–Chuyển–Hợp đòi hiểu nội dung"}},
 
-  {"so": 4, "ma": ["S2","S3","S5"], "muc": "chan", "da_chay": true, "dat": true,
+  {"so": 4, "ma": ["S1","S2","S3"], "muc": "chan", "da_chay": true, "dat": true,
    "trich_luat": "P2, P4, P6 nên luân phiên bằng – trắc",
    "bang_chung": "20/20 dòng khớp khuôn; 0 dòng phá khuôn (QĐ-1, QĐ-2)",
    "chi_tiet": {"khuon_tung_dong": ["bang","trac","trac","bang","..."],
                 "so_dong_pha_khuon": 0,
                 "S3_khong_kiem_duoc": "P7 chọn có chủ đích — đòi ý đồ tác giả"}},
 
-  {"so": 5, "ma": ["S6","S7","S8","S9","S10","S11","S12"], "muc": "chan",
+  {"so": 5, "ma": ["S6","S8","S9","S10","S11","S12"], "muc": "chan",
    "da_chay": true, "dat": true,
    "trich_luat": "Sơ đồ vần nên nhất quán trong phạm vi một khổ",
    "bang_chung": "sơ đồ aaxa|bbxb, nhất quán trong từng khổ; so vần theo âm đệm–âm chính–âm cuối",
@@ -162,6 +319,9 @@ Mỗi bài mang dấu vết đủ 8 tầng, **kể cả tầng bị bỏ qua**.
 Bài trượt ở tầng 2 sẽ có tầng 3–7 mang `"da_chay": false` và
 `"bang_chung": "bỏ qua vì tầng 2 đã chặn"` — **không giả vờ đã kiểm**.
 
+Lưu ý tầng 3 mang `"muc": "ghi_nhan"`: nó **luôn** `dat = true` và không góp vào phán
+quyết chung. Quan sát của nó nằm ở `chi_tiet["nghi_duong_luat"]`.
+
 ---
 
 ## 6. Bốn quyết định — ĐÃ CHỐT
@@ -182,7 +342,7 @@ Tiêu chí tầng 4: **mọi dòng** phải khớp khuôn bằng (P2 B, P4 T, P6
 **Nguyên văn quyết định:** *"sao lại phá khuôn; không được phá khuôn, phải tuân thủ toàn bộ
 Rule đã có"*
 
-Không có ngoại lệ "phá khuôn có chủ đích". Dòng ở trạng thái `pha` là trượt. S5 do đó không
+Không có ngoại lệ "phá khuôn có chủ đích". Dòng ở trạng thái `pha` là trượt. S4 và S5 do đó đã bị xoá khỏi bảng luật 18/09; phần dưới không
 còn việc để làm: không có phá khuôn thì không cần xét phá tập trung hay rải rác.
 
 ### QĐ-3 — Sơ đồ vần phải dựa trên ngữ âm tiếng Việt ✅
@@ -343,8 +503,10 @@ cửa sổ. Nếu chỉ đòi chiều thuận thì bốn dòng cùng một vần
 
 #### Hai hệ quả phải nói rõ
 
-1. **Bài dưới bốn dòng trượt tầng 5.** H3 chỉ đòi từ hai dòng, nên bài hai hoặc ba dòng sẽ
-   `thuoc_the = True` nhưng `dat = False`. Đây là hệ quả trực tiếp của QĐ-7, không phải lỗi.
+1. ~~**Bài dưới bốn dòng trượt tầng 5.**~~ **Hệ quả này đã hết hiệu lực từ 18/09.** Khi
+   viết QĐ-7, H3 mới chỉ đòi từ hai dòng nên bài 2–3 dòng đi tới được tầng 5. Nay H3 đòi
+   **≥ 4 dòng** và H4 đòi **bội của 4**, nên bài ngắn bị chặn ngay ở **tầng 1** — nhánh
+   "dưới 4 dòng" trong tầng 5 không còn với tới được qua đường chạy bình thường.
 2. **Khổ có quan hệ vần không bắc cầu không khớp sơ đồ nào.** Ví dụ ba dòng kết bằng
    `vang / vương / vuông`: vang~vương và vương~vuông, nhưng vang ≁ vuông (Trần Trọng Kim ghi
    rõ). Khổ ấy nhận nhãn `?` và không tính là khớp.
@@ -358,28 +520,40 @@ Ghi ở đây để mã nguồn và tài liệu không nói hai điều khác nh
 
 | Tài liệu nói                                                                                                      | Quyết định dự án                                                          |
 | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| S4:*"**Có thể** phá khuôn ở bất kỳ dòng nào khi dụng ý biểu đạt đòi hỏi"*                   | QĐ-2: không cho phá khuôn                                                  |
+| *(S4 đã xoá 18/09/2026)* — không còn điều nào cho phép phá khuôn                   | QĐ-2: không cho phá khuôn — nay **không ghi đè điều nào**                   |
 | S2:*"P2, P4, P6 **nên** luân phiên"* — chữ *nên*, nói ở mức dòng                                 | QĐ-1: bắt buộc, áp lên mọi dòng                                         |
 | S13:*"Nhịp do **nghĩa** của dòng quyết định"*                                                         | QĐ-4: nhịp phải khớp một trong bảy kiểu, xét theo hình thức          |
 | S13:*"**không cố định** cho toàn bài"* · S15: *"**đổi nhịp** nên trùng chỗ chuyển ý"* | QĐ-4b: phải tồn tại một nhịp chủ đạo phủ**mọi** dòng         |
 | §6: bảng bảy nhịp không nói dòng*phải* thuộc kiểu nào                                                   | QĐ-6b/6a: mọi dòng phải ngắt được theo ít nhất một trong bảy kiểu |
 
-Vì vậy thiết kế giữ **hai cờ phán quyết** (§8.1): `thuoc_the` trả lời theo tài liệu (H1–H3),
-`dat` trả lời theo chuẩn dự án (toàn bộ 8 tầng). Cả hai con số cùng được báo cáo.
+Vì vậy thiết kế giữ **hai cờ phán quyết** (§8.1): `thuoc_the` trả lời theo tài liệu
+(**H1–H4**, sau khi H4 được bổ sung 18/09), `dat` trả lời theo chuẩn dự án (toàn bộ các
+tầng chặn). Cả hai con số cùng được báo cáo.
 
 ### 6.6. Hệ quả đo được — nêu thẳng, không dùng để phản đối
 
-Theo N4, các số này **sẽ được đo lại từ đầu** khi thi công. Số dưới đây lấy từ lượt đo ngày
-17/09 chỉ để chủ dự án thấy quy mô công việc phía sau.
+Bảng này nay là **số đo thật** trên toàn bộ 67.150 bản ghi, không còn là ước lượng.
+Sinh lại: `python datalake/scripts/kiem_tra_toan_bo.py`.
 
-| Tầng   | Tiêu chí sau khi chốt                                      | Số bài qua, trên nền 59.437 bài đạt H1–H3 |
-| ------- | ------------------------------------------------------------- | ------------------------------------------------- |
-| Tầng 4 | QĐ-1 + QĐ-2:**mọi dòng** khớp khuôn               | **25.662** — 43,18%                        |
-| Tầng 5 | QĐ-3: chưa đo được, phải dựng lại bảng vần trước | chưa đo                                         |
-| Tầng 6 | QĐ-4: chưa đo được, phải tách từ trước             | chưa đo                                         |
+| Cổng | Tiêu chí sau khi chốt | Vào | Qua | Chặn | % chặn |
+|---|---|---:|---:|---:|---:|
+| 1 | H3 ≥4 dòng **và** H4 bội của 4 | 62.034 | 57.366 | 4.668 | 7,52% |
+| 2 | H1+H2: mọi dòng đúng 7 tiếng | 57.366 | 55.297 | 2.069 | 3,61% |
+| 3 | F1–F5: **ghi nhận**, không chặn | 55.297 | 55.297 | 0 | 0,00% |
+| **4** | QĐ-1 + QĐ-2: **mọi dòng** khớp khuôn | 55.297 | 24.726 | **30.571** | **55,29%** |
+| 5 | QĐ-7: ≥1 cụm 4 dòng khớp §5.2 | 24.726 | **24.366** | 6.576 | 26,60% |
+| 6 | QĐ-4b: có nhịp chủ đạo | 24.366 | 24.366 | 0 | 0,00% |
+| 7 | Không khổ rỗng | 24.366 | 24.366 | 0 | 0,00% |
 
-Con số cuối cùng sẽ thấp hơn 25.662 vì tầng 5 và tầng 6 còn lọc tiếp. Đây là hệ quả trực
-tiếp của yêu cầu "tuân thủ toàn bộ Rule"; plan này không tìm cách làm nhẹ nó.
+**Kết quả cuối: 24.366 bài đạt — 39,28%** trên 62.034 bài có nội dung.
+`thuoc_the` (chỉ H1–H4): **55.297**.
+
+Đây là hệ quả trực tiếp của yêu cầu *"tuân thủ toàn bộ Rule"*; plan này không tìm cách làm
+nhẹ nó. Cổng 4 một mình chiếm **69,66%** toàn bộ bài trượt, và phần lớn số bài ấy **không
+sai gì theo câu chữ tài liệu** — chúng trượt vì QĐ-1 và QĐ-2.
+
+⚠️ **Cổng 6 chặn 0 bài không phải vì thơ đạt nhịp** mà vì tầng 6 đang rỗng nghĩa khi thiếu
+bộ tách từ — xem cảnh báo ở QĐ-6b. Con số 24.366 là **chưa qua kiểm nhịp thật sự**.
 
 ---
 
@@ -521,8 +695,8 @@ Theo N4:
 ### 8.1. Hai cờ phán quyết, không gộp làm một
 
 ```python
-thuoc_the: bool   # chỉ H1–H3 — câu trả lời của TÀI LIỆU LUẬT (§2)
-dat: bool         # qua toàn bộ 8 tầng — câu trả lời của DỰ ÁN
+thuoc_the: bool   # chỉ H1–H4 — câu trả lời của TÀI LIỆU LUẬT (§2)
+dat: bool         # qua mọi tầng CHẶN — câu trả lời của DỰ ÁN
 ```
 
 Lý do giữ cả hai: §9 Bước 4 nói thẳng các lựa chọn mềm *"không dùng để loại bài"*. Nếu chỉ
@@ -539,7 +713,8 @@ không"*. Báo cáo corpus từ nay nêu **cả hai con số**.
 `PoemVerdict` giữ nguyên mọi trường cũ, thêm `tang`, `thuoc_the`, `tang_dung_lai`, `ho_so`.
 
 Ba nơi đang dùng `rule.py` — `poem_verifier.py`, `adapters/tools/poem_check.py`,
-`tests/unit/application/test_rule.py` (45 test) — không phải sửa để chạy được.
+`tests/unit/application/test_rule.py` — không phải sửa chữ ký để chạy được. Riêng phần
+**ngữ liệu** của test thì có phải sửa: bài mẫu 2 dòng nay trượt H4, xem §11.
 
 ---
 
@@ -554,7 +729,7 @@ Ba nơi đang dùng `rule.py` — `poem_verifier.py`, `adapters/tools/poem_check
 | T1b-2 | Dựng bộ phân tích âm tiết 5 thành phần                                                                                                                                                                   | Test:`hoa` tách được âm đệm `o` + âm chính `a`; `quê` tách được âm đệm `u` + âm chính `ê`                                  |
 | T1b-3 | Nạp bảng vần đã duyệt, bỏ`VAN_THONG` cũ                                                                                                                                                                | Mỗi lớp vần có chú thích nguồn ngay tại chỗ                                                                                                       |
 | T1c   | Cài tầng 6 hai bước 6a/6b theo QĐ-6b, chỉ dùng bảy kiểu trong tài liệu (QĐ-6)                                                                                                                        | Test: bốn dòng có nhịp khả dĩ giao nhau ở`4/3` thì nhịp chủ đạo là `4/3`; giao rỗng thì trượt tầng 6                                 |
-| T1    | Kiểu`KetQuaTang`, bảng 8 tầng, bảng phân loại 29 điều luật                                                                                                                                            | Test: mọi mã trong`LUAT` thuộc **đúng một** tầng; mọi điều loại *quyền* **không** nằm trong tiêu chí đạt của tầng nào |
+| T1    | Kiểu`KetQuaTang`, bảng 8 tầng, bảng phân loại 30 điều luật                                                                                                                                            | Test: mọi mã trong`LUAT` thuộc **đúng một** tầng; mọi điều loại *quyền* **không** nằm trong tiêu chí đạt của tầng nào |
 | T2    | Chuyển phép kiểm hiện có vào tầng, chưa đổi hành vi                                                                                                                                                   | 45 test cũ xanh nguyên                                                                                                                                   |
 | T3    | Chạy tuần tự, dừng sớm, sinh bằng chứng từng tầng                                                                                                                                                       | Test: bài hỏng tầng 2 thì tầng 3–7 có`da_chay = False`                                                                                            |
 | T4    | Cài tiêu chí tầng 4–7 theo QĐ đã chốt                                                                                                                                                                   | Test: một dòng lệch khuôn thì trượt tầng 4 (QĐ-1, QĐ-2); một dòng không ngắt được theo bảy kiểu nhịp thì trượt tầng 6 (QĐ-4)      |
@@ -579,14 +754,27 @@ Ba nơi đang dùng `rule.py` — `poem_verifier.py`, `adapters/tools/poem_check
 
 ---
 
-## 11. Phụ lục — trạng thái khi lập plan
+## 11. Phụ lục — trạng thái hiện tại
 
-| Hạng mục                     | Giá trị                                                                    |
-| ------------------------------ | ---------------------------------------------------------------------------- |
-| `rule.py`                    | 816 dòng                                                                    |
-| Test riêng của`rule.py`    | 45                                                                           |
-| Test toàn dự án             | 357                                                                          |
-| Nơi dùng`rule.py`          | `poem_verifier.py` · `adapters/tools/poem_check.py` · `test_rule.py` |
-| Script chạy lại corpus       | `datalake/scripts/kiem_tra_toan_bo.py`                                     |
-| Script kiểm chứng độc lập | `datalake/scripts/doi_soat_ket_qua.py`                                     |
-| Script so sánh hai bản luật | `datalake/scripts/so_sanh_ban_luat.py`                                     |
+Cột *"khi lập plan"* là 17/09, cột *"hiện tại"* đo ngày 18/09 sau khi thi công.
+
+| Hạng mục | Khi lập plan | Hiện tại |
+|---|---|---|
+| `rule.py` | 816 dòng | **2.200 dòng**, 45 hàm |
+| Số điều luật | 29 | **30** (H4 bổ sung 18/09) |
+| Tiêu chí chặn | 5 | **7** |
+| Test riêng của `rule.py` | 45 | **126** (`test_rule.py` 37 + `test_rule_tang.py` 52, có tham số hoá) |
+| Test toàn dự án | 357 | **438** |
+| Bài đạt trên corpus | — | **24.366** / 62.034 (39,28%) |
+
+**Nơi dùng `rule.py`:** `poem_verifier.py` · `adapters/tools/poem_check.py` ·
+`tests/unit/application/test_rule*.py`
+
+**Script liên quan:**
+
+| Script | Việc |
+|---|---|
+| `datalake/scripts/kiem_tra_toan_bo.py` | Chạy lại corpus, sinh mọi tệp kết quả và `TONG_HOP.md` |
+| `datalake/scripts/doi_soat_ket_qua.py` | Kiểm chứng độc lập: phân hoạch id, lấy mẫu chạy lại |
+| `datalake/scripts/so_sanh_ban_luat.py` | So hai bản luật bằng cách chạy song song |
+| `datalake/scripts/doi_soat_tai_lieu.py` | **Chặn số liệu bịa trong tài liệu** — đối chiếu mọi con số trong ba tài liệu với nguồn sinh ra nó. Đã cắm vào CI |

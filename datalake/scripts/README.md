@@ -16,7 +16,7 @@ python datalake/scripts/<tên>.py
 
 | Script | Việc | Đầu ra |
 |---|---|---|
-| `kiem_tra_toan_bo.py` | Kiểm **từng bài một** qua `rule.py`, có đối soát đầu vào — đầu ra. Dừng và báo lỗi nếu số liệu không khớp | `bai_dat.jsonl` · `bai_truot.jsonl` · `bai_khong_co_noi_dung.jsonl` · `tong_hop.json` |
+| `kiem_tra_toan_bo.py` | Kiểm **từng bài một** qua `rule.py`, có đối soát đầu vào — đầu ra. Dừng và báo lỗi nếu số liệu không khớp | `bai_dat.jsonl` · `bai_truot.jsonl` · `bai_khong_co_noi_dung.jsonl` · `tong_hop.json` · `phan_bo.json` |
 | `doi_soat_ket_qua.py` | Kiểm chứng **độc lập** kết quả trên: phân hoạch id, lấy mẫu chạy lại, nhất quán nội tại | in ra màn hình, thoát mã 1 nếu sai |
 
 ```bash
@@ -63,3 +63,60 @@ tệp đó thì sao lưu trước khi chạy lại.
 `bai_dat.jsonl` khoảng 33 MB và tệp nguồn khoảng 60 MB. Cân nhắc đưa
 `datalake/dataraw/` cùng các tệp `.jsonl` trong `datalake/analysis/` vào
 `.gitignore`, chỉ giữ lại `TONG_HOP.md` và `tong_hop.json`.
+
+---
+
+## `doi_soat_tai_lieu.py` — chặn số liệu bịa trong tài liệu
+
+Đối chiếu **mọi con số** trong ba tài liệu phân tích với nguồn sinh ra chúng:
+`tong_hop.json`, các tệp `.jsonl` kết quả, và bảng `LUAT` trong `rule.py`.
+
+```
+python datalake/scripts/doi_soat_tai_lieu.py
+```
+
+Trả mã thoát khác 0 nếu có sai lệch, nên cắm được vào CI.
+
+**Vì sao có script này.** Ngày 18/09/2026 một lệnh thay-thế-hàng-loạt đã đưa con số
+`3.975` vào ba tài liệu — con số đó **chưa từng được đo**, tôi gõ ra theo cảm tính.
+Số liệu gõ tay thì sớm muộn cũng lệch; cách chặn duy nhất là đối chiếu bằng máy.
+
+Script báo hai loại lỗi:
+
+| Loại | Nghĩa |
+|---|---|
+| **THIẾU** | Tài liệu không nhắc một điều luật hoặc mã tiêu chí lẽ ra phải có — tài liệu cũ |
+| **LẠC** | Tài liệu chứa một con số không khớp nguồn nào — **nghi là bịa** |
+
+Con số lịch sử có thật (ví dụ *"giảm 59.437 → 55.297"*) được miễn qua `SO_LICH_SU`,
+và **mỗi mục bắt buộc kèm lý do**.
+
+### `xuat_phan_bo.py` — để phép đối soát chạy được ở mọi nơi
+
+`doi_soat_tai_lieu.py` cần khoảng 100 con số là **phân bố** (bài đạt theo số dòng,
+theo số khổ, theo sơ đồ vần…). Bản đầu lấy chúng bằng cách mở thẳng `bai_dat.jsonl`
+(33 MB) và `bai_truot.jsonl` — hai tệp nằm trong `.gitignore`.
+
+Hậu quả: script xanh trên máy có sẵn dữ liệu, và **chết bằng `FileNotFoundError`
+trên mọi checkout sạch**. Bước đối soát — thứ sinh ra để chặn số bịa — trở thành
+bước duy nhất làm đỏ CI.
+
+> **Bài học:** một phép kiểm chỉ chạy được trên MỘT máy thì không phải phép kiểm,
+> nó là thói quen cá nhân.
+
+`xuat_phan_bo.py` rút các phân bố ấy ra `datalake/analysis/phan_bo.json` — khoảng
+**3 KB**, track được. Nhờ vậy CI kiểm đủ **175/175** con số mà không cần corpus
+60 MB, thay vì phải bỏ bớt 100 số cho qua chuyện.
+
+```
+bai_dat.jsonl     33 MB  .gitignore  ─┐
+                                       ├─►  phan_bo.json  ~3 KB  ✅ track
+bai_truot.jsonl    … MB  .gitignore  ─┘
+```
+
+Script này **không cần chạy tay**: `kiem_tra_toan_bo.py` gọi nó ở cuối mỗi lượt,
+nên `phan_bo.json` không thể lệch khỏi hai tệp `.jsonl`. Chỉ chạy tay khi đã có sẵn
+`.jsonl` từ lượt trước mà chưa có `phan_bo.json`.
+
+Thiếu `phan_bo.json` thì `doi_soat_tai_lieu.py` **thoát mã 1 kèm hướng dẫn** — cố ý
+không bỏ qua im lặng, vì bỏ qua sẽ cho ra một cổng CI báo xanh mà chỉ kiểm 43% số liệu.

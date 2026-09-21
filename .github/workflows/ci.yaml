@@ -37,3 +37,6 @@ jobs:
 
       - name: Contract tests (HTTP/SSE)
         run: pytest -q tests/contract
+
+      - name: Đối soát số liệu trong tài liệu (chặn số bịa)
+        run: python datalake/scripts/doi_soat_tai_lieu.py

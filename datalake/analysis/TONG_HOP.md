@@ -18,61 +18,62 @@
 | Đối soát | ✅ KHỚP |
 
 ```
-67,150 bản ghi = 16,391 đạt + 45,643 trượt + 5,116 không có nội dung
-62,034 lần gọi luật = 16,391 đạt + 45,643 trượt
+67,150 bản ghi = 24,366 đạt + 37,668 trượt + 5,116 không có nội dung
+62,034 lần gọi luật = 24,366 đạt + 37,668 trượt
 ```
 
 ---
 
 ## 2. Phễu theo từng cổng
 
-Bài phải qua cổng N mới sang cổng N+1. Cột *chưa chạy* là số bài không được
-kiểm ở cổng này vì đã bị một cổng trước chặn — **chưa kiểm, không phải đạt**.
+Bài phải qua cổng N mới sang cổng N+1.
 
-| Cổng | Điều luật | Vào | Qua | Chặn tại đây | Chưa chạy |
-|---|---|---:|---:|---:|---:|
-| 1. Hình thức | H3 | 62,034 | 62,032 | 2 | 0 |
-| 2. Độ dài dòng | H1, H2 | 62,032 | 59,437 | 2,595 | 2 |
-| 3. Loại trừ Đường luật | F1, F2, F3, F4, F5 | 59,437 | 55,149 | 4,288 | 2,597 |
-| 4. Thanh luật | S1, S2, S3, S4, S5 | 55,149 | 21,374 | 33,775 | 6,885 |
-| 5. Vần | S6, S7, S8, S9, S10, S11, S12 | 21,374 | 16,391 | 4,983 | 40,660 |
-| 6. Nhịp | S13, S14, S15 | 16,391 | 16,391 | 0 | 45,643 |
-| 7. Khổ và bố cục | S16, S17, S18, S19, S20, S21 | 16,391 | 16,391 | 0 | 45,643 |
+- **% qua** và **% chặn** lấy mẫu số là số bài **đi vào cổng đó** — đo độ khắt
+  khe của riêng cổng.
+- **Còn lại** lấy mẫu số là **toàn bộ bài có nội dung** — đường sống sót tích luỹ.
+- **Đánh dấu** là số bài cổng ghi nhận có phát hiện nhưng **vẫn cho đi tiếp**.
+
+| Cổng | Mức | Điều luật | Vào | Qua | % qua | Chặn | % chặn | Còn lại | Đánh dấu |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 1. Hình thức và số dòng | ⛔ chặn | H3, H4 | 62,034 | 57,366 | 92.48% | 4,668 | 7.52% | 92.48% | 0 |
+| 2. Độ dài dòng | ⛔ chặn | H1, H2 | 57,366 | 55,297 | 96.39% | 2,069 | 3.61% | 89.14% | 0 |
+| 3. Đối chiếu Đường luật | ℹ️ ghi nhận | F1, F2, F3, F4, F5 | 55,297 | 55,297 | 100.00% | 0 | 0.00% | 89.14% | 4,288 |
+| 4. Thanh luật | ⛔ chặn | S1, S2, S3 | 55,297 | 24,726 | 44.71% | 30,571 | 55.29% | 39.86% | 0 |
+| 5. Vần | ⛔ chặn | S6, S9, S10, S11, S12 | 24,726 | 24,366 | 98.54% | 360 | 1.46% | 39.28% | 0 |
+| 6. Nhịp | ⛔ chặn | S13, S14, S15 | 24,366 | 24,366 | 100.00% | 0 | 0.00% | 39.28% | 0 |
+| 7. Khổ và bố cục | ⛔ chặn | S16, S17, S18, S19, S20, S21 | 24,366 | 24,366 | 100.00% | 0 | 0.00% | 39.28% | 0 |
 
 ## 3. Kết quả
 
 | | Số bài |
 |---|---:|
-| Thuộc thể theo **tài liệu** (chỉ H1–H3) | 59,437 |
-| **Đạt theo chuẩn dự án** (cả 7 tầng) | **16,391** |
-| Trượt | 45,643 |
+| Thuộc thể theo **tài liệu** (chỉ H1–H3) | 55,297 |
+| **Đạt theo chuẩn dự án** (cả 7 tầng) | **24,366** |
+| Trượt | 37,668 |
 | Không có nội dung | 5,116 |
-| Tỉ lệ đạt trên bài có nội dung | 26.42% |
+| Tỉ lệ đạt trên bài có nội dung | 39.28% |
 
 ## 4. Vì sao trượt — theo từng cổng
 
 Số bên cạnh mã luật là **số lần vi phạm**, không phải số bài: một bài có thể
 phạm cùng một điều ở nhiều dòng.
 
-**Cổng 1 — Hình thức**
+**Cổng 1 — Hình thức và số dòng**
 
-- `2` H3: văn bản có phân dòng, từ 2 dòng trở lên
+- `4,668` H4: số dòng là bội của 4
+- `655` H3: văn bản có phân dòng, từ 4 dòng trở lên
 
 **Cổng 2 — Độ dài dòng**
 
-- `9,015` H1: 7 tiếng
-
-**Cổng 3 — Loại trừ Đường luật**
-
-- `4,288` F3: không phải Đường luật
+- `7,645` H1: 7 tiếng
 
 **Cổng 4 — Thanh luật**
 
-- `177,405` S2: P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)
+- `160,828` S2: P2/P4/P6 luân phiên theo khuôn bằng (B T B) hoặc khuôn trắc (T B T)
 
 **Cổng 5 — Vần**
 
-- `4,983` S11: ít nhất 4 dòng liên tiếp khớp một sơ đồ §5.2 (aabb / abab / abba / aaxa)
+- `360` S11: ít nhất 4 dòng liên tiếp có vần chân — trong cụm đó phải có ít nhất một cặp tiếng cuối hiệp vần
 
 ## 5. Nhóm nguyên nhân trượt
 
@@ -84,12 +85,46 @@ phạm cùng một điều ở nhiều dòng.
 | D. Đúng một dòng thiếu một tiếng | 1,060 |
 | E. Đúng một dòng thừa một tiếng | 338 |
 | F. Đúng một dòng lệch nhiều tiếng | 242 |
-| G. Hai dòng lệch | 43,287 |
+| G. Hai dòng lệch | 35,312 |
 | H. Lệch nhiều dòng | 525 |
 
 Bài rỗng có thể cứu được: **1,934**
 
-## 6. Tệp kết quả
+## 6. Tổ hợp khuôn của cụm bốn dòng — tài liệu §4.4
+
+Đếm trên **24,366 bài đạt**, mẫu số là **cụm**, không phải
+bài: một bài 12 dòng góp 3 cụm. Tổng **73,106 cụm**.
+
+Bảng 16 tổ hợp là tập **đầy đủ** (2⁴), nên nó KHÔNG loại bài nào — đây là
+số liệu mô tả, không phải tiêu chí chặn.
+
+Mỗi ô là **ba giá trị thanh ở P2, P4, P6 của một dòng**: `B-T-B` = khuôn
+bằng, `T-B-T` = khuôn trắc. P1/P3/P5 tự do (S1) và P7 thuộc về vần nên
+không có mặt ở đây.
+
+| # | D1 · D2 · D3 · D4 (mỗi dòng: P2-P4-P6) | Số cụm | Tỷ lệ | |
+|---:|---|---:|---:|---|
+| 10 | `T-B-T  B-T-B  B-T-B  T-B-T` | 41,227 | 56.39% | ← mẫu đảo §4.3 |
+| 7 | `B-T-B  T-B-T  T-B-T  B-T-B` | 27,982 | 38.28% | ← mẫu cổ điển §4.3 |
+| 6 | `B-T-B  T-B-T  B-T-B  T-B-T` | 999 | 1.37% |  |
+| 11 | `T-B-T  B-T-B  T-B-T  B-T-B` | 561 | 0.77% |  |
+| 2 | `B-T-B  B-T-B  B-T-B  T-B-T` | 328 | 0.45% |  |
+| 9 | `T-B-T  B-T-B  B-T-B  B-T-B` | 326 | 0.45% |  |
+| 4 | `B-T-B  B-T-B  T-B-T  T-B-T` | 216 | 0.30% |  |
+| 5 | `B-T-B  T-B-T  B-T-B  B-T-B` | 213 | 0.29% |  |
+| 13 | `T-B-T  T-B-T  B-T-B  B-T-B` | 207 | 0.28% |  |
+| 14 | `T-B-T  T-B-T  B-T-B  T-B-T` | 195 | 0.27% |  |
+| 1 | `B-T-B  B-T-B  B-T-B  B-T-B` | 180 | 0.25% |  |
+| 12 | `T-B-T  B-T-B  T-B-T  T-B-T` | 180 | 0.25% |  |
+| 8 | `B-T-B  T-B-T  T-B-T  T-B-T` | 178 | 0.24% |  |
+| 3 | `B-T-B  B-T-B  T-B-T  B-T-B` | 159 | 0.22% |  |
+| 15 | `T-B-T  T-B-T  T-B-T  B-T-B` | 88 | 0.12% |  |
+| 16 | `T-B-T  T-B-T  T-B-T  T-B-T` | 67 | 0.09% |  |
+
+Hai mẫu §4.3 chiếm **69,209/73,106 = 94.67%** số cụm.
+Mười bốn tổ hợp còn lại: **5.33%**.
+
+## 7. Tệp kết quả
 
 | Tệp | Nội dung |
 |---|---|

@@ -26,10 +26,15 @@ GOC = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(GOC / "src"))
 
 from application.rule import (  # noqa: E402
+    MA_PHOI_KHUON_CO_DIEN,
+    MA_PHOI_KHUON_DAO,
+    PHOI_KHUON_16,
     SO_TIENG_MOI_DONG,
     TANG,
+    cua_so_co_van_chan,
     kiem_tra_bai_tho,
     mo_ta_luat,
+    tach_kho,
 )
 
 NGUON = GOC / "datalake/dataraw/final_data_7_chu.jsonl"
@@ -42,6 +47,41 @@ KHOA_THO_KHAC = (
     "content_fix", "content_fixed", "content_processed", "content_correction",
     "content_details", "content_analysis",
 )
+
+
+def dau_vet_tung_dong(v) -> list[dict]:
+    """Dấu vết ĐẦY ĐỦ của từng dòng, để bản ghi tự đứng được.
+
+    VÌ SAO CÓ HÀM NÀY. Trước đây `bai_dat.jsonl` chỉ có bằng chứng MỨC TẦNG:
+    "8/8 dòng khớp khuôn", "dòng 1–4 có vần chân, sơ đồ aaxa". Muốn kiểm lại một
+    câu ấy thì phải mở tệp nguồn 60 MB, tìm đúng id, rồi tự đếm tiếng và tự phân
+    thanh — tức là bằng chứng KHÔNG tự kiểm được.
+
+    Nay mỗi bản ghi mang theo nguyên văn bài thơ và, cho từng dòng: số tiếng,
+    danh sách tiếng đã tách, thanh của từng tiếng, ba giá trị P2/P4/P6, khuôn, và
+    vần cuối. Người đọc đối chiếu được ngay tại chỗ, không cần chạy lại gì.
+    """
+    ra = []
+    for bc in v.dong:
+        p246 = (
+            [bc.thanh[i] for i in (1, 3, 5)]
+            if len(bc.thanh) == SO_TIENG_MOI_DONG
+            else None
+        )
+        ra.append({
+            "so": bc.so,
+            "van_ban": bc.van_ban,
+            "so_tieng": bc.so_tieng,
+            "tieng": list(bc.tieng),
+            "thanh": list(bc.thanh),
+            # None = dòng không đủ 7 tiếng, nên P2/P4/P6 không còn là P2/P4/P6
+            # của thể. Khác hẳn với "có P2/P4/P6 nhưng lệch khuôn".
+            "P2_P4_P6": p246,
+            "khuon": bc.khuon,
+            "van_cuoi": bc.van_cuoi,
+            "thanh_cuoi": bc.thanh_cuoi,
+        })
+    return ra
 
 
 def phan_nhom_nguyen_nhan(do_dai: list[int], hong: list) -> str:
@@ -64,6 +104,34 @@ def phan_nhom_nguyen_nhan(do_dai: list[int], hong: list) -> str:
         return "G. Hai dòng lệch"
     return "H. Lệch nhiều dòng"
 
+
+
+
+def _them_ty_le(pheu, cac_tang, so_bai_ban_dau: int) -> list:
+    """Thêm ba tỷ lệ cho mỗi cổng. Ba mẫu số khác nhau, đừng lẫn.
+
+    `ty_le_qua`  · `ty_le_chan`  — mẫu số là số bài ĐI VÀO CỔNG ĐÓ.
+        Trả lời: "trong những bài tới được cổng này, bao nhiêu phần trăm lọt?"
+        Đây là thước đo độ khắt khe của riêng cổng.
+
+    `ty_le_con_lai` — mẫu số là TOÀN BỘ bài có nội dung ban đầu.
+        Trả lời: "sau cổng này còn lại bao nhiêu phần trăm corpus?"
+        Đây là đường sống sót tích luỹ, giảm dần qua từng cổng.
+
+    Một cổng có thể `ty_le_qua` rất cao mà vẫn kéo `ty_le_con_lai` xuống thấp,
+    nếu các cổng trước đã cắt nhiều. Nêu cả hai để không đọc nhầm.
+    """
+    ra = []
+    for t in cac_tang:
+        c = dict(pheu[t.so])
+        vao = int(c["vao"])
+        c["ty_le_qua"] = round(int(c["qua"]) / vao * 100, 2) if vao else 0.0
+        c["ty_le_chan"] = round(int(c["chan_tai_day"]) / vao * 100, 2) if vao else 0.0
+        c["ty_le_con_lai"] = (
+            round(int(c["qua"]) / so_bai_ban_dau * 100, 2) if so_bai_ban_dau else 0.0
+        )
+        ra.append(c)
+    return ra
 
 
 def _ghi_tong_hop_md(duong_dan, th) -> None:
@@ -110,14 +178,22 @@ def _ghi_tong_hop_md(duong_dan, th) -> None:
     A("")
     A("## 2. Phễu theo từng cổng")
     A("")
-    A("Bài phải qua cổng N mới sang cổng N+1. Cột *chưa chạy* là số bài không được")
-    A("kiểm ở cổng này vì đã bị một cổng trước chặn — **chưa kiểm, không phải đạt**.")
+    A("Bài phải qua cổng N mới sang cổng N+1.")
     A("")
-    A("| Cổng | Điều luật | Vào | Qua | Chặn tại đây | Chưa chạy |")
-    A("|---|---|---:|---:|---:|---:|")
+    A("- **% qua** và **% chặn** lấy mẫu số là số bài **đi vào cổng đó** — đo độ khắt")
+    A("  khe của riêng cổng.")
+    A("- **Còn lại** lấy mẫu số là **toàn bộ bài có nội dung** — đường sống sót tích luỹ.")
+    A("- **Đánh dấu** là số bài cổng ghi nhận có phát hiện nhưng **vẫn cho đi tiếp**.")
+    A("")
+    A("| Cổng | Mức | Điều luật | Vào | Qua | % qua | Chặn | % chặn | Còn lại | Đánh dấu |")
+    A("|---|---|---|---:|---:|---:|---:|---:|---:|---:|")
     for c in th["pheu_theo_cong"]:
-        A(f"| {c['so']}. {c['ten']} | {', '.join(c['ma_luat'])} | {c['vao']:,} | "
-          f"{c['qua']:,} | {c['chan_tai_day']:,} | {c['khong_chay']:,} |")
+        muc = "⛔ chặn" if c.get("muc", "chan") == "chan" else "ℹ️ ghi nhận"
+        dd = c.get("ghi_nhan_nhung_khong_chan", 0)
+        A(f"| {c['so']}. {c['ten']} | {muc} | {', '.join(c['ma_luat'])} | "
+          f"{c['vao']:,} | {c['qua']:,} | {c['ty_le_qua']:.2f}% | "
+          f"{c['chan_tai_day']:,} | {c['ty_le_chan']:.2f}% | "
+          f"{c['ty_le_con_lai']:.2f}% | {dd:,} |")
     A("")
     A("## 3. Kết quả")
     A("")
@@ -150,7 +226,41 @@ def _ghi_tong_hop_md(duong_dan, th) -> None:
     A("")
     A(f"Bài rỗng có thể cứu được: **{th['bai_rong_co_the_cuu']:,}**")
     A("")
-    A("## 6. Tệp kết quả")
+    A("## 6. Tổ hợp khuôn của cụm bốn dòng — tài liệu §4.4")
+    A("")
+    tk = th["to_hop_khuon_cum_bon_dong"]
+    tong_cum = tk["tong_so_cum"]
+    A(f"Đếm trên **{th['ket_qua']['bai_dat']:,} bài đạt**, mẫu số là **cụm**, không phải")
+    A(f"bài: một bài 12 dòng góp 3 cụm. Tổng **{tong_cum:,} cụm**.")
+    A("")
+    A("Bảng 16 tổ hợp là tập **đầy đủ** (2⁴), nên nó KHÔNG loại bài nào — đây là")
+    A("số liệu mô tả, không phải tiêu chí chặn.")
+    A("")
+    A("Mỗi ô là **ba giá trị thanh ở P2, P4, P6 của một dòng**: `B-T-B` = khuôn")
+    A("bằng, `T-B-T` = khuôn trắc. P1/P3/P5 tự do (S1) và P7 thuộc về vần nên")
+    A("không có mặt ở đây.")
+    A("")
+    A("| # | D1 · D2 · D3 · D4 (mỗi dòng: P2-P4-P6) | Số cụm | Tỷ lệ | |")
+    A("|---:|---|---:|---:|---|")
+    ky = {"bang": "B-T-B", "trac": "T-B-T"}
+    xep = sorted(range(1, 17), key=lambda m: -tk["theo_ma"][str(m)])
+    for m in xep:
+        n = tk["theo_ma"][str(m)]
+        bo = "  ".join(ky[k] for k in PHOI_KHUON_16[m - 1])
+        ghi = ""
+        if m == tk["ma_co_dien"]:
+            ghi = "← mẫu cổ điển §4.3"
+        elif m == tk["ma_dao"]:
+            ghi = "← mẫu đảo §4.3"
+        pct = (n / tong_cum * 100) if tong_cum else 0.0
+        A(f"| {m} | `{bo}` | {n:,} | {pct:.2f}% | {ghi} |")
+    A("")
+    hai_mau = tk["theo_ma"][str(tk["ma_co_dien"])] + tk["theo_ma"][str(tk["ma_dao"])]
+    pct_hai = (hai_mau / tong_cum * 100) if tong_cum else 0.0
+    A(f"Hai mẫu §4.3 chiếm **{hai_mau:,}/{tong_cum:,} = {pct_hai:.2f}%** số cụm.")
+    A(f"Mười bốn tổ hợp còn lại: **{100 - pct_hai:.2f}%**.")
+    A("")
+    A("## 7. Tệp kết quả")
     A("")
     A("| Tệp | Nội dung |")
     A("|---|---|")
@@ -184,6 +294,24 @@ def main() -> int:
     nguyen_nhan_truot = Counter()
     ma_vi_pham = Counter()
     rong_cuu_duoc = 0
+    # §6c: phân bố 16 tổ hợp khuôn của cụm 4 dòng, đếm trên BÀI ĐẠT.
+    # Mẫu số là CỤM, không phải bài: một bài 12 dòng góp 3 cụm.
+    to_hop_khuon = Counter()
+    # Phân bố số dòng phá khuôn của bài TRƯỢT TẦNG 4. Trung bình một mình
+    # che mất hình dạng thật: phân bố lệch phải mạnh, một phần năm số bài
+    # chỉ lệch đúng MỘT dòng. Con số đó quyết định việc nới QĐ-1 có đáng không.
+    pha_khuon_theo_bai = Counter()
+    # Phân bố theo `score` của đường ống sinh dữ liệu. Đo cả hai cờ vì chúng kể
+    # hai chuyện khác nhau: `thuoc_the` gần bão hoà nên che mất tương quan, còn
+    # `dat` mới cho thấy score có dự báo được việc tuân thủ luật hay không.
+    score_tong: Counter = Counter()
+    score_dat: Counter = Counter()
+    score_the: Counter = Counter()
+    # Tầng 5 chỉ chặn 1,46% nên dễ bị nghi là hỏng. Hai con số dưới đây trả lời:
+    # nó không thể chặn nhiều hơn số bài THỰC SỰ không vần, và cổng 4 đứng trước
+    # đã vét phần lớn số ấy. Đo trên MỌI bài thuộc thể, bỏ qua thứ tự cổng.
+    xxxx_tren_thuoc_the = 0   # bài thuộc thể mà không cụm nào có vần chân
+    xxxx_bi_cong4_vet = 0     # trong số ấy, bao nhiêu bị cổng 4 chặn trước
 
     # ── PHỄU THEO CỔNG ──
     # Mỗi tầng: bao nhiêu bài đi vào, bao nhiêu qua, bao nhiêu bị chặn tại đó,
@@ -193,11 +321,13 @@ def main() -> int:
             "so": t.so,
             "ten": t.ten,
             "ma_luat": list(t.ma_luat),
+            "muc": t.muc,
             "trich_luat": t.trich_luat,
             "vao": 0,
             "qua": 0,
             "chan_tai_day": 0,
             "khong_chay": 0,
+            "ghi_nhan_nhung_khong_chan": 0,
         }
         for t in TANG
     }
@@ -258,10 +388,23 @@ def main() -> int:
                     o["khong_chay"] = int(o["khong_chay"]) + 1
                     continue
                 o["vao"] = int(o["vao"]) + 1
+                # Tầng GHI NHẬN luôn cho qua, nên cột "chặn" của nó luôn bằng 0.
+                # Nếu chỉ đếm qua/chặn thì quan sát của tầng biến mất khỏi phễu.
+                # Cột này giữ lại: bao nhiêu bài bị tầng ấy ĐÁNH DẤU mà vẫn đi tiếp.
+                if kq.muc == "ghi_nhan" and any(
+                    giatri is True
+                    for khoa, giatri in kq.chi_tiet.items()
+                    if khoa.startswith("nghi_")
+                ):
+                    o["ghi_nhan_nhung_khong_chan"] = (
+                        int(o.get("ghi_nhan_nhung_khong_chan", 0)) + 1
+                    )
                 if kq.dat:
                     o["qua"] = int(o["qua"]) + 1
                 else:
                     o["chan_tai_day"] = int(o["chan_tai_day"]) + 1
+                    if kq.so == 4:
+                        pha_khuon_theo_bai[int(kq.chi_tiet["so_dong_pha_khuon"])] += 1
                     for vp in kq.vi_pham:
                         ly_do_truot_theo_tang[kq.so][f"{vp.ma}: {vp.ky_vong}"] += 1
                     if not kq.vi_pham:
@@ -283,8 +426,24 @@ def main() -> int:
                             ],
                         })
 
+            if v.thuoc_the and not cua_so_co_van_chan(
+                tuple(bc.tieng[-1] if bc.tieng else "" for bc in v.dong)
+            ):
+                xxxx_tren_thuoc_the += 1
+                if not (v.tang[3].da_chay and v.tang[3].dat):
+                    xxxx_bi_cong4_vet += 1
+
+            diem = res.get("score") if isinstance(res, dict) else None
+            if isinstance(diem, (int, float)):
+                score_tong[diem] += 1
+                score_dat[diem] += int(v.dat)
+                score_the[diem] += int(v.thuoc_the)
+
             if v.dat:
                 n_dat += 1
+                # Bài đạt thì mọi cụm đều có mã (không dòng nào phá khuôn).
+                for ma_cum in v.ma_phoi_khuon_theo_cum:
+                    to_hop_khuon[ma_cum] += 1
                 so_do = " | ".join("".join(k) for k in v.so_do_van_theo_kho)
                 # Lý do đạt phải kể ĐỦ BẢY CỔNG, không chỉ H1–H3.
                 # Bản trước chỉ ghi H1+H2+H3 nên đọc vào tưởng bài chỉ qua ba
@@ -305,6 +464,10 @@ def main() -> int:
                     "tieu_de": tieu_de,
                     "trang_thai": "dat",
                     "thuoc_the": v.thuoc_the,
+                    # Nguyên văn bài thơ, để bản ghi tự đứng được — xem
+                    # `dau_vet_tung_dong`.
+                    "tho": tho,
+                    "dong": dau_vet_tung_dong(v),
                     "tang": [
                         {
                             "so": kq.so, "ten": kq.ten, "ma_luat": list(kq.ma_luat),
@@ -324,7 +487,11 @@ def main() -> int:
                     },
                     "dac_diem_mem": {
                         "so_kho": v.so_kho,
+                        "kich_thuoc_tung_kho": [len(k) for k in tach_kho(tho)],
                         "so_do_van_theo_kho": ["".join(k) for k in v.so_do_van_theo_kho],
+                        "ma_phoi_khuon_theo_cum": list(v.ma_phoi_khuon_theo_cum),
+                        "van_lung": [list(x) for x in v.van_lung],
+                        "cap_van_lech_thanh": [list(x) for x in v.van_lech_thanh],
                         "phoi_khuon_theo_kho": list(v.phoi_khuon_theo_kho),
                         "ty_le_dong_theo_khuon": v.ty_le_theo_khuon,
                         "so_cap_van_lech_thanh": len(v.van_lech_thanh),
@@ -346,6 +513,10 @@ def main() -> int:
                     "trang_thai": "truot",
                     "thuoc_the": v.thuoc_the,
                     "tang_dung_lai": v.tang_dung_lai,
+                    # Nguyên văn + dấu vết từng dòng, giống bài đạt: người đọc
+                    # đối chiếu được lời buộc tội ngay tại chỗ.
+                    "tho": tho,
+                    "dong": dau_vet_tung_dong(v),
                     "tang": [
                         {
                             "so": kq.so, "ten": kq.ten, "da_chay": kq.da_chay,
@@ -417,7 +588,7 @@ def main() -> int:
             "khop": not loi,
             "loi_doi_soat": loi,
         },
-        "pheu_theo_cong": [pheu[t.so] for t in TANG],
+        "pheu_theo_cong": _them_ty_le(pheu, TANG, so_lan_goi_rule),
         "ly_do_truot_theo_tang": {
             str(so): dict(c.most_common(10)) for so, c in ly_do_truot_theo_tang.items() if c
         },
@@ -431,12 +602,46 @@ def main() -> int:
         },
         "ly_do_truot_theo_nhom": dict(sorted(nguyen_nhan_truot.items())),
         "ma_luat_bi_vi_pham": dict(ma_vi_pham),
+        "to_hop_khuon_cum_bon_dong": {
+            "tong_so_cum": sum(to_hop_khuon.values()),
+            "tren_tap": "bai_dat",
+            "theo_ma": {str(m): to_hop_khuon.get(m, 0) for m in range(1, 17)},
+            "ma_co_dien": MA_PHOI_KHUON_CO_DIEN,
+            "ma_dao": MA_PHOI_KHUON_DAO,
+        },
+        "pha_khuon_cua_bai_truot_tang4": {
+            "tong_bai": sum(pha_khuon_theo_bai.values()),
+            "tong_dong_pha": sum(k * v for k, v in pha_khuon_theo_bai.items()),
+            "theo_so_dong_pha": {
+                str(k): pha_khuon_theo_bai[k] for k in sorted(pha_khuon_theo_bai)
+            },
+        },
+        "vi_sao_cong5_chan_it": {
+            "xxxx_tren_toan_bo_bai_thuoc_the": xxxx_tren_thuoc_the,
+            "trong_do_bi_cong4_vet_truoc": xxxx_bi_cong4_vet,
+            "con_lai_cho_cong5": xxxx_tren_thuoc_the - xxxx_bi_cong4_vet,
+        },
+        "phan_bo_score": {
+            str(k): {
+                "so_bai": score_tong[k],
+                "thuoc_the": score_the[k],
+                "dat": score_dat[k],
+            }
+            for k in sorted(score_tong)
+        },
         "bai_rong_co_the_cuu": rong_cuu_duoc,
     }
     (RA / "tong_hop.json").write_text(
         json.dumps(tong_hop, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     _ghi_tong_hop_md(RA / "TONG_HOP.md", tong_hop)
+
+    # Rút phân bố ra tệp nhỏ track được, NGAY TẠI ĐÂY chứ không để chạy tay:
+    # `doi_soat_tai_lieu.py` đọc tệp ấy, nên nó phải sinh cùng lượt với hai tệp
+    # .jsonl. Tách ra chạy tay thì sớm muộn hai bên lệch nhau mà không ai hay.
+    from xuat_phan_bo import xuat as _xuat_phan_bo
+
+    print(f"  phân bố                      : {_xuat_phan_bo().name}")
 
     print("=" * 66)
     print("ĐỐI SOÁT ĐẦU VÀO — ĐẦU RA")
