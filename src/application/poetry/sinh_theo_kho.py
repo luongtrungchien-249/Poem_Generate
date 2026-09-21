@@ -56,6 +56,7 @@ from application.poetry.requirement import PoetryRequirement
 from application.ports.llm import CallContext, LlmPort, UserMessage
 from application.ports.rate_limit import RateLimitPort
 from application.prompting.builder import wrap_xml_tag
+from application.prompting.instructions import CHI_DAN_VIET_TIEP_KHO
 from application.rule import kiem_tra_bai_tho
 from domain.common.errors import BotError, BudgetExceeded
 from domain.common.result import Err, Ok, Result
@@ -97,9 +98,7 @@ def _loi_nhac_khuon(da_co: list[str]) -> str:
         return ""
     return wrap_xml_tag(
         "phan_da_viet",
-        "\n".join(da_co)
-        + "\n\nViết TIẾP khổ kế tiếp, giữ mạch cảm xúc và mạch vần của phần trên. "
-        "KHÔNG chép lại, KHÔNG sửa các dòng đã có.",
+        "\n".join(da_co) + "\n\n" + CHI_DAN_VIET_TIEP_KHO,
     )
 
 

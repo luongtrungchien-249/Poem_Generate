@@ -81,13 +81,38 @@ def lap_ke_hoach(
     )
 
 
+# QĐ-KH-1 phương án B, chủ dự án chốt 21/09/2026: hai trường nội dung lấy từ YÊU
+# CẦU NGƯỜI DÙNG, không thêm một lượt gọi mô hình để nghĩ hộ.
+#
+# 🩸 VÌ SAO CẦN HÀM NÀY. `lap_ke_hoach` nhận `mach_cam_xuc` và `hinh_anh` từ ngoài
+# vào, và docstring module nói rõ đó là "phần mô hình LÀM TỐT HƠN". Nhưng đường sinh
+# thơ gọi `lap_ke_hoach_hop_le(yeu_cau)` — hàm chỉ nhận `req`, không có chỗ truyền
+# hai trường kia. Nên `plan.hinh_anh` LUÔN rỗng và nhánh `if plan.hinh_anh:` trong
+# `mo_ta_ke_hoach_cho_mo_hinh` CHƯA BAO GIỜ chạy. Một ô trống khai báo tử tế, có lý
+# do viết rõ, và không đường nào dẫn tới.
+#
+# GIỚI HẠN CỦA PHƯƠNG ÁN B, ghi ra chứ không giấu: `PoetryRequirement` có trường cho
+# cảm xúc nhưng KHÔNG có trường nào cho hình ảnh. Nên `hinh_anh` vẫn rỗng sau thay
+# đổi này — B chỉ nối được phần có nguồn. Phần hình ảnh nay do khối `CHI_DAN_CHAT_LUONG`
+# ở tầng 2 đảm nhiệm: dạy mô hình cách tự chọn hình ảnh, thay vì chọn hộ nó.
+def _mach_cam_xuc_tu_yeu_cau(req: PoetryRequirement) -> tuple[str, ...]:
+    """Mạch cảm xúc suy từ yêu cầu. Rỗng khi người dùng không nêu.
+
+    CỐ Ý KHÔNG tách thành nhiều ý cho từng khổ: người dùng nêu một cảm xúc thì đó
+    là một cảm xúc, không phải n cảm xúc chia đều. Bịa thêm ý cho các khổ sau là
+    quyết định thay tác giả — cùng lý do cổng B1 không tự chọn hộ số dòng.
+    """
+    gt = req.cam_xuc.gia_tri
+    return (gt.strip(),) if isinstance(gt, str) and gt.strip() else ()
+
+
 def lap_ke_hoach_hop_le(req: PoetryRequirement) -> PoetryPlan | None:
     """Trả kế hoạch chỉ khi nó vượt được `kiem_tra_ke_hoach`, ngược lại None.
 
     Dùng ở đường sinh thơ: kế hoạch hỏng thì đi tiếp KHÔNG kèm kế hoạch, thay vì
     kéo theo một kế hoạch sai làm bước B3 chặn oan mọi bản nháp.
     """
-    plan = lap_ke_hoach(req)
+    plan = lap_ke_hoach(req, mach_cam_xuc=_mach_cam_xuc_tu_yeu_cau(req))
     return plan if not kiem_tra_ke_hoach(plan, req.so_dong_int) else None
 
 

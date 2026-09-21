@@ -44,6 +44,7 @@ from application.poetry.requirement import (
 )
 from application.poetry.sinh_theo_kho import SO_UNG_VIEN_MAC_DINH, sinh_tung_kho
 from application.poetry.state import DauVetTrangThai
+from application.poetry.tieu_de import dat_tieu_de
 from application.poetry.verifier import BienBanDayDu, PoemVerifierDayDu
 from application.ports.llm import CallContext, LlmPort, UserMessage
 from application.ports.poem_corpus import PoemCorpusPort
@@ -85,6 +86,10 @@ class DaSinhTho:
     # §31 — đường đi thật của yêu cầu này qua máy trạng thái. §23 đòi reviewer thấy
     # được lịch sử; không ghi thì sau sự cố không ai biết hệ thống đã đi qua đâu.
     duong_di: tuple[str, ...] = ()
+    # QĐ-TD-1. Rỗng là giá trị HỢP LỆ, không phải lỗi: tiêu đề đặt bằng một lượt
+    # gọi phụ sau khi bài đã qua cổng, và lượt đó hỏng thì bài vẫn nguyên vẹn.
+    # Xem `poetry/tieu_de.py`.
+    tieu_de: str = ""
 
 
 KetQuaSinhTho: TypeAlias = CanLamRo | DaSinhTho
@@ -202,6 +207,13 @@ async def sinh_bai_tho(
                         duong_di=(*vet.duong_di(), "FINAL_RESPONSE"),
                         bo_sinh="tung_kho",
                         so_ung_vien_da_dung=da_dung,
+                        # Đặt tiêu đề SAU cổng kiểm, trên bài đã đạt. Hỏng thì rỗng.
+                        tieu_de=await dat_tieu_de(
+                            bien_ban_kho.van_ban_tho,
+                            llm=llm,
+                            ctx=ctx,
+                            default_model=default_model,
+                        ),
                     )
                 )
         elif isinstance(theo_kho, Err):
@@ -247,5 +259,8 @@ async def sinh_bai_tho(
             duong_di=(*vet.duong_di(), "FINAL_RESPONSE"),
             bo_sinh=bo_sinh,
             so_ung_vien_da_dung=da_dung,
+            tieu_de=await dat_tieu_de(
+                bien_ban.van_ban_tho, llm=llm, ctx=ctx, default_model=default_model
+            ),
         )
     )

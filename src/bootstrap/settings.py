@@ -15,7 +15,15 @@ import yaml
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+# File này nằm ở `src/bootstrap/settings.py`, nên gốc dự án là parents[2]:
+#   parents[0] = bootstrap · parents[1] = src · parents[2] = gốc dự án
+#
+# 🔴 TRƯỚC 21/09/2026 chỗ này là `parents[3]` — trỏ ra THƯ MỤC CHA của dự án. Cả
+# `configs/` chưa bao giờ được nạp: `load_settings` không tìm thấy `base.yaml`
+# nên rơi về mặc định trong mã, và `ModelRouter` nhận danh mục model RỖNG.
+# Không test nào bắt được vì mọi test đều chạy với cùng mặc định đó, và đường
+# dẫn không tồn tại thì mã lặng lẽ bỏ qua thay vì báo lỗi — xem `_load_config`.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIGS_DIR = PROJECT_ROOT / "configs"
 
 Env = Literal["dev", "staging", "production"]
@@ -25,6 +33,17 @@ class ServerConfig(BaseModel):
     host: str = "127.0.0.1"
     port: int = 8000
     workers: int = 1
+    # Origin được phép gọi API từ trình duyệt.
+    #
+    # 🔴 ĐÃ VÁ 21/09/2026. Bản trước đặt cứng `allow_origins=["*"]` KÈM
+    # `allow_credentials=True` trong `app.py`. Starlette xử lý cặp đó bằng cách
+    # ECHO LẠI mọi Origin nhận được, nên bất kỳ website nào cũng gọi được API này
+    # kèm credential. Đo được: gửi `Origin: https://ke-tan-cong.example` thì
+    # response trả về đúng origin đó cộng `allow-credentials: true`.
+    #
+    # Danh sách rỗng = KHÔNG cho phép trình duyệt nào gọi chéo. Đó là mặc định
+    # đúng, vì frontend đi qua BFF của Next.js (same-origin) nên không cần CORS.
+    cors_origins: list[str] = Field(default_factory=list)
 
 
 class LLMConfig(BaseModel):
@@ -165,6 +184,26 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     return merged
 
 
+def _danh_sach(tu_env: str | None, mac_dinh: list[Any] | None) -> list[str]:
+    """Đọc danh sách từ biến môi trường (ngăn bằng dấu phẩy) hoặc từ YAML.
+
+    `"*"` bị TỪ CHỐI tường minh: với `allow_credentials=True` nó khiến middleware
+    echo lại mọi origin, tức là mở cho toàn bộ web. Ai thật sự cần điều đó phải
+    liệt kê từng origin ra, để quyết định ấy nhìn thấy được trong cấu hình.
+    """
+    ds = (
+        [m.strip() for m in tu_env.split(",") if m.strip()]
+        if tu_env
+        else [str(m).strip() for m in (mac_dinh or []) if str(m).strip()]
+    )
+    if "*" in ds:
+        raise ValueError(
+            "CORS_ORIGINS không nhận '*': kèm allow_credentials thì nó mở API cho "
+            "mọi website. Hãy liệt kê từng origin cụ thể."
+        )
+    return ds
+
+
 def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Settings:
     """Nạp cấu hình theo thứ tự ưu tiên: base.yaml < <env>.yaml < biến môi trường."""
     cfg_dir = configs_dir or CONFIGS_DIR
@@ -191,6 +230,9 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             host=os.getenv("HOST", server_raw.get("host", "127.0.0.1")),
             port=int(os.getenv("PORT", server_raw.get("port", 8000))),
             workers=int(os.getenv("WORKERS", server_raw.get("workers", 1))),
+            cors_origins=_danh_sach(
+                os.getenv("CORS_ORIGINS"), server_raw.get("cors_origins", [])
+            ),
         ),
         llm=LLMConfig(
             default_provider=_kiem_lua_chon(

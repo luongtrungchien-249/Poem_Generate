@@ -11,6 +11,7 @@ from entrypoints.api.middleware.error_handler import ErrorHandlerMiddleware
 from entrypoints.api.middleware.rate_limit import RateLimitMiddleware
 from entrypoints.api.middleware.request_context import RequestContextMiddleware
 from entrypoints.api.routers.chat import router as chat_router
+from entrypoints.api.routers.conversations import router as conversations_router
 from entrypoints.api.routers.documents import router as documents_router
 from entrypoints.api.routers.feedback import router as feedback_router
 from entrypoints.api.routers.health import router as health_router
@@ -52,13 +53,24 @@ def create_app() -> FastAPI:
     )
 
     # Middlewares (order: Outer -> Inner)
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # CORS chỉ bật khi có origin được khai TƯỜNG MINH.
+    #
+    # Frontend đi qua BFF của Next.js nên mọi lệnh gọi đều same-origin — không cần
+    # CORS chút nào. Danh sách rỗng thì KHÔNG gắn middleware, và trình duyệt tự
+    # chặn mọi lệnh gọi chéo. Đó là mặc định đúng.
+    #
+    # Bản trước: `allow_origins=["*"]` kèm `allow_credentials=True`. Starlette xử
+    # lý cặp đó bằng cách echo lại mọi Origin, nên mọi website đều gọi được API
+    # này kèm credential — xem chú thích ở `ServerConfig.cors_origins`.
+    cors_origins = get_settings().server.cors_origins
+    if cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_credentials=True,
+            allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+            allow_headers=["content-type", "x-api-key"],
+        )
     app.add_middleware(ErrorHandlerMiddleware)
     app.add_middleware(RateLimitMiddleware, capacity=100, refill_rate=5.0)
     # AuthMiddleware add SAU RequestContextMiddleware nên chạy TRƯỚC nó: Starlette
@@ -75,6 +87,7 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(feedback_router)
     app.include_router(poem_router)
+    app.include_router(conversations_router)
 
     return app
 
