@@ -26,6 +26,14 @@ api = [
 worker = [
     "redis>=5.0.0",
 ]
+# Lưu trữ SQL — MỘT adapter, hai dialect (xem adapters/persistence/sql/).
+# `sqlalchemy` + `aiosqlite` là phụ thuộc LÕI của nhánh lưu trữ bền vững, vì nhờ
+# chúng mà adapter Postgres test được ngay trong CI bằng SQLite.
+sql = [
+    "sqlalchemy>=2.0.30",
+    "aiosqlite>=0.20.0",
+    "alembic>=1.13.0",
+]
 postgres = [
     "sqlalchemy>=2.0.30",
     "asyncpg>=0.29.0",
@@ -40,6 +48,10 @@ dev = [
     "mypy>=1.10.0",
     "import-linter>=2.0",
     "pre-commit>=3.7.0",
+    # Để test lưu trữ bền vững chạy được mà không cần hạ tầng.
+    "sqlalchemy>=2.0.30",
+    "aiosqlite>=0.20.0",
+    "alembic>=1.13.0",
 ]
 
 [project.scripts]
@@ -60,6 +72,7 @@ markers = [
     "integration: cần hạ tầng thật (Postgres, Redis, Qdrant)",
     "contract: kiểm chứng hợp đồng HTTP/SSE của API",
     "architecture: kiểm chứng ranh giới tầng",
+    "postgres: cần một PostgreSQL thật qua DATABASE_URL; tự bỏ qua khi không có",
 ]
 
 [tool.ruff]

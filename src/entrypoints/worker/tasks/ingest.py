@@ -4,6 +4,7 @@ from application.ingest.chunker import TextChunker
 from application.ingest.enricher import ChunkEnricher
 from bootstrap.container import get_container
 from contracts.chunk import Document
+from domain.conversation.tenant import TenantScope
 
 logger = logging.getLogger("worker.ingest")
 
@@ -23,7 +24,9 @@ async def run_ingest_task(document: Document) -> int:
     enriched_chunks = await enricher.enrich_chunks(raw_chunks)
 
     # 3. Vector Indexing
-    await container.vector_repo.insert_chunks(enriched_chunks)
+    await container.vector_repo.insert_chunks(
+        TenantScope(tenant_id=document.tenant_id), enriched_chunks
+    )
     logger.info(f"Successfully indexed {len(enriched_chunks)} chunks for doc {document.id}.")
 
     return len(enriched_chunks)

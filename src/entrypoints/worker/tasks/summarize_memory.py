@@ -2,15 +2,20 @@ import logging
 
 from bootstrap.container import get_container
 from contracts.chat import Role
+from domain.conversation.tenant import TenantScope
 
 logger = logging.getLogger("worker.summarize_memory")
 
 
-async def run_summarize_memory_task(session_id: str, user_id: str) -> None:
+async def run_summarize_memory_task(
+    session_id: str, user_id: str, tenant_id: str = "default"
+) -> None:
     """Worker task: Compresses short-term messages and extracts persistent user facts."""
     container = get_container()
     logger.info(f"Summarizing memory for session '{session_id}', user '{user_id}'...")
-    msgs = await container.session_memory.get_recent_messages(session_id, max_turns=20)
+    msgs = await container.session_memory.get_recent_messages(
+        TenantScope(tenant_id=tenant_id), session_id, max_turns=20
+    )
 
     if not msgs:
         return

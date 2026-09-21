@@ -7,6 +7,7 @@ from application.ingest.enricher import ChunkEnricher
 from application.ingest.loader import DocumentLoader
 from application.rag.context_builder import ContextAssembler
 from application.rag.retriever import HybridRetriever
+from domain.conversation.tenant import TenantScope
 
 
 @pytest.mark.asyncio
@@ -28,11 +29,11 @@ async def test_rag_pipeline_end_to_end():
     enricher = ChunkEnricher(embedding_client=mock_llm)
     enriched = await enricher.enrich_chunks(chunks)
     assert enriched[0].embedding is not None
-    await vector_repo.insert_chunks(enriched)
+    await vector_repo.insert_chunks(TenantScope.mac_dinh(), enriched)
 
     # 4. Retrieve
-    retriever = HybridRetriever(vector_repo=vector_repo, llm_client=mock_llm)
-    results = await retriever.retrieve(query="kiểm thử tự động", top_k=2)
+    retriever = HybridRetriever(vector_repo=vector_repo, embedder=mock_llm)
+    results = await retriever.retrieve(TenantScope.mac_dinh(), query="kiểm thử tự động", top_k=2)
     assert len(results) >= 1
 
     # 5. Context Assembly

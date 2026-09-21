@@ -53,6 +53,24 @@ Một phép đo ban đầu dùng `[a-zA-Z]` để tìm "tên riêng nước ngo�
 số dòng. `do_lai.py` là bản đo lại, dùng `f, j, w, z` — các chữ không thuộc bảng
 chữ tiếng Việt.
 
+## `tuyen_tho_mau.py` — sinh tập mẫu cho few-shot
+
+```bash
+python datalake/scripts/tuyen_tho_mau.py
+```
+
+Tuyển 300 bài từ `bai_dat.jsonl` (266 MB, gitignored) ra
+`datalake/corpus_tuyen/tho_mau.jsonl` (149 KB, **commit được**), để cơ chế few-shot
+chạy được trên checkout sạch.
+
+Phép lấy mẫu **tất định và mù với chất lượng**: chia theo số dòng, lấy cách đều
+theo thứ tự xuất hiện, hạn ngạch cố định. Không xếp hạng, không chấm điểm, không
+đọc nội dung — chọn tay "bài hay" sẽ làm số liệu sinh thơ đẹp lên mà không ai kiểm
+được, đúng kiểu sai lầm §1.1 của `Plan_Rule_Phan_Tang.md`.
+
+Mỗi bài được chạy lại qua `rule.py` trước khi ghi; bài không đạt bị loại và script
+báo số lượng.
+
 ## Lưu ý về `ba_viec.py`
 
 Script này **ghi đè** ba tệp JSONL trong `datalake/analysis/`. Nếu bạn sửa tay các

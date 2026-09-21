@@ -36,8 +36,23 @@ class LLMConfig(BaseModel):
     mock_fallback_on_missing_key: bool = True
 
 
+class AuthConfig(BaseModel):
+    """G10 — xác thực API key.
+
+    `api_keys` là bảng KHOÁ -> TENANT. Để rỗng nghĩa là TẮT xác thực (chế độ dev),
+    và điều đó được ghi vào `request.state.da_xac_thuc` để không ai nhầm "chưa bật"
+    với "đã bật và qua được".
+
+    ⚠️ Khoá là BÍ MẬT nên KHÔNG nằm trong YAML. Nạp từ biến môi trường
+    `API_KEYS` dạng `khoa1:tenant1,khoa2:tenant2` — xem `Secrets.api_keys`.
+    """
+
+    bat: bool = False
+
+
 class StorageConfig(BaseModel):
-    kind: Literal["in_memory", "postgres"] = "in_memory"
+    kind: Literal["in_memory", "sqlite", "sql", "postgres"] = "in_memory"
+    sqlite_path: str = "data/app.sqlite3"
     vector_kind: Literal["in_memory", "pgvector", "qdrant"] = "in_memory"
     database_url: str | None = None
     redis_url: str | None = None
@@ -71,6 +86,23 @@ class Secrets(BaseSettings):
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     redis_url: str | None = Field(default=None, alias="REDIS_URL")
     qdrant_url: str | None = Field(default=None, alias="QDRANT_URL")
+    # Dạng "khoa1:tenant1,khoa2:tenant2". Rỗng = tắt xác thực (dev).
+    api_keys: str | None = Field(default=None, alias="API_KEYS")
+
+    def bang_khoa_tenant(self) -> dict[str, str]:
+        """Phân tích `API_KEYS` thành bảng khoá -> tenant.
+
+        Mục hỏng bị BỎ QUA chứ không làm sập khởi động — nhưng cũng không được
+        lặng lẽ biến thành một khoá rỗng cho phép mọi người vào.
+        """
+        if not self.api_keys:
+            return {}
+        bang: dict[str, str] = {}
+        for muc in self.api_keys.split(","):
+            khoa, _, tenant = muc.partition(":")
+            if khoa.strip() and tenant.strip():
+                bang[khoa.strip()] = tenant.strip()
+        return bang
 
 
 class Settings(BaseModel):
@@ -84,6 +116,7 @@ class Settings(BaseModel):
     rag: RagConfig = Field(default_factory=RagConfig)
     guardrails: GuardrailsConfig = Field(default_factory=GuardrailsConfig)
     rate_limit: RateLimitConfig = Field(default_factory=RateLimitConfig)
+    auth: AuthConfig = Field(default_factory=AuthConfig)
     secrets: Secrets = Field(default_factory=Secrets)
 
     @property

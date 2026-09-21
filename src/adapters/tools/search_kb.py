@@ -2,6 +2,7 @@ from typing import Any
 
 from application.agent.tools.registry import tool_registry
 from application.rag.retriever import HybridRetriever
+from domain.conversation.tenant import TenantScope
 
 
 def register_search_kb_tool(retriever: HybridRetriever | None = None) -> None:
@@ -24,9 +25,14 @@ def register_search_kb_tool(retriever: HybridRetriever | None = None) -> None:
             "required": ["query"],
         },
     )
-    async def search_kb(query: str, top_k: int = 3) -> list[dict[str, Any]]:
+    async def search_kb(query: str, top_k: int = 3, tenant_id: str = "default") -> list[dict[str, Any]]:
+        # Tool nhận `tenant_id` tường minh thay vì đọc biến toàn cục: sổ đăng ký
+        # tool dùng chung cho mọi request, nên trạng thái toàn cục ở đây là đường
+        # rò dữ liệu giữa các tenant chạy song song.
         if retriever:
-            results = await retriever.retrieve(query=query, top_k=top_k)
+            results = await retriever.retrieve(
+                TenantScope(tenant_id=tenant_id), query=query, top_k=top_k
+            )
             return [
                 {
                     "chunk_id": r.chunk_id,

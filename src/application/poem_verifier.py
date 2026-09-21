@@ -17,13 +17,69 @@ from application.ports.verifier import (
     LoiKiemDinh,
     OutputSpec,
 )
-from application.rule import PoemVerdict, kiem_tra_bai_tho, mo_ta_luat
+from application.rule import BaoCaoDong, PoemVerdict, kiem_tra_bai_tho, mo_ta_luat
 
 MA_THE = "that_ngon_tu_do"
 
 
 def _dia_chi(dong: int | None) -> str:
     return f"D{dong}" if dong is not None else "toàn bài"
+
+
+# Hai khuôn hợp lệ ở P2/P4/P6 — QĐ-2. Đọc từ nghĩa của luật, không phải hằng số mới.
+_KHUON = {"bang": ("B", "T", "B"), "trac": ("T", "B", "T")}
+
+
+def _chi_ro_thanh(bc: BaoCaoDong) -> tuple[str, ...]:
+    """Nói RÕ tiếng nào ở vị trí nào, và đổi tiếng nào thì đủ.
+
+    🩸 VÌ SAO CẦN — đo thật, 21/09/2026.
+
+    Biên bản bản trước viết: *"cần P2/P4/P6 luân phiên..., đang có P2/P4/P6 = T T B"*.
+    Đúng nhưng KHÔNG DÙNG ĐƯỢC: mô hình phải tự đếm để biết P4 là tiếng nào — mà
+    đếm vị trí âm tiết chính là thứ nó làm sai ngay từ đầu. Bảo nó "sửa P4" chẳng
+    khác gì bảo "sửa chỗ sai".
+
+    Đo trên gpt-4o-mini, 12 yêu cầu: 3/12 đạt, và **100% ca trượt đều là S2**.
+    gpt-4o cũng vậy (0/6) — nên đây không phải giới hạn trí thông minh của mô hình,
+    mà là biên bản chưa nói đủ cụ thể.
+
+    Nay nêu thẳng: tiếng nào, thanh gì, và ĐỔI TIẾNG NÀO THÌ ĐỦ — chọn khuôn gần
+    nhất để số chỗ phải đổi là ít nhất.
+
+    ⛔ VẪN KHÔNG VIẾT THƠ HỘ. Chỉ nói *"tiếng thứ 4 phải mang thanh bằng"*, không
+    bao giờ gợi ý dùng chữ nào. Bộ kiểm phán, mô hình viết — P2 của plan.
+    """
+    if bc.khuon != "pha" or len(bc.thanh) < 6:
+        return ()
+    vi_tri = (2, 4, 6)
+    hien = tuple(bc.thanh[i] for i in (1, 3, 5))
+    tieng = tuple(bc.tieng[i] for i in (1, 3, 5))
+
+    dang_co = " · ".join(
+        f'P{v}="{t}"({h})' for v, t, h in zip(vi_tri, tieng, hien, strict=True)
+    )
+
+    # Khuôn GẦN NHẤT = ít chỗ phải đổi nhất. Nêu cả hai khuôn thì mô hình phải tự
+    # chọn, và nó hay chọn khuôn xa hơn rồi phải đổi ba tiếng thay vì một.
+    ten, muc_tieu = min(
+        _KHUON.items(), key=lambda kv: sum(a != b for a, b in zip(hien, kv[1], strict=True))
+    )
+    can_doi = [
+        (v, t, c)
+        for v, t, h, c in zip(vi_tri, tieng, hien, muc_tieu, strict=True)
+        if h != c
+    ]
+    ten_thanh = {"B": "BẰNG (không dấu hoặc huyền)", "T": "TRẮC (sắc, hỏi, ngã, nặng)"}
+    sua = "; ".join(
+        f'đổi tiếng thứ {v} (hiện là "{t}") thành một tiếng thanh {ten_thanh[c]}'
+        for v, t, c in can_doi
+    )
+    return (
+        f"đang có {dang_co}  =>  {' '.join(hien)}",
+        f"gần khuôn {ten} ({' '.join(muc_tieu)}) nhất — {sua}",
+        "Giữ nguyên các tiếng ở vị trí 1, 3, 5, 7: chúng tự do về thanh.",
+    )
 
 
 def dung_bien_ban(v: PoemVerdict) -> str:
@@ -51,8 +107,15 @@ def dung_bien_ban(v: PoemVerdict) -> str:
         else:
             khuc.append(f"{_dia_chi(vp.dong)} |")
         khuc.append(f"   | {mo_ta_luat(vp.ma)}")
-        khuc.append(f"   | cần {vp.ky_vong}, đang có {vp.thuc_te}")
-        khuc.append(f"   | {vp.goi_y}")
+        # S2 (thanh luật) được nói CỤ THỂ hơn: đo thật cho thấy 100% ca trượt là
+        # S2, và nguyên nhân là biên bản không chỉ ra tiếng nào ở vị trí nào.
+        chi_tiet = _chi_ro_thanh(bc) if (vp.ma == "S2" and bc is not None) else ()
+        if chi_tiet:
+            for d in chi_tiet:
+                khuc.append(f"   | {d}")
+        else:
+            khuc.append(f"   | cần {vp.ky_vong}, đang có {vp.thuc_te}")
+            khuc.append(f"   | {vp.goi_y}")
 
     dong_hong = {vp.dong for vp in v.vi_pham if vp.dong is not None}
     dong_dat = [d.so for d in v.dong if d.so not in dong_hong]

@@ -96,3 +96,109 @@ def test_feedback_submission():
     resp = client.post("/v1/feedback", json=fb_payload)
     assert resp.status_code == 200
     assert resp.json()["rating"] == 1
+
+
+# ── 🔴 Lỗ hổng streaming bỏ qua output rails — đã vá 21/09/2026 ───────────────
+
+
+def _doc_sse(text: str) -> list[dict]:
+    """Tách các sự kiện SSE thành dict, bỏ [DONE]."""
+    import json as _json
+
+    ra = []
+    for dong in text.splitlines():
+        if not dong.startswith("data: "):
+            continue
+        body = dong[6:].strip()
+        if body == "[DONE]":
+            continue
+        ra.append(_json.loads(body))
+    return ra
+
+
+def test_stream_KHONG_duoc_di_vong_qua_output_rails(monkeypatch):
+    """Bản trước yield thẳng `chunk.delta`, nên `stream=true` tắt rào chắn.
+
+    Ép mock phát ra một email bị CẮT ĐÔI giữa hai chunk — ca mà bộ lọc từng chunk
+    độc lập sẽ bỏ sót hoàn toàn.
+    """
+    from adapters.llm.mock import MockLLMClient
+    from application.ports.llm_client import LLMStreamChunk
+
+    async def phat_email(self, messages, model="mock-gpt", **kw):
+        for phan in ["Liên hệ nguyen@vi", "du.com để biết thêm."]:
+            yield LLMStreamChunk(delta=phan)
+        yield LLMStreamChunk(delta="", finish_reason="stop")
+
+    monkeypatch.setattr(MockLLMClient, "stream", phat_email)
+
+    resp = client.post(
+        "/v1/chat",
+        json={
+            "messages": [{"role": "user", "content": "cho tôi email liên hệ"}],
+            "stream": True,
+            "enable_rag": False,
+            "enable_guardrails": True,
+        },
+    )
+    assert resp.status_code == 200
+    toan_bo = "".join(e.get("delta", "") for e in _doc_sse(resp.text))
+
+    assert "nguyen@vidu.com" not in toan_bo, "email lọt ra qua luồng SSE"
+    assert "[REDACTED_EMAIL]" in toan_bo, "phải che chứ không phải nuốt mất"
+
+
+def test_stream_doc_to_thi_chan_giua_chung_va_bao_ly_do(monkeypatch):
+    from adapters.llm.mock import MockLLMClient
+    from application.ports.llm_client import LLMStreamChunk
+
+    async def phat_doc_to(self, messages, model="mock-gpt", **kw):
+        yield LLMStreamChunk(delta="Câu trả lời là ")
+        yield LLMStreamChunk(delta="đồ ngu")
+        yield LLMStreamChunk(delta="", finish_reason="stop")
+
+    monkeypatch.setattr(MockLLMClient, "stream", phat_doc_to)
+
+    resp = client.post(
+        "/v1/chat",
+        json={
+            "messages": [{"role": "user", "content": "hỏi gì đó"}],
+            "stream": True,
+            "enable_rag": False,
+            "enable_guardrails": True,
+        },
+    )
+    su_kien = _doc_sse(resp.text)
+    chan = [e for e in su_kien if e.get("finish_reason") == "blocked_by_guardrail"]
+    assert chan, "phải có sự kiện báo bị chặn"
+    assert chan[0]["error"]
+
+    toan_bo = "".join(e.get("delta", "") for e in su_kien)
+    assert "đồ ngu" not in toan_bo
+
+
+def test_stream_van_ban_sach_van_di_ra_nguyen_ven(monkeypatch):
+    """Rào chắn không được làm hỏng đường thuận."""
+    from adapters.llm.mock import MockLLMClient
+    from application.ports.llm_client import LLMStreamChunk
+
+    GOC = "Xin chào, đây là một câu trả lời hoàn toàn bình thường và an toàn."
+
+    async def phat_sach(self, messages, model="mock-gpt", **kw):
+        for ky_tu in GOC:
+            yield LLMStreamChunk(delta=ky_tu)
+        yield LLMStreamChunk(delta="", finish_reason="stop")
+
+    monkeypatch.setattr(MockLLMClient, "stream", phat_sach)
+
+    resp = client.post(
+        "/v1/chat",
+        json={
+            "messages": [{"role": "user", "content": "chào"}],
+            "stream": True,
+            "enable_rag": False,
+            "enable_guardrails": True,
+        },
+    )
+    toan_bo = "".join(e.get("delta", "") for e in _doc_sse(resp.text))
+    assert toan_bo == GOC, "không được mất chữ nào của văn bản sạch"

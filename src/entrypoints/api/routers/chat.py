@@ -9,9 +9,16 @@ from fastapi.responses import StreamingResponse
 from adapters.observability.metrics import metrics
 from adapters.observability.tracing import get_current_trace_id, trace_span
 from contracts.chat import ChatRequest, ChatResponse, Message, Role
-from domain.guardrails.input import check_input_length, detect_injection, mask_pii
+from domain.guardrails.input import (
+    check_forbidden_topics,
+    check_input_length,
+    detect_injection,
+    mask_pii,
+)
 from domain.guardrails.output import enforce_output_guardrails
+from domain.guardrails.output.streaming import Chan, StreamingOutputGuard
 from entrypoints.api.deps import AppContainer, get_container
+from entrypoints.api.middleware.auth import tenant_scope_cua
 
 router = APIRouter(prefix="/v1", tags=["Chat"])
 
@@ -24,7 +31,13 @@ async def chat_endpoint(
 ):
     start_time = time.perf_counter()
     trace_id = getattr(raw_request.state, "trace_id", get_current_trace_id())
-    tenant_id: str = req.tenant_id or str(getattr(raw_request.state, "tenant_id", "default"))
+    # G10 — tenant đến từ XÁC THỰC, KHÔNG từ thân request.
+    #
+    # Bản trước: `req.tenant_id or ...` — người gọi tự khai tenant của mình. Mọi
+    # cô lập ở tầng dưới đều vô nghĩa khi danh tính do chính người gọi đặt.
+    # `req.tenant_id` nay bị BỎ QUA hoàn toàn; có test ghim điều đó.
+    scope = tenant_scope_cua(raw_request)
+    tenant_id: str = scope.tenant_id
     # Danh tính người gọi hiện chưa được dùng: Bước 3 sẽ đưa nó vào RequestContext
     # để bộ nhớ hồ sơ và kiểm soát truy cập theo người dùng hoạt động.
     _user_id = req.user_id or getattr(raw_request.state, "user_id", "anonymous")
@@ -49,9 +62,25 @@ async def chat_endpoint(
                 detail=f"Security Guardrail Triggered: Potential prompt injection detected ({', '.join(inj_res.matched_patterns)}).",
             )
 
+        # §17.3 — phân loại chủ đề. TRƯỚC 21/09/2026 `check_forbidden_topics` tồn
+        # tại nhưng không đường nào gọi tới: một rào chắn không được nối thì chỉ
+        # làm cho bản kiểm kê trông đầy đủ.
+        topic_res = check_forbidden_topics(raw_query)
+        if topic_res.muc == "BLOCK":
+            raise HTTPException(
+                status_code=400,
+                detail=f"Chủ đề không được hỗ trợ ({topic_res.category}): {topic_res.ly_do}",
+            )
+        # REVIEW thì VẪN xử lý — đánh dấu để HITL (§22) xem lại, không chặn người
+        # dùng chỉ vì họ nói nặng lời. Chặn ở đây là biến bộ lọc thành bộ kiểm duyệt.
+        can_xem_lai = topic_res.muc == "REVIEW"
+
         # Mask PII
         pii_res = mask_pii(raw_query)
         last_user_msg.content = pii_res.masked_text
+
+    else:
+        can_xem_lai = False
 
     # 3. Model selection & routing
     chosen_model = app_container.router.select_model(
@@ -68,9 +97,11 @@ async def chat_endpoint(
     if req.enable_rag:
         with trace_span("rag_retrieval", {"query": raw_query}):
             retrieved = await app_container.retriever.retrieve(
+                scope,
                 query=raw_query,
                 top_k=4,
-                filters={"tenant_id": tenant_id},
+                # 🩸 `filters={"tenant_id": ...}` ĐÃ BỎ: tenant lọc trên field qua
+                # `scope`, không qua metadata. Xem docstring của InMemoryVectorRepository.
             )
             reranked = await app_container.reranker.rerank(raw_query, retrieved, top_n=3)
             rag_context, citations = app_container.context_assembler.assemble(reranked)
@@ -80,7 +111,9 @@ async def chat_endpoint(
     session_messages = list(req.messages)
     if req.session_id:
         with trace_span("load_session_memory"):
-            history = await app_container.session_memory.get_recent_messages(req.session_id)
+            history = await app_container.session_memory.get_recent_messages(
+                scope, req.session_id
+            )
             if history:
                 session_messages = history + [last_user_msg]
 
@@ -99,10 +132,25 @@ async def chat_endpoint(
             metrics.active_requests.inc()
             first_token_recorded = False
             token_start = time.perf_counter()
-            full_content = []
+
+            # 🔴 LỖ HỔNG ĐÃ VÁ 21/09/2026. Bản trước yield thẳng `chunk.delta` ra
+            # SSE, nên `stream=true` đi vòng qua TOÀN BỘ output rails — bật stream
+            # là tắt rào chắn đầu ra. Nay mọi mẩu đều phải qua guard.
+            #
+            # Guard giữ lại một cửa sổ ký tự cuối trước khi phát, để một mẫu bị cắt
+            # đôi giữa hai chunk vẫn bị bắt TRƯỚC khi nửa đầu kịp đi ra. Đánh đổi:
+            # chữ hiện chậm hơn vài chục ký tự. Xem docstring của module guard.
+            guard = (
+                StreamingOutputGuard(valid_chunk_ids=list(valid_chunk_ids))
+                if req.enable_guardrails
+                else None
+            )
+
+            def _su_kien(**truong: Any) -> str:
+                return f"data: {json.dumps(truong, ensure_ascii=False)}\n\n"
 
             try:
-                async for chunk in app_container.default_llm.stream(
+                async for chunk in app_container.streamer.stream(
                     messages=session_messages,
                     model=chosen_model,
                     temperature=req.temperature,
@@ -113,22 +161,59 @@ async def chat_endpoint(
                         metrics.time_to_first_token.labels(model=chosen_model).observe(ttft)
                         first_token_recorded = True
 
-                    full_content.append(chunk.delta)
-                    data = {
-                        "delta": chunk.delta,
-                        "finish_reason": chunk.finish_reason,
-                        "trace_id": trace_id,
-                        "citation_ids": valid_chunk_ids if chunk.finish_reason else None,
-                    }
-                    yield f"data: {json.dumps(data, ensure_ascii=False)}\n\n"
+                    if guard is None:
+                        phat = chunk.delta
+                    else:
+                        kq = guard.nap(chunk.delta)
+                        if isinstance(kq, Chan):
+                            # FAIL CLOSED giữa luồng: không phát thêm chữ nào nữa.
+                            yield _su_kien(
+                                delta="", finish_reason="blocked_by_guardrail",
+                                error=kq.ly_do, trace_id=trace_id,
+                            )
+                            metrics.record_request(
+                                "/v1/chat", tenant_id, "400",
+                                time.perf_counter() - start_time, chosen_model,
+                            )
+                            return
+                        phat = kq.text
+
+                    # Mẩu rỗng vì đang bị giữ lại thì KHÔNG phát sự kiện trống —
+                    # trừ mẩu mang `finish_reason`, vốn là tín hiệu chứ không phải chữ.
+                    if phat or chunk.finish_reason:
+                        yield _su_kien(
+                            delta=phat,
+                            finish_reason=chunk.finish_reason,
+                            trace_id=trace_id,
+                            citation_ids=valid_chunk_ids if chunk.finish_reason else None,
+                        )
+
+                # Xả nốt phần còn giữ lại, sau khi soi lần cuối trên toàn văn.
+                if guard is not None:
+                    cuoi = guard.ket_thuc()
+                    if isinstance(cuoi, Chan):
+                        yield _su_kien(
+                            delta="", finish_reason="blocked_by_guardrail",
+                            error=cuoi.ly_do, trace_id=trace_id,
+                        )
+                        metrics.record_request(
+                            "/v1/chat", tenant_id, "400",
+                            time.perf_counter() - start_time, chosen_model,
+                        )
+                        return
+                    if cuoi.text:
+                        yield _su_kien(delta=cuoi.text, finish_reason=None, trace_id=trace_id)
 
                 yield "data: [DONE]\n\n"
 
-                # Save turn to session memory if provided
+                # Lưu vào bộ nhớ phiên VĂN BẢN ĐÃ QUA RÀO, không phải văn bản thô.
+                # Lưu bản thô thì PII đã bị che ở đầu ra lại nằm nguyên trong lịch
+                # sử, và sẽ quay lại prompt ở lượt sau — rò qua đường vòng.
                 if req.session_id:
-                    await app_container.session_memory.add_message(req.session_id, last_user_msg)
+                    da_sinh = guard.toan_van if guard is not None else ""
+                    await app_container.session_memory.add_message(scope, req.session_id, last_user_msg)
                     await app_container.session_memory.add_message(
-                        req.session_id, Message(role=Role.ASSISTANT, content="".join(full_content))
+                        scope, req.session_id, Message(role=Role.ASSISTANT, content=da_sinh)
                     )
 
                 duration = time.perf_counter() - start_time
@@ -142,7 +227,7 @@ async def chat_endpoint(
     # Non-streaming response
     with trace_span("llm_generate", {"model": chosen_model}):
         async def call_llm(model_name: str):
-            return await app_container.default_llm.generate(
+            return await app_container.generator.generate(
                 messages=session_messages,
                 model=model_name,
                 temperature=req.temperature,
@@ -166,9 +251,9 @@ async def chat_endpoint(
 
     # 8. Record session memory
     if req.session_id:
-        await app_container.session_memory.add_message(req.session_id, last_user_msg)
+        await app_container.session_memory.add_message(scope, req.session_id, last_user_msg)
         await app_container.session_memory.add_message(
-            req.session_id, Message(role=Role.ASSISTANT, content=final_content)
+            scope, req.session_id, Message(role=Role.ASSISTANT, content=final_content)
         )
 
     # 9. Observability & Metrics
@@ -186,5 +271,7 @@ async def chat_endpoint(
         cost_usd=llm_resp.cost_usd,
         trace_id=trace_id,
         citations=citations,
-        guardrail_verdict={"allowed": True} if verdict else None,
+        guardrail_verdict=(
+            {"allowed": True, "can_xem_lai": can_xem_lai} if verdict else None
+        ),
     )

@@ -50,3 +50,17 @@ observability:
   tracing_enabled: true
   metrics_enabled: true
   cost_tracking_enabled: true
+
+
+# G10 — xác thực. Khoá là BÍ MẬT nên KHÔNG ở đây; nạp qua biến môi trường
+# API_KEYS dạng "khoa1:tenant1,khoa2:tenant2". Để trống = tắt xác thực (dev).
+auth:
+  bat: false
+
+# G12 — lưu trữ. `in_memory` (mất khi restart) · `sqlite` (bền vững, một tiến
+# trình) · `sql` (DSN bất kỳ, kể cả postgresql+asyncpg:// cho nhiều worker).
+#
+# Cùng MỘT adapter cho `sqlite` và `sql` — xem adapters/persistence/sql/engine.py.
+storage:
+  kind: in_memory
+  sqlite_path: data/app.sqlite3

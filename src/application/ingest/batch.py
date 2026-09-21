@@ -1,6 +1,6 @@
 import math
 
-from application.ports.llm_client import LLMClient
+from application.ports.embedding import EmbeddingPort
 
 
 def normalize_l2(vector: list[float]) -> list[float]:
@@ -14,7 +14,7 @@ def normalize_l2(vector: list[float]) -> list[float]:
 class BatchEmbedder:
     """Processes large collections of text chunks in batches."""
 
-    def __init__(self, client: LLMClient, batch_size: int = 32) -> None:
+    def __init__(self, client: EmbeddingPort, batch_size: int = 32) -> None:
         self.client = client
         self.batch_size = batch_size
 

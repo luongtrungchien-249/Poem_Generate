@@ -1,4 +1,4 @@
-.PHONY: install lint types arch test test-unit run docker-up check
+.PHONY: install lint types arch test test-unit test-integration migrate migration run docker-up check
 
 install:
 	pip install -e ".[api,worker,dev]"
@@ -17,6 +17,17 @@ test:
 
 test-unit:
 	pytest -q tests/unit
+
+# Test tích hợp. Không có DATABASE_URL thì nhánh Postgres tự bỏ qua.
+test-integration:
+	pytest -q tests/integration
+
+# Migration. DSN lấy từ DATABASE_URL; không có thì dùng SQLite cục bộ.
+migrate:
+	alembic upgrade head
+
+migration:
+	alembic revision --autogenerate -m "$(m)"
 
 check: lint types arch test
 

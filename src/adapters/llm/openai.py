@@ -5,8 +5,47 @@ from typing import Any
 import httpx
 
 from adapters.observability.cost import cost_calculator
-from application.ports.llm_client import LLMResponse, LLMStreamChunk
+from application.ports.llm_client import (
+    LLMResponse,
+    LLMStreamChunk,
+    ToolCallOut,
+    ToolSchema,
+)
 from contracts.chat import Message
+
+
+def _sang_payload(m: Message) -> dict[str, Any]:
+    """Đổi một `Message` sang lượt hội thoại của OpenAI.
+
+    BA VAI CẦN XỬ LÝ RIÊNG, không chỉ role+content:
+
+      - lượt `assistant` XIN GỌI TOOL phải mang `tool_calls`. Bỏ trường này đi thì
+        lượt `tool` ngay sau nó trở thành mồ côi và API trả 400.
+      - lượt `tool` phải mang `tool_call_id` để ghép với lời gọi tương ứng.
+      - `content` của lượt assistant xin gọi tool có thể rỗng — đó là hợp lệ.
+    """
+    ra: dict[str, Any] = {"role": m.role.value, "content": m.content}
+    if m.tool_calls:
+        ra["tool_calls"] = m.tool_calls
+        # OpenAI đòi content là null (không phải chuỗi rỗng) khi chỉ có tool_calls.
+        ra["content"] = m.content or None
+    if m.tool_call_id:
+        ra["tool_call_id"] = m.tool_call_id
+    if m.name:
+        ra["name"] = m.name
+    return ra
+
+
+def _sang_tool_openai(t: ToolSchema) -> dict[str, Any]:
+    """Lược đồ trung lập -> định dạng function của OpenAI."""
+    return {
+        "type": "function",
+        "function": {
+            "name": t["name"],
+            "description": t.get("description", ""),
+            "parameters": t.get("parameters") or {"type": "object", "properties": {}},
+        },
+    }
 
 
 class OpenAIClient:
@@ -29,16 +68,19 @@ class OpenAIClient:
         model: str = "gpt-4o",
         temperature: float = 0.7,
         max_tokens: int | None = None,
+        tools: list[ToolSchema] | None = None,
         **kwargs: Any,
     ) -> LLMResponse:
         payload: dict[str, Any] = {
             "model": model,
-            "messages": [{"role": m.role.value, "content": m.content} for m in messages],
+            "messages": [_sang_payload(m) for m in messages],
             "temperature": temperature,
             **kwargs,
         }
         if max_tokens:
             payload["max_tokens"] = max_tokens
+        if tools:
+            payload["tools"] = [_sang_tool_openai(t) for t in tools]
 
         async with httpx.AsyncClient(timeout=60.0) as client:
             resp = await client.post(
@@ -50,8 +92,22 @@ class OpenAIClient:
             data = resp.json()
 
         choice = data["choices"][0]
-        content = choice["message"]["content"]
+        tin_nhan = choice["message"]
+        # `content` là NULL khi mô hình chỉ xin gọi tool. Bản trước đọc thẳng
+        # `choice["message"]["content"]` và gán None vào `LLMResponse.content: str`
+        # -> ValidationError ngay lần đầu mô hình gọi tool. Quy về chuỗi rỗng.
+        content = tin_nhan.get("content") or ""
         finish_reason = choice.get("finish_reason", "stop")
+
+        tool_calls = [
+            ToolCallOut(
+                id=tc["id"],
+                name=tc["function"]["name"],
+                arguments=tc["function"].get("arguments", "") or "",
+            )
+            for tc in (tin_nhan.get("tool_calls") or [])
+            if tc.get("type", "function") == "function"
+        ]
         usage = data.get("usage", {})
         prompt_tokens = usage.get("prompt_tokens", 0)
         completion_tokens = usage.get("completion_tokens", 0)
@@ -64,6 +120,7 @@ class OpenAIClient:
             usage=usage,
             cost_usd=cost,
             raw_response=data,
+            tool_calls=tool_calls,
         )
 
     async def stream(
@@ -76,7 +133,7 @@ class OpenAIClient:
     ) -> AsyncIterator[LLMStreamChunk]:
         payload: dict[str, Any] = {
             "model": model,
-            "messages": [{"role": m.role.value, "content": m.content} for m in messages],
+            "messages": [_sang_payload(m) for m in messages],
             "temperature": temperature,
             "stream": True,
             **kwargs,

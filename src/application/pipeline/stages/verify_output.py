@@ -47,6 +47,26 @@ from domain.common.result import Err, Ok, Result
 
 # Thang leo thang. Không lặp lại cùng một cách sửa ba lần: nếu cách nhẹ không ăn,
 # phải đổi cách chứ không phải xin lại y hệt.
+#
+# 🩸 LỖI ĐÃ SỬA 21/09/2026 — LEO THANG THEO SỐ LƯỢT, KHÔNG THEO BẰNG CHỨNG.
+#
+# Bản trước tính `_chien_luoc_cho_luot(luot + leo_them)`, nên SỐ LƯỢT tự nó đẩy
+# thang lên. Với `max_repair_rounds=3` thì:
+#
+#     lượt 0 -> sua_dong        (sửa đúng dòng hỏng)
+#     lượt 1 -> sinh_lai_kho
+#     lượt 2 -> sinh_lai_ca_bai  <- "viết lại toàn bài từ đầu"
+#
+# Nghĩa là ngay ở lượt sửa THỨ HAI, hệ thống đã bảo mô hình vứt cả bài — kể cả
+# những dòng đã đạt. Và đó thường là lúc bài chỉ còn 1–2 lỗi.
+#
+# Đo thật, gpt-4o-mini: vòng sửa CHỈ dùng `sua_dong` hội tụ 4/4 trong 0–2 lượt
+# (số lỗi đi [1,0] · [1,1,0] · [2,0]). Cùng đường ống nhưng có leo thang theo
+# lượt: 0–3/12. Leo thang đang phá đúng thứ nó định cứu.
+#
+# Nay thang CHỈ nhích khi có BẰNG CHỨNG là cách nhẹ không ăn — số lỗi không giảm
+# hai lượt liên tiếp, hoặc mô hình trả lại đúng bài đã thấy. Số lượt không còn tự
+# nó đẩy thang.
 ChienLuoc: TypeAlias = Literal["sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai"]
 
 THANG_LEO_THANG: tuple[ChienLuoc, ...] = ("sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai")
@@ -208,7 +228,9 @@ async def generate_with_verification(
             leo_them += 1
         da_thay.add(dau_van)
 
-        chien_luoc_cuoi = _chien_luoc_cho_luot(luot + leo_them)
+        # CHỈ `leo_them` điều khiển thang. `luot` không còn góp vào — xem chú
+        # thích ở `THANG_LEO_THANG`.
+        chien_luoc_cuoi = _chien_luoc_cho_luot(leo_them)
         messages.extend(_dung_luot_sua(ban_nhap, ket_qua, chien_luoc_cuoi))
 
     # CHẶN G7: fail closed. Hết lượt thì KHÔNG trả bài sai — kể cả khi đã có văn

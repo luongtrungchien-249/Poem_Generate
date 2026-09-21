@@ -3,6 +3,7 @@
 from .citation import CitationValidationResult, validate_citations
 from .policy import OutputGuardrailVerdict, enforce_output_guardrails
 from .schema import SchemaValidationResult, validate_json_output
+from .streaming import Chan, PhatRa, StreamingOutputGuard
 from .toxicity import ToxicityScanResult, check_toxicity
 
 __all__ = [
@@ -14,4 +15,7 @@ __all__ = [
     "ToxicityScanResult",
     "enforce_output_guardrails",
     "OutputGuardrailVerdict",
+    "StreamingOutputGuard",
+    "PhatRa",
+    "Chan",
 ]

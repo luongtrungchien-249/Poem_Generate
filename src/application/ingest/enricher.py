@@ -1,12 +1,12 @@
 
-from application.ports.llm_client import LLMClient
+from application.ports.embedding import EmbeddingPort
 from contracts.chunk import Chunk, EnrichedChunk
 
 
 class ChunkEnricher:
     """Enriches raw chunks with embeddings, contextual headers, and summaries."""
 
-    def __init__(self, embedding_client: LLMClient | None = None) -> None:
+    def __init__(self, embedding_client: EmbeddingPort | None = None) -> None:
         self.embedding_client = embedding_client
 
     async def enrich_chunks(self, chunks: list[Chunk]) -> list[EnrichedChunk]:

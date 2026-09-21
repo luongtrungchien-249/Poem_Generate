@@ -21,9 +21,11 @@ venv/
 .coverage
 htmlcov/
 
-# Dữ liệu cục bộ
+# Dữ liệu cục bộ — gồm cả tệp SQLite và tệp phụ của WAL
 data/
 *.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
 
 # IDE / OS
 .vscode/
