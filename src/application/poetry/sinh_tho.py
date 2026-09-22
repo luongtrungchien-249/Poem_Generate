@@ -33,7 +33,7 @@ from dataclasses import dataclass
 from typing import TypeAlias
 
 from application.pipeline.stages.verify_output import generate_with_verification
-from application.poetry.fewshot import chon_che_do, chon_vi_du, dung_khoi_vi_du
+from application.poetry.fewshot import dung_khoi_vi_du
 from application.poetry.plan import PoetryPlan
 from application.poetry.planner import lap_ke_hoach_hop_le, mo_ta_ke_hoach_cho_mo_hinh
 from application.poetry.prompt import dung_luot_yeu_cau
@@ -132,16 +132,33 @@ async def sinh_bai_tho(
         },
     )
 
-    # §26–28. Kho vắng, hoặc không có ví dụ nào giống yêu cầu -> lùi về zero-shot,
-    # đúng §32 *Retrieval Failure -> Zero-shot generation -> Verification*. Thiếu
-    # ví dụ làm bài KHÓ HƠN, không làm hệ thống hỏng: vòng ngoài vẫn bảo đảm.
-    che_do = chon_che_do(yeu_cau)
-    if corpus:
-        vet.chuyen("RESEARCHING", f"tra kho thơ mẫu, chế độ {che_do}")
-    vi_du = chon_vi_du(corpus.tat_ca(), yeu_cau, che_do=che_do) if corpus else ()
-    if not vi_du:
-        # §32 Retrieval Failure -> zero-shot.
-        che_do = "zero_shot"
+    # ⛔ FEW-SHOT ĐÃ TẮT — chủ dự án chốt 22/09/2026.
+    #
+    # Mọi yêu cầu nay chạy zero-shot. Đường tra kho thơ mẫu không còn được gọi,
+    # nên `corpus` truyền vào cũng không còn tác dụng lên prompt.
+    #
+    # ⚠️ ĐO ĐƯỢC TRƯỚC KHI TẮT, ghi lại vì số liệu KHÔNG ủng hộ việc tắt:
+    # gpt-4o-mini, khổ 4 dòng, 25 chủ đề × 8 ứng viên mỗi nhánh (≈800 dòng/nhánh).
+    #
+    #     dòng đủ 7 tiếng    55,62 %  ->  62,69 % khi CÓ few-shot   p = 0,0044
+    #     dòng khớp khuôn    28,12 %  ->  30,65 %                   p = 0,27
+    #     cả khổ đạt luật     1,00 %  ->   2,01 %                   p = 0,45
+    #
+    # Nghĩa là few-shot GIÚP THẬT ở phép đếm tiếng, mức có ý nghĩa thống kê. Tắt nó
+    # đi thì tỉ lệ dòng đủ tiếng tụt khoảng 7 điểm phần trăm. Đây là đánh đổi có
+    # chủ ý (đổi lấy token tiết kiệm được ở mỗi lượt gọi), không phải kết luận rằng
+    # few-shot vô dụng — ai đọc tới đây mà định gỡ nốt `fewshot.py` thì biết trước.
+    #
+    # `fewshot.py` KHÔNG bị xoá, và `dung_khoi_vi_du` vẫn được gọi bên dưới với danh
+    # sách rỗng (nó trả chuỗi rỗng). Giữ nguyên hình dạng lời gọi là cố ý: bật lại
+    # chỉ cần khôi phục ba dòng dưới đây cùng hai tên import, không phải dựng lại cả
+    # đường dữ liệu.
+    #     from application.poetry.fewshot import chon_che_do, chon_vi_du
+    #     che_do = chon_che_do(yeu_cau)
+    #     vi_du = chon_vi_du(corpus.tat_ca(), yeu_cau, che_do=che_do) if corpus else ()
+    #     if not vi_du: che_do = "zero_shot"
+    che_do = "zero_shot"
+    vi_du = ()
 
     vet.chuyen("PLANNING", "lập kế hoạch tất định từ yêu cầu")
     ke_hoach = lap_ke_hoach_hop_le(yeu_cau)

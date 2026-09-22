@@ -117,8 +117,9 @@ CACH_LAM_VIEC: str = """CÁCH LÀM VIỆC:
 # từ planner của nó — nhập cách dạy, không nhập tiêu chí, không nhập trọng số.
 
 CHI_DAN_CHAT_LUONG: str = """ĐỂ BÀI KHÔNG NHẠT — đúng luật mới là điều kiện cần:
-1. Cả bài chỉ nói MỘT điều. Chọn điều đó trước khi viết, và chọn đủ hẹp để hình
-   dung ra được.
+1. Cả bài chỉ nói MỘT điều. Viết khổ đầu thì chọn điều ấy trước, và chọn đủ hẹp để
+   hình dung ra được. Viết khổ tiếp thì điều ấy đã chọn rồi — đọc nó ra từ phần đã
+   viết ở trên, đừng chọn một điều mới.
      hẹp:  người về nhà cũ, thấy cái ghế vẫn kê đúng chỗ ngày xưa
      rộng: tình cảm gia đình
 2. Hình ảnh phải nhìn thấy được: một vật, một cử chỉ, một khoảnh khắc.
@@ -133,10 +134,27 @@ CHI_DAN_CHAT_LUONG: str = """ĐỂ BÀI KHÔNG NHẠT — đúng luật mới l�
    có sẵn.
 6. Nói xuôi như người Việt nói. Đảo chữ cho vừa khuôn mà thành câu không ai nói
    là đã đổi sai: bài đạt mà đọc lên thấy gượng thì vẫn hỏng.
+7. Người dùng có nêu chủ đề thì dùng chính chữ của chủ đề ấy ở đâu đó trong bài,
+   đừng chỉ nói quanh nó.
+     dùng chữ : chủ đề "mùa thu" — trong bài có tiếng "thu"
+     nói quanh: chủ đề "mùa thu" — cả bài chỉ có lá vàng với gió heo may
+   Chữ ấy đặt được ở nhiều chỗ trong dòng, không nhất thiết rơi vào chỗ bị khuôn
+   ràng buộc. Ép nó vào chỗ làm lệch khuôn là hỏng bài — đổi chỗ, đừng phá khuôn.
 """
 # Mục 6 là chỗ khối này gặp khối thanh luật, và cố ý đặt ở ĐÂY chứ không ở bên
 # kia: nó không nói khuôn là gì, nó nói phải xử sự ra sao khi bị khuôn ép. Cùng
 # họ với mục 7 của `CACH_LAM_VIEC`.
+#
+# Mục 7 vá một chỗ im lặng đáng kể: `quality.py` có chiều `CL3 bam_chu_de` ĐO ĐƯỢC
+# và CÓ CHẶN — nó đòi ít nhất một tiếng của chủ đề xuất hiện trong bài — nhưng
+# trước mục này không một chữ nào trong prompt nhắc tới điều đó. Bài bám đúng đề về
+# mặt ý mà không dùng chữ nào của đề thì vẫn bị cổng chặn, và mô hình không có cách
+# nào đoán ra vì sao.
+#
+# Viết thành VIỆC PHẢI LÀM, cố ý không nêu con số ngưỡng: nêu ngưỡng là dựng thẩm
+# quyền thứ hai bên cạnh `quality.py`, đúng thứ `test_chat_luong_KHONG_phai_thang_diem`
+# ghim. Câu cuối của mục là lối thoát bắt buộc — thiếu nó thì mục này dạy mô hình
+# nhét chữ chủ đề vào chỗ làm lệch khuôn, tức đổi một lỗi chất lượng lấy một lỗi luật.
 #
 # Danh sách chữ mòn ở mục 5 là ví dụ, KHÔNG phải danh sách cấm. Không có mã nào
 # chặn những chữ này, và không được viết mã như thế: chặn một chữ vì nó hay bị
@@ -231,8 +249,15 @@ ChienLuoc: TypeAlias = Literal["sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai"]
 THANG_LEO_THANG: tuple[ChienLuoc, ...] = ("sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai")
 
 CHI_DAN_SUA: dict[ChienLuoc, str] = {
+    # Câu thứ hai nói GIỮ GÌ khi viết lại. Bản trước chỉ nói giữ PHẠM VI ("đúng dòng
+    # bị nêu") mà không nói giữ nội dung, nên mô hình thường thay luôn cả hình ảnh để
+    # lấy một chữ hợp thanh — và bài mất mạch đúng ở dòng vừa được sửa, trong khi các
+    # dòng quanh nó vẫn nói về hình ảnh cũ. Mệnh đề cuối là lối thoát: giữ hình ảnh là
+    # NÊN, đúng khuôn là BẮT BUỘC.
     "sua_dong": (
-        "Chỉ viết lại đúng những dòng bị nêu. Giữ nguyên từng chữ ở các dòng đã đạt."
+        "Chỉ viết lại đúng những dòng bị nêu. Giữ nguyên từng chữ ở các dòng đã đạt. "
+        "Viết lại thì giữ hình ảnh của chính dòng đó, chỉ đổi chữ cho khớp khuôn; "
+        "không giữ nổi thì bỏ hình ảnh, lấy đúng khuôn."
     ),
     "sinh_lai_kho": (
         "Viết lại cả khổ chứa dòng hỏng, giữ sơ đồ vần của khổ đó. "
@@ -252,6 +277,37 @@ CHI_DAN_SUA: dict[ChienLuoc, str] = {
 # "KHÔNG chép lại, KHÔNG sửa các dòng đã có" là phần bắt buộc: các khổ trước đã
 # qua kiểm và được chọn từ nhiều ứng viên. Để mô hình sửa chúng là vứt bỏ công
 # chọn lọc đó, và bài ghép xong sẽ hỏng ở chỗ vốn đã đúng.
+#
+# ⛔ ĐÃ THỬ MỞ RỘNG KHỐI NÀY — ĐO XONG THÌ HOÀN NGUYÊN. 22/09/2026.
+#
+# Giả thuyết nghe rất hợp lý: thơ sinh THEO TỪNG KHỔ (`sinh_theo_kho.py`), mô hình
+# viết khổ 3 chỉ thấy `<phan_da_viet>` chứ không thấy cả bài, nên một câu là quá ít
+# để giữ mạch — đúng chiều `CL6 mach_lac` mà `quality.py` khai là không đo được.
+# Đã viết hai bản khối nhiều mục (đẩy tiếp hình ảnh, không kể lại từ đầu, giữ ngôi,
+# cấm lặp dòng, kèm lối thoát khi bị khuôn ép).
+#
+# ĐO TRÊN gpt-4o-mini, đối chứng sạch: khổ đầu lấy từ corpus đã đạt `rule.py` và
+# GIỮ CỐ ĐỊNH cho cả hai nhánh, 25 khổ × 6 ứng viên mỗi nhánh. Chỉ số là ứng viên
+# DÙNG ĐƯỢC THẬT = đạt luật VÀ không lặp dòng nào VÀ qua cổng chất lượng.
+#
+#     bản một câu (khối này)   8,00 %  và  7,33 %   ← nền, ổn định qua hai vòng
+#     bản nhiều mục v1         6,00 %              p = 0,65  (không khác)
+#     bản nhiều mục v2         2,67 %              p = 0,036 so với nền gộp
+#
+# TỆ HƠN THẾ: v1 làm mô hình CHÉP NGUYÊN VĂN khổ trước tăng từ 0,67 % lên 14,00 %
+# (p = 5,5e-06) — đúng thứ câu cuối của khối này cấm. Cơ chế đoán được: khối càng
+# dài càng đẩy mô hình về phía "giữ nguyên", mà cách giữ nguyên chắc ăn nhất, vừa
+# khớp khuôn vừa giữ mạch, là chép lại khổ đã đạt. v2 dời lệnh cấm chép lên đầu thì
+# chép giảm còn 2,67 %, nhưng ứng viên dùng được cũng tụt theo.
+#
+# BÀI HỌC, ghi ra để người sau không thử lại mù: ở mối nối khổ, mỗi câu thêm vào là
+# một câu tranh chỗ với ràng buộc cứng. "Không đo được" (CL6) KHÔNG suy ra "cứ dạy
+# thêm thì hơn". Muốn cải thiện mạch lạc thì tìm đường khác — cho mô hình thấy kế
+# hoạch nội dung cả bài chẳng hạn — chứ đừng nống khối này ra nữa.
+#
+# Dữ liệu thô và script đo: xem lượt làm việc 22/09; chạy lại thì đối chứng phải
+# giữ khổ đầu CỐ ĐỊNH, và KHÔNG được lấy "đạt luật" làm chỉ số — bản chép luôn đạt
+# luật vì khổ nó chép vốn đã đạt.
 CHI_DAN_VIET_TIEP_KHO: str = (
     "Viết TIẾP khổ kế tiếp, giữ mạch cảm xúc và mạch vần của phần trên. "
     "KHÔNG chép lại, KHÔNG sửa các dòng đã có."

@@ -1,37 +1,356 @@
-
-
-"""⛔ HỒ SƠ ĐỐI CHIẾU — FILE NÀY KHÔNG CHẠY, KHÔNG MÃ NÀO IMPORT.
+"""⛔ HỒ SƠ ĐỐI CHIẾU — FILE NÀY KHÔNG CHẠY TRONG HỆ THỐNG SỐNG.
 
 Bộ kiểm luật **LỤC BÁT** của một hệ khác. Hệ thống sống làm thất ngôn tự do, và bộ
 kiểm của nó là `src/application/rule.py` — file ĐÓNG BĂNG, có băm SHA-256 ghim
 trong `tests/architecture/test_rule_dong_bang.py`.
 
-File này còn không import nổi: nó dùng import tương đối (`.constants`, `.rhyme`)
-trỏ tới một gói không tồn tại trong repo. Giữ lại làm tài liệu theo quyết định của
-chủ dự án 21/09/2026 (*"không cần xóa đâu, chỉ cần không chạy qua đó là được"*).
-
 ⚠️ **Đừng nhập luật từ đây.** Luật lục bát — niêm, vần lưng, câu Lục/câu Bát —
 không thuộc thể mà hệ thống này làm. Một điều luật sai thể lọt vào `rule.LUAT` hay
 vào prompt sẽ được mô hình đọc như luật thật.
 
-Có test ghim: `tests/architecture/test_file_doi_chieu_khong_chay.py`.
+Có test ghim: `tests/architecture/test_file_doi_chieu_khong_chay.py` — không module
+nào trong `src/` được import file này.
 
 ════════════════════════════════════════════════════════════════════════════
+BỔ SUNG PHẦN LÕI — 22/09/2026
 
-checker.py — deterministic lục bát prosody checker.
-Depends on rhyme.py and constants.py. No LLM calls.
+Bản trước không import nổi: `import __main__` thừa, và hai import tương đối
+`from .constants` / `from .rhyme` trỏ tới một gói KHÔNG TỒN TẠI trong repo.
+
+Lượt sửa này CHỈ BÙ PHẦN LÕI CÒN THIẾU. §0 dưới đây cung cấp đúng sáu cái mà thân
+bài cần và chưa bao giờ có:
+
+    CRITICAL_ERROR_KEYWORDS     (vốn ở .constants)
+    clean_and_tokenize          ┐
+    get_tone                    │
+    get_bang_type               ├ (vốn ở .rhyme)
+    is_rhyme_match              │
+    get_suggested_endings       ┘
+
+⛔ **LOGIC LUẬT CHỈ ĐỔI ĐÚNG HAI KHỐI** — xem §1.1 ngay dưới đây. Ngoài hai khối ấy,
+toàn bộ phần từ `evaluate_errors` trở xuống vẫn được chép NGUYÊN VĂN từ
+`git show HEAD:compare_rule.py`. Mọi khiếm khuyết thiết kế đã ghi ở
+`docs/Report_Phan_Tich_Ma_Kiem_Luat.md` — bắt buộc câu 1 gieo vần, `elif` nuốt lỗi,
+hai nhánh cùng điều kiện ở thơ tám chữ, lệch pha lục/bát sau khổ lẻ — VẪN CÒN
+NGUYÊN. Đó là chủ ý: hồ sơ đối chiếu phải phản ánh đúng bộ luật thế hệ trước,
+không phải bản đã được sửa hộ.
+
+Ai muốn biết các khiếm khuyết ấy làm lệch kết quả bao nhiêu thì đọc
+`docs/Report_analisys_rule2.md` — lưu ý số liệu trong đó sinh ra TRƯỚC bản sửa 22/09
+dưới đây, nên không còn khớp với hành vi hiện tại của hai hàm thất ngôn.
+
+════════════════════════════════════════════════════════════════════════════
+§1.1. BẢN SỬA 22/09/2026 — NỚI LUẬT BẰNG/TRẮC THẤT NGÔN
+
+Theo yêu cầu chủ dự án: **chỉ câu đầu** phải tuân thủ nhịp "nhị tứ lục phân minh"
+(B-T-B hoặc T-B-T ở tiếng 2/4/6). Các câu còn lại KHÔNG còn bị chấm Bằng/Trắc —
+không error, không success, im lặng hoàn toàn.
+
+    bay_chu_rule_check          bỏ bảng `expected_patterns` 4 dòng + vòng lặp;
+                                guard đổi từ `all(...)` sang `len(line1) >= 6`
+    bay_chu_bat_cu_rule_check   bỏ bảng `base/opposite` 8 dòng + vòng lặp
+
+Hai khối GIEO VẦN của cả hai hàm không đụng tới. `luc_bat_rule_check` và
+`tam_chu_rule_check` không đụng tới.
+
+Vì sao nới: bảng cũ suy luật từ tiếng 2 câu 1 rồi ép cả khổ theo, quá nghiêm với
+thất ngôn hiện đại — một bài chỉ giữ nhịp ở câu mở sẽ trượt hàng loạt lỗi CRITICAL.
+
+⚠️ Lệnh đối chiếu nguyên văn ở §1 KHÔNG còn cho kết quả trùng khít vì bản sửa này.
+
+KHÔNG SỬA: `rule.py`. File ấy đóng băng và lượt bổ sung này không chạm vào nó.
 """
-import __main__
+
 import re
+import unicodedata
 from typing import List, Set, Tuple
- 
-from .constants import CRITICAL_ERROR_KEYWORDS
-from .rhyme import (
-    clean_and_tokenize, get_bang_type, get_suggested_endings,
-    get_tone, is_rhyme_match,
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §0. PHẦN LÕI CÒN THIẾU
+#
+# Sáu cái tên mà thân bài import từ `.constants` và `.rhyme` — hai module chưa bao
+# giờ tồn tại trong repo. Viết ở đây để file tự chứa và chạy được.
+#
+# CỐ Ý KHÔNG import từ `src/application/rule.py`: một hồ sơ đối chiếu mà dùng lại
+# ngữ âm của bộ kiểm đang sống thì không còn là ý kiến thứ hai, nó chỉ là
+# `rule.py` soi gương. Mức đồng thuận giữa hai tầng ngữ âm được ĐO chứ không giả
+# định — xem `datalake/scripts/chay_doi_chieu_rule2.py` §3.
+# ══════════════════════════════════════════════════════════════════════════════
+
+#: Từ khoá phân loại lỗi nặng. Thân bài gắn nhãn "[CRITICAL!]" vào chính câu
+#: thông điệp, nên bảng này tra đúng chuỗi ấy.
+CRITICAL_ERROR_KEYWORDS = {
+    "luc_bat": ["CRITICAL!"],
+    "bay_chu": ["CRITICAL!"],
+    "tam_chu": ["CRITICAL!"],
+}
+
+_GACH_NOI = "-"
+
+
+def _la_dau_cau(ky_tu: str) -> bool:
+    """Nhận diện dấu câu theo PHÂN LOẠI UNICODE, không theo danh sách liệt kê tay.
+
+    Danh sách liệt kê luôn thiếu — gạch ngang dài "—", gạch ngang ngắn "–", nháy
+    kép "«»", ba chấm "…". Gạch nối "-" là ngoại lệ duy nhất vì nó mang thông tin
+    tách âm tiết ("ra-đi-ô" = 3 tiếng).
+    """
+    if ky_tu == _GACH_NOI:
+        return False
+    return unicodedata.category(ky_tu).startswith(("P", "S"))
+
+
+_CHU_SO = re.compile(r"^\d+$")
+_SO_THAP_PHAN = re.compile(r"^(\d+)[.,](\d+)$")
+_DON_VI = ("không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín")
+_HANG = ("", "nghìn", "triệu", "tỷ")
+
+
+def _doc_nhom_ba(n: int, day_du: bool) -> List[str]:
+    tram, chuc, dv = n // 100, (n // 10) % 10, n % 10
+    ra: List[str] = []
+    if tram > 0 or day_du:
+        ra += [_DON_VI[tram], "trăm"]
+    if chuc == 0:
+        if dv > 0:
+            ra += (["linh", _DON_VI[dv]] if (tram > 0 or day_du) else [_DON_VI[dv]])
+    elif chuc == 1:
+        ra += ["mười"]
+        if dv == 5:
+            ra += ["lăm"]
+        elif dv > 0:
+            ra += [_DON_VI[dv]]
+    else:
+        ra += [_DON_VI[chuc], "mươi"]
+        if dv == 1:
+            ra += ["mốt"]
+        elif dv == 4:
+            ra += ["tư"]
+        elif dv == 5:
+            ra += ["lăm"]
+        elif dv > 0:
+            ra += [_DON_VI[dv]]
+    return ra
+
+
+def doc_so(n: int) -> List[str]:
+    """Quy một số nguyên về danh sách âm tiết (chuẩn đọc văn viết miền Bắc).
+
+    Số vượt quá "tỷ" thì đọc rời từng chữ số — tránh phải bịa quy ước "nghìn tỷ
+    tỷ", và đó cũng là cách người Việt thật sự đọc khi số quá dài.
+    """
+    if n == 0:
+        return ["không"]
+    goc = str(n)
+    nhom: List[int] = []
+    m = n
+    while m > 0:
+        nhom.append(m % 1000)
+        m //= 1000
+    if len(nhom) > len(_HANG):
+        return [_DON_VI[int(c)] for c in goc]
+    nhom.reverse()
+    ra: List[str] = []
+    for i, gia_tri in enumerate(nhom):
+        if gia_tri == 0:
+            continue
+        ra += _doc_nhom_ba(gia_tri, day_du=(i != 0))
+        bac = len(nhom) - i - 1
+        if bac > 0:
+            ra.append(_HANG[bac])
+    return ra
+
+
+def _doc_token_so(token: str) -> List[str]:
+    m = _SO_THAP_PHAN.match(token)
+    if m:
+        return _doc_token_so(m.group(1)) + ["phẩy"] + [_DON_VI[int(c)] for c in m.group(2)]
+    if len(token) > 1 and token[0] == "0":
+        return [_DON_VI[int(c)] for c in token]
+    return doc_so(int(token))
+
+
+def _got_hai_dau(tu: str) -> str:
+    i, j = 0, len(tu)
+    while i < j and _la_dau_cau(tu[i]):
+        i += 1
+    while j > i and _la_dau_cau(tu[j - 1]):
+        j -= 1
+    return tu[i:j]
+
+
+def clean_and_tokenize(dong: str) -> List[str]:
+    """Tách một dòng thành danh sách TIẾNG (âm tiết).
+
+    Không phải tách theo dấu cách: dấu câu bị loại trước khi đếm, gạch nối tách
+    tiếp, chữ số quy về cách đọc rồi mới đếm ("năm 1975" = 8 tiếng).
+    """
+    ra: List[str] = []
+    for tho in dong.split():
+        tu = _got_hai_dau(tho)
+        if not tu:
+            continue
+        if _SO_THAP_PHAN.match(tu):
+            ra.extend(_doc_token_so(tu))
+            continue
+        sach = "".join(" " if _la_dau_cau(c) else c for c in tu)
+        for cum in sach.split():
+            for phan in cum.split(_GACH_NOI):
+                if not phan:
+                    continue
+                ra.extend(_doc_token_so(phan) if _CHU_SO.match(phan) else [phan])
+    return ra
+
+
+_DAU_SAC, _DAU_HUYEN = "́", "̀"
+_DAU_HOI, _DAU_NGA, _DAU_NANG = "̉", "̃", "̣"
+_DAU_THANH = frozenset({_DAU_SAC, _DAU_HUYEN, _DAU_HOI, _DAU_NGA, _DAU_NANG})
+
+
+def _dau_thanh_cua(tieng: str) -> str:
+    for c in unicodedata.normalize("NFD", tieng):
+        if c in _DAU_THANH:
+            return c
+    return ""
+
+
+def get_tone(tieng: str) -> str:
+    """Bằng = ngang, huyền.  Trắc = sắc, hỏi, ngã, nặng."""
+    d = _dau_thanh_cua(tieng)
+    return "Bằng" if (not d or d == _DAU_HUYEN) else "Trắc"
+
+
+def get_bang_type(tieng: str) -> str:
+    """Phân biệt hai thanh bằng — phục vụ luật điệp thanh của câu Bát."""
+    return "huyền" if _dau_thanh_cua(tieng) == _DAU_HUYEN else "ngang"
+
+
+def _bo_dau_thanh(tieng: str) -> str:
+    """Bỏ dấu thanh, GIỮ dấu nền: "về" -> "vê", không thành "ve"."""
+    ra = "".join(c for c in unicodedata.normalize("NFD", tieng) if c not in _DAU_THANH)
+    return unicodedata.normalize("NFC", ra)
+
+
+# ── Cấu trúc âm tiết: [Âm đầu] + [Âm đệm] + Âm chính + [Âm cuối] ──────────────
+_AM_DAU = (
+    "ngh", "ng", "nh", "ch", "gh", "gi", "kh", "ph", "th", "tr", "qu",
+    "b", "c", "d", "đ", "g", "h", "k", "l", "m", "n", "p", "r", "s", "t", "v", "x",
 )
- 
- 
+_AM_CUOI = ("ng", "nh", "ch", "c", "m", "n", "p", "t", "i", "y", "o", "u")
+_CHUAN_HOA = {"ia": "iê", "ya": "iê", "yê": "iê", "ua": "uô", "ưa": "ươ", "y": "i"}
+_SAU_AM_DEM_U = ("y", "ê", "â", "ơ")
+_NGUYEN_AM = set("aăâeêioôơuưy")
+
+
+def _am_dau_kha_di(s: str) -> str:
+    """Khớp dài nhất MÀ phần dư còn nguyên âm; không có thì lùi về khớp dài nhất.
+
+    Nếu chỉ khớp dài nhất thì "gìn" bị đọc thành "gi" + "n" (phần vần "n", vô
+    nghĩa) thay vì "g" + "ìn", và "gìn" hoá ra không vần với "nhìn".
+    """
+    dai_nhat = ""
+    for pa in _AM_DAU:
+        if s.startswith(pa) and len(s) > len(pa):
+            if not dai_nhat:
+                dai_nhat = pa
+            if _NGUYEN_AM & set(s[len(pa):]):
+                return pa
+    return dai_nhat
+
+
+def van_cua(tieng: str) -> str:
+    """Phần dùng để so vần: ÂM CHÍNH + ÂM CUỐI, bỏ âm đệm.
+
+    Âm đệm không cản trở hiệp vần trong thơ Việt: `hoa` gieo được với `nhà`, `ta`.
+    """
+    s = _bo_dau_thanh(tieng).lower()
+    am_dau = _am_dau_kha_di(s)
+    if am_dau:
+        s = s[len(am_dau):]
+    if am_dau == "qu":
+        pass  # chữ "u" đã nằm trong âm đầu, phần còn lại là vần
+    elif s.startswith("o") and len(s) > 1 and s[1] in "aăe":
+        s = s[1:]
+    elif s.startswith("u") and len(s) > 1 and s[1] in _SAU_AM_DEM_U:
+        s = s[1:]
+    am_cuoi = ""
+    for ac in _AM_CUOI:
+        if s.endswith(ac) and len(s) > len(ac):
+            am_cuoi, s = ac, s[: -len(ac)]
+            break
+    return _CHUAN_HOA.get(s, s) + am_cuoi
+
+
+# ── Bảng vần thông — Trần Trọng Kim, "Việt thi" I-6 ───────────────────────────
+# ĐÂY LÀ ĐỒ THỊ, KHÔNG PHẢI PHÂN HOẠCH. Chính tác giả viết "ang thông với ương
+# (không thông được với uông)" rồi vài dòng sau "uông thông với ương" — nên quan
+# hệ này ĐỐI XỨNG nhưng KHÔNG BẮC CẦU. Ép thành lớp tương đương sẽ bịa thêm
+# những cặp hiệp vần mà nguồn không cho.
+_NHOM_VAN = (
+    ("e", "ê", "i"),
+    ("o", "ô", "u"),
+    ("ai", "oi", "ôi", "ơi", "ươi", "ui"),
+    ("ao", "eo", "êu", "iêu", "iu", "ưu"),
+    ("en", "in", "iên"),
+    ("on", "ôn", "uôn"),
+    ("ăng", "âng", "ưng"),
+    ("ong", "ông", "ung"),
+    ("anh", "ênh", "inh"),
+)
+_CAP_VAN = (
+    ("a", "ơ"), ("ơ", "ư"),
+    ("ai", "ay"), ("ao", "au"),
+    ("am", "ơm"), ("ăm", "âm"), ("êm", "im"),
+    ("an", "ơn"), ("ăn", "ân"),
+    ("on", "un"),
+    ("ang", "ương"), ("uông", "ương"),
+    ("o", "uô"), ("iê", "ê"), ("ac", "ươc"), ("ât", "ưt"),
+)
+
+
+def _dung_bang_van() -> frozenset:
+    canh = set()
+    for nhom in _NHOM_VAN:
+        for i, a in enumerate(nhom):
+            for b in nhom[i + 1:]:
+                canh.add(frozenset((a, b)))
+    for a, b in _CAP_VAN:
+        canh.add(frozenset((a, b)))
+    return frozenset(canh)
+
+
+CAP_VAN_THONG = _dung_bang_van()
+
+
+def is_rhyme_match(a: str, b: str, poem_type: str = "luc_bat") -> bool:
+    """Hai tiếng có hiệp vần không. Vần chính hoặc vần thông đều tính.
+
+    `poem_type` giữ nguyên trong chữ ký vì thân bài truyền nó vào, nhưng phép so
+    không đổi theo thể: quan hệ hiệp vần là chuyện của âm tiết, không của thể thơ.
+    """
+    if not a or not b:
+        return False
+    va, vb = van_cua(a), van_cua(b)
+    return va == vb or frozenset((va, vb)) in CAP_VAN_THONG
+
+
+def get_suggested_endings(tieng: str, poem_type: str = "luc_bat") -> str:
+    """Các phần vần gieo được với `tieng`, lấy từ bảng vần thông ở trên."""
+    v = van_cua(tieng)
+    goi = sorted({x for c in CAP_VAN_THONG if v in c for x in c if x != v})
+    return ", ".join("-" + x for x in [v] + goi[:7])
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §1. THÂN BÀI — NGUYÊN VĂN, TRỪ HAI KHỐI ĐÃ NÊU Ở §1.1
+#
+# Chép từ `git show HEAD:compare_rule.py`, sau đó nới luật Bằng/Trắc ở đúng hai chỗ:
+# khối chấm tiếng 2/4/6 trong `bay_chu_rule_check` và trong `bay_chu_bat_cu_rule_check`
+# (chi tiết ở §1.1 đầu file). Đối chiếu phần còn lại bằng:
+#     git show HEAD:compare_rule.py | sed -n '/^def evaluate_errors/,$p'
+# — lệnh này sẽ báo khác ở hai khối trên; mọi khác biệt NGOÀI hai khối đó là lỗi.
+# ══════════════════════════════════════════════════════════════════════════════
+
 def evaluate_errors(errors: List[str], poem_type: str = "luc_bat") -> Tuple[int, int]:
     """Return (critical_count, minor_count)."""
     kw_list = CRITICAL_ERROR_KEYWORDS.get(poem_type, [])
@@ -329,45 +648,35 @@ def bay_chu_rule_check(poem: str) -> Tuple[bool, List[str], List[str]]:
  
         line1, line2, line3, line4 = chunk
         
-        # Check Bằng/Trắc cho các chữ 2, 4, 6
-        if all(len(line) >= 6 for line in chunk):
+        # Check Bằng/Trắc cho các chữ 2, 4, 6 — CHỈ CÂU ĐẦU KHỔ (bản sửa 22/09, xem §1.1)
+        # Guard chỉ nhìn câu 1: bản cũ đòi `all(len(line) >= 6 for line in chunk)`, nên một
+        # câu 3 thiếu tiếng làm câu 1 thoát kiểm hoàn toàn.
+        if len(line1) >= 6:
             t1_2 = get_tone(line1[1])
             is_bang_rule = (t1_2 == "Bằng")
             rule_name = "Luật Bằng" if is_bang_rule else "Luật Trắc"
             successes.append(f"[Khổ {chunk_idx}] Xác định được {rule_name} (do từ 2 câu 1 là thanh {t1_2}).")
- 
-            if is_bang_rule:
-                expected_patterns = {
-                    0: ("Bằng", "Trắc", "Bằng"),
-                    1: ("Trắc", "Bằng", "Trắc"),
-                    2: ("Trắc", "Bằng", "Trắc"),
-                    3: ("Bằng", "Trắc", "Bằng"),
-                }
+
+            exp_2, exp_4, exp_6 = (
+                ("Bằng", "Trắc", "Bằng") if is_bang_rule else ("Trắc", "Bằng", "Trắc")
+            )
+            t2, t4, t6 = get_tone(line1[1]), get_tone(line1[3]), get_tone(line1[5])
+
+            # `t2` chính là cái xác định luật nên không bao giờ lệch `exp_2`; chỉ tiếng 4 và
+            # tiếng 6 mới có thể sai. Không kiểm lại `t2` để khỏi để một nhánh chết trong mã.
+            line_errs = []
+            if t4 != exp_4: line_errs.append(f"Từ 4 '{line1[3]}' ({t4} -> cần {exp_4})")
+            if t6 != exp_6: line_errs.append(f"Từ 6 '{line1[5]}' ({t6} -> cần {exp_6})")
+
+            if line_errs:
+                errors.append(
+                    f"[Dòng {i + 1}] Vi phạm Bằng/Trắc [CRITICAL!]: {'; '.join(line_errs)}. "
+                    f"Câu đầu khổ theo {rule_name} yêu cầu (Từ 2 {exp_2}, Từ 4 {exp_4}, Từ 6 {exp_6})."
+                )
             else:
-                expected_patterns = {
-                    0: ("Trắc", "Bằng", "Trắc"),
-                    1: ("Bằng", "Trắc", "Bằng"),
-                    2: ("Bằng", "Trắc", "Bằng"),
-                    3: ("Trắc", "Bằng", "Trắc"),
-                }
- 
-            for j, line_words in enumerate(chunk):
-                global_line = i + j + 1
-                exp_2, exp_4, exp_6 = expected_patterns[j]
-                t2, t4, t6 = get_tone(line_words[1]), get_tone(line_words[3]), get_tone(line_words[5])
- 
-                line_errs = []
-                if t2 != exp_2: line_errs.append(f"Từ 2 '{line_words[1]}' ({t2} -> cần {exp_2})")
-                if t4 != exp_4: line_errs.append(f"Từ 4 '{line_words[3]}' ({t4} -> cần {exp_4})")
-                if t6 != exp_6: line_errs.append(f"Từ 6 '{line_words[5]}' ({t6} -> cần {exp_6})")
- 
-                if line_errs:
-                    errors.append(
-                        f"[Dòng {global_line}] Vi phạm Bằng/Trắc [CRITICAL!]: {'; '.join(line_errs)}. "
-                        f"Câu {j+1} của {rule_name} yêu cầu (Từ 2 {exp_2}, Từ 4 {exp_4}, Từ 6 {exp_6})."
-                    )
-                else:
-                    successes.append(f"[Dòng {global_line}] Niêm luật chuẩn xác (2 {t2} - 4 {t4} - 6 {t6}).")
+                successes.append(
+                    f"[Dòng {i + 1}] Luật Bằng/Trắc chuẩn xác (2 {t2} - 4 {t4} - 6 {t6})."
+                )
  
         # --- Check Gieo Vần (Dòng 1, 2, 4) ---
         if len(line1) >= 7 and len(line2) >= 7 and len(line4) >= 7:
@@ -462,21 +771,26 @@ def bay_chu_bat_cu_rule_check(poem: str) -> Tuple[bool, List[str], List[str]]:
         successes.append("Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.")
  
     if len(words_by_line) >= 8 and all(len(words) >= 7 for words in words_by_line[:8]):
+        # CHỈ CÂU ĐẦU chịu luật Bằng/Trắc (bản sửa 22/09, xem §1.1). Bảng 8 dòng
+        # base/opposite của Đường luật đã bỏ: bảy câu sau không còn bị chấm tiếng 2/4/6.
         is_bang_rule = get_tone(words_by_line[0][1]) == "Bằng"
         base = ("Bằng", "Trắc", "Bằng") if is_bang_rule else ("Trắc", "Bằng", "Trắc")
-        opposite = ("Trắc", "Bằng", "Trắc") if is_bang_rule else ("Bằng", "Trắc", "Bằng")
-        expected = [base, opposite, opposite, base, base, opposite, opposite, base]
-        for index, (words, pattern) in enumerate(zip(words_by_line[:8], expected), start=1):
-            actual = (get_tone(words[1]), get_tone(words[3]), get_tone(words[5]))
-            mismatches = [
-                f"từ {position} '{words[position - 1]}' ({got} -> cần {want})"
-                for position, got, want in zip((2, 4, 6), actual, pattern)
-                if got != want
-            ]
-            if mismatches:
-                errors.append(
-                    f"[Dòng {index}] Vi phạm Bằng/Trắc [CRITICAL!]: {'; '.join(mismatches)}."
-                )
+        cau_dau = words_by_line[0]
+        actual = (get_tone(cau_dau[1]), get_tone(cau_dau[3]), get_tone(cau_dau[5]))
+        mismatches = [
+            f"từ {position} '{cau_dau[position - 1]}' ({got} -> cần {want})"
+            for position, got, want in zip((2, 4, 6), actual, base)
+            if got != want
+        ]
+        if mismatches:
+            errors.append(
+                f"[Dòng 1] Vi phạm Bằng/Trắc [CRITICAL!]: {'; '.join(mismatches)}."
+            )
+        else:
+            successes.append(
+                f"[Dòng 1] Luật Bằng/Trắc chuẩn xác "
+                f"({'Luật Bằng' if is_bang_rule else 'Luật Trắc'}: 2-4-6 = {' - '.join(base)})."
+            )
  
         rhyme_lines = (1, 2, 4, 6, 8)
         rhyme_words = [words_by_line[index - 1][6] for index in rhyme_lines]
