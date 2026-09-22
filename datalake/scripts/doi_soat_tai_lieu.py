@@ -60,6 +60,27 @@ SO_LICH_SU: dict[str, str] = {
     "65.978": "số bản ghi thiếu source_file, đo ở §5",
     "43.911": "tập dùng được của bản đo 17/09",
     "1.244": "bài thu hồi từ khoá sai, đo ở §5",
+    # ── Bản đo TRƯỚC phép lùi âm đầu (T8, 21/09/2026) ────────────────────────
+    #
+    # Mười con số này nằm ở cột "Trước" của bảng §12.3 trong Plan_Rule_Phan_Tang,
+    # ghi lại tác động của bản vá lỗi `gìn` (`hiep_van("gìn","nhìn")` từng trả
+    # False). Chúng là số ĐÃ ĐO THẬT của bản luật cũ, nêu ra để đối chiếu — không
+    # phải số đang có hiệu lực.
+    #
+    # Giữ chúng ở đây thay vì xoá khỏi tài liệu: một bảng "trước/sau" mất cột
+    # "trước" thì không còn chứng minh được điều gì, và lần sau không ai kiểm lại
+    # được là thay đổi ấy đã làm gì với corpus.
+    "189.415": "T8 — cum_co_van_chan trước phép lùi âm đầu (nay 189.422)",
+    "13.532": "T8 — bai_dat_co_van_lung trước phép lùi âm đầu (nay 13.533)",
+    "37.312": "T8 — sơ đồ vần axax trước phép lùi âm đầu (nay 37.314)",
+    "32.145": "T8 — sơ đồ vần aaxa trước phép lùi âm đầu (nay 32.147)",
+    "26.805": "T8 — sơ đồ vần xaxa trước phép lùi âm đầu (nay 26.806)",
+    "19.921": "T8 — sơ đồ vần aaaa trước phép lùi âm đầu (nay 19.923)",
+    "17.079": "T8 — sơ đồ vần xaax trước phép lùi âm đầu (nay 17.081)",
+    "17.002": "T8 — sơ đồ vần xxaa trước phép lùi âm đầu (nay 17.004)",
+    "7.393": "T8 — sơ đồ vần xaaa trước phép lùi âm đầu (nay 7.391)",
+    "4.200": "T8 — sơ đồ vần axxa trước phép lùi âm đầu (nay 4.198)",
+    "2.200": "T8 — số dòng rule.py trước phép lùi âm đầu (nay 2.238)",
     # Nhóm dưới đây đo ở §5 "chất lượng dữ liệu" và §6 "điểm mù H1". Chúng nói về
     # BẢN GHI, không về phán quyết luật, nên không đổi khi bộ luật đổi — xem ghi
     # chú phạm vi ở đầu hai mục ấy trong report.

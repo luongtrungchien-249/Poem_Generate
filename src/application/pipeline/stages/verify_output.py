@@ -27,7 +27,6 @@ import hashlib
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Literal, TypeAlias
 
 from application.pipeline.stages.generate import generate_react_loop
 from application.ports.llm import (
@@ -42,6 +41,11 @@ from application.ports.tools import ToolPort
 from application.ports.verifier import KetQuaKiemDinh, OutputSpec, OutputVerifier
 from application.prompting.builder import wrap_xml_tag
 from application.prompting.context import ContextEnvelope
+from application.prompting.instructions import (
+    CHI_DAN_SUA,
+    THANG_LEO_THANG,
+    ChienLuoc,
+)
 from domain.common.errors import BotError, BudgetExceeded, OutputKhongDat, UpstreamTimeout
 from domain.common.result import Err, Ok, Result
 
@@ -67,21 +71,11 @@ from domain.common.result import Err, Ok, Result
 # Nay thang CHỈ nhích khi có BẰNG CHỨNG là cách nhẹ không ăn — số lỗi không giảm
 # hai lượt liên tiếp, hoặc mô hình trả lại đúng bài đã thấy. Số lượt không còn tự
 # nó đẩy thang.
-ChienLuoc: TypeAlias = Literal["sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai"]
-
-THANG_LEO_THANG: tuple[ChienLuoc, ...] = ("sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai")
-
-_CHI_DAN: dict[ChienLuoc, str] = {
-    "sua_dong": "Chỉ viết lại đúng những dòng bị nêu. Giữ nguyên từng chữ ở các dòng đã đạt.",
-    "sinh_lai_kho": (
-        "Viết lại cả khổ chứa dòng hỏng, giữ sơ đồ vần của khổ đó. "
-        "Các khổ khác giữ nguyên."
-    ),
-    "sinh_lai_ca_bai": (
-        "Viết lại toàn bài từ đầu. Bài ở trên là PHẢN VÍ DỤ — đừng lặp lại cách "
-        "triển khai đó, nó dẫn tới lỗi không sửa được bằng cách vá từng dòng."
-    ),
-}
+# `ChienLuoc`, `THANG_LEO_THANG` và chỉ dẫn từng bước nay ở `prompting/instructions.py`.
+#
+# Chúng từng nằm ngay đây, và `_CHI_DAN` còn là biến PRIVATE — nghĩa là chỉ dẫn
+# quan trọng nhất của vòng sửa không nằm trong bất kỳ bản kiểm kê prompt nào, và
+# không test nào về nội dung prompt chạm tới được.
 
 
 @dataclass(frozen=True, slots=True)
@@ -116,7 +110,7 @@ def _dung_luot_sua(
       - Biên bản bọc thẻ XML để mô hình phân biệt được đâu là dữ liệu kiểm định,
         đâu là nội dung nó tự viết.
     """
-    noi_dung = f"{ket_qua.bien_ban}\n\n{_CHI_DAN[chien_luoc]}"
+    noi_dung = f"{ket_qua.bien_ban}\n\n{CHI_DAN_SUA[chien_luoc]}"
     return (
         AssistantMessage(content=ban_nhap),
         UserMessage(content=wrap_xml_tag("bien_ban_kiem_dinh", noi_dung)),

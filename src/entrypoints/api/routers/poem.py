@@ -23,6 +23,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from adapters.observability.tracing import get_current_trace_id
+from application.conversation import luu_luot
 from application.poetry.phan_tich_yeu_cau import TRUONG_TRICH, phan_tich_yeu_cau
 from application.poetry.requirement import (
     PoetryRequirement,
@@ -49,6 +50,8 @@ from domain.guardrails.input import (
 )
 from domain.policy.hitl import TinHieuHitl, quyet_dinh_hitl
 from entrypoints.api.deps import AppContainer, get_container
+from entrypoints.api.middleware.auth import tenant_scope_cua
+from entrypoints.api.ngan_sach import chan_neu_het_ngan_sach
 
 router = APIRouter(prefix="/v1", tags=["Poem"])
 
@@ -108,13 +111,50 @@ def _dung_yeu_cau_tuong_minh(req: PoemRequest) -> PoetryRequirement:
     )
 
 
-@router.post("/poem", response_model=None)
+# `response_model=None` là bắt buộc: đường này trả BA kiểu khác nhau tuỳ kết quả,
+# nên không có một model duy nhất để khai. Nhưng để mặc như vậy thì OpenAPI mô tả
+# 200 là "bất kỳ thứ gì" và mô tả 422 là LỖI VALIDATION — trong khi 422 ở đây
+# nghĩa là "bài trượt kiểm luật", một chuyện hoàn toàn khác. Client sinh kiểu tự
+# động từ spec đó sẽ hiểu sai cả hai mã.
+#
+# `responses=` khai phần mô tả mà `response_model` không khai được.
+@router.post(
+    "/poem",
+    response_model=None,
+    responses={
+        200: {
+            "description": (
+                "Bài thơ đã qua kiểm định (PoemResponse), HOẶC yêu cầu làm rõ "
+                "(CanLamRo) khi chưa đủ thông tin. Phân biệt bằng trường "
+                "`can_lam_ro`. Hỏi lại trả 200 vì người dùng không làm gì sai."
+            ),
+            # Khai bằng `model` (không phải `$ref` viết tay) để FastAPI ĐĂNG KÝ
+            # hai schema này vào `components` — `$ref` trỏ tới thứ chưa đăng ký
+            # sẽ tạo ra một spec gãy.
+            "model": PoemResponse | CanLamRoDTO,
+        },
+        422: {
+            "description": (
+                "Hết lượt sửa mà bài vẫn chưa đạt luật — KHÔNG phải lỗi validation. "
+                "Response cố ý không chứa văn bản thơ."
+            ),
+            "model": PoemKhongDatDTO,
+        },
+    },
+)
 async def sinh_tho_endpoint(
     req: PoemRequest,
     raw_request: Request,
     app_container: AppContainer = Depends(get_container),
 ) -> Any:
     trace_id = getattr(raw_request.state, "trace_id", None) or get_current_trace_id()
+
+    # TRẦN NGÂN SÁCH NGÀY theo tenant. Đường thơ tốn gấp nhiều lần một lượt chat
+    # thường vì mỗi khổ được sinh best-of-16, nên chốt này ở đây không phải đề
+    # phòng lạm dụng — nó là chi phí vận hành bình thường.
+    await chan_neu_het_ngan_sach(
+        app_container.rate_limiter, tenant_scope_cua(raw_request).tenant_id
+    )
 
     # INPUT RAILS (§17). Đường thơ trước đây KHÔNG có rào chắn đầu vào nào — nó chỉ
     # có rào đầu ra. Thiếu vế này thì một yêu cầu tiêm lệnh đi thẳng vào prompt.
@@ -161,6 +201,13 @@ async def sinh_tho_endpoint(
         if isinstance(e, OutputKhongDat):
             # FAIL CLOSED. Không trường nào của response này chứa văn bản thơ —
             # kể cả khi bản nháp cuối trông có vẻ ổn.
+            # Vẫn ghi lượt này vào hội thoại, với câu trả lời RỖNG. Bài thơ
+            # không đạt thì không có gì để lưu, nhưng câu hỏi thì có: giấu nó đi
+            # sẽ tạo một khoảng trống khó hiểu khi người dùng mở lại hội thoại.
+            await luu_luot(
+                app_container.relational_repo, tenant_scope_cua(raw_request),
+                req.session_id, cau_hoi=req.yeu_cau, tra_loi="",
+            )
             return JSONResponse(
                 status_code=422,
                 content=PoemKhongDatDTO(
@@ -177,6 +224,13 @@ async def sinh_tho_endpoint(
 
     if isinstance(ra, CanLamRo):
         h = ra.cau_hoi
+        # Câu hỏi lại LÀ một lượt của hội thoại, không phải một sự cố bỏ qua được.
+        # Không ghi thì người dùng trả lời xong, tải lại trang, và không còn thấy
+        # mình đang trả lời cho câu hỏi nào.
+        await luu_luot(
+            app_container.relational_repo, tenant_scope_cua(raw_request),
+            req.session_id, cau_hoi=req.yeu_cau, tra_loi=h.cau_hoi,
+        )
         return CanLamRoDTO(
             ca=h.ca,
             cau_hoi=h.cau_hoi,
@@ -204,8 +258,21 @@ async def sinh_tho_endpoint(
             tran_luot_sua=req.max_repair_rounds,
         )
     )
+
+    # Lưu bài đã qua cổng. Ghi SAU khi mọi kiểm định đã xong, không phải trong lúc
+    # sinh: lưu bản nháp giữa chừng thì một bài trượt luật vẫn nằm lại trong lịch
+    # sử, và lượt sau nó quay lại prompt như thể là một ví dụ đúng.
+    await luu_luot(
+        app_container.relational_repo,
+        tenant_scope_cua(raw_request),
+        req.session_id,
+        cau_hoi=req.yeu_cau,
+        tra_loi=ra.text,
+    )
+
     return PoemResponse(
         poem=ra.text,
+        tieu_de=ra.tieu_de,
         dat=bb.dat,
         thuoc_the=v.thuoc_the,
         dat_luat=bb.dat_luat,

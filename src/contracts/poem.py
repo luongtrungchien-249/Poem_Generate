@@ -71,6 +71,10 @@ class PoemResponse(BaseModel):
     """
 
     poem: str
+    # QĐ-TD-1. Chuỗi rỗng là giá trị HỢP LỆ: tiêu đề đặt bằng một lượt gọi phụ SAU
+    # cổng kiểm, và lượt đó hỏng thì bài vẫn trả ra bình thường, chỉ không có tên.
+    # Client phải chịu được rỗng — đừng dựng giao diện giả định luôn có tiêu đề.
+    tieu_de: str = ""
     dat: bool
     thuoc_the: bool
     dat_luat: bool

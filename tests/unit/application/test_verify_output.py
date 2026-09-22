@@ -13,7 +13,6 @@ from typing import Any
 import pytest
 
 from application.pipeline.stages.verify_output import (
-    _CHI_DAN,
     THANG_LEO_THANG,
     generate_with_verification,
 )
@@ -21,6 +20,7 @@ from application.poem_verifier import MA_THE, PoemVerifier
 from application.ports.llm import CallContext, LlmMessage, LlmReply, LlmUsage
 from application.ports.verifier import OutputSpec
 from application.prompting.context import ContextEnvelope
+from application.prompting.instructions import CHI_DAN_SUA
 from domain.common.errors import BotError, OutputKhongDat, is_retryable
 from domain.common.result import Ok, Result, is_err, is_ok
 from domain.conversation.thread import ThreadScope
@@ -197,7 +197,7 @@ async def test_khong_tien_bo_thi_LEO_THANG_chu_khong_sua_lai_cach_cu():
         cl
         for cl in THANG_LEO_THANG
         if any(
-            _CHI_DAN[cl] in getattr(m, "content", "")
+            CHI_DAN_SUA[cl] in getattr(m, "content", "")
             for luot in llm.luot_nhan
             for m in luot
         )

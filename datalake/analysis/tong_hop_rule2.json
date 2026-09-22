@@ -1,0 +1,684 @@
+{
+ "thong_ke": {
+  "tong": 24366,
+  "rule2_dat": 3146,
+  "rule2_truot": 21220,
+  "ty_le_dat": 12.91,
+  "ty_le_truot": 87.09,
+  "rule2_modern_dat": 24366,
+  "rule2_modern_ty_le": 100.0,
+  "dong_thuan_ngu_am": {
+   "mau_dong": 4000,
+   "tach_tieng_khop": 4000,
+   "tach_tieng_ty_le": 100.0,
+   "mau_tieng": 28000,
+   "phan_thanh_khop": 28000,
+   "phan_thanh_ty_le": 100.0,
+   "mau_cap_van": 4000,
+   "so_van_khop": 3939,
+   "so_van_ty_le": 98.47
+  },
+  "cach_doc": {
+   "8 dòng → 2 khổ tứ tuyệt": 13130,
+   "4 dòng → 1 khổ tứ tuyệt": 3903,
+   "16 dòng → 4 khổ tứ tuyệt": 2816,
+   "12 dòng → 3 khổ tứ tuyệt": 936,
+   "28 dòng → 7 khổ tứ tuyệt": 936,
+   "20 dòng → 5 khổ tứ tuyệt": 841,
+   "24 dòng → 6 khổ tứ tuyệt": 581,
+   "56 dòng → 14 khổ tứ tuyệt": 286,
+   "32 dòng → 8 khổ tứ tuyệt": 282,
+   "40 dòng → 10 khổ tứ tuyệt": 144,
+   "36 dòng → 9 khổ tứ tuyệt": 114,
+   "52 dòng → 13 khổ tứ tuyệt": 94,
+   "48 dòng → 12 khổ tứ tuyệt": 78,
+   "64 dòng → 16 khổ tứ tuyệt": 74,
+   "44 dòng → 11 khổ tứ tuyệt": 47,
+   "72 dòng → 18 khổ tứ tuyệt": 22,
+   "60 dòng → 15 khổ tứ tuyệt": 21,
+   "80 dòng → 20 khổ tứ tuyệt": 19,
+   "68 dòng → 17 khổ tứ tuyệt": 9,
+   "84 dòng → 21 khổ tứ tuyệt": 7,
+   "96 dòng → 24 khổ tứ tuyệt": 6,
+   "100 dòng → 25 khổ tứ tuyệt": 5,
+   "76 dòng → 19 khổ tứ tuyệt": 5,
+   "104 dòng → 26 khổ tứ tuyệt": 3,
+   "108 dòng → 27 khổ tứ tuyệt": 2,
+   "92 dòng → 23 khổ tứ tuyệt": 2,
+   "156 dòng → 39 khổ tứ tuyệt": 2,
+   "128 dòng → 32 khổ tứ tuyệt": 1
+  },
+  "cach_doc_dat": {
+   "4 dòng → 1 khổ tứ tuyệt": 1983,
+   "16 dòng → 4 khổ tứ tuyệt": 288,
+   "8 dòng → 2 khổ tứ tuyệt": 238,
+   "12 dòng → 3 khổ tứ tuyệt": 192,
+   "28 dòng → 7 khổ tứ tuyệt": 142,
+   "20 dòng → 5 khổ tứ tuyệt": 129,
+   "24 dòng → 6 khổ tứ tuyệt": 108,
+   "32 dòng → 8 khổ tứ tuyệt": 34,
+   "36 dòng → 9 khổ tứ tuyệt": 11,
+   "44 dòng → 11 khổ tứ tuyệt": 7,
+   "40 dòng → 10 khổ tứ tuyệt": 6,
+   "52 dòng → 13 khổ tứ tuyệt": 4,
+   "56 dòng → 14 khổ tứ tuyệt": 3,
+   "104 dòng → 26 khổ tứ tuyệt": 1
+  },
+  "ly_do_truot": {
+   "Sai Vần": 30170,
+   "Lỗi Gieo Vần": 24049,
+   "Vi phạm Bằng/Trắc": 6959
+  },
+  "phan_bo_so_loi": {
+   "0": 3146,
+   "1": 4352,
+   "2": 9694,
+   "3": 2565,
+   "4": 1722,
+   "5": 770,
+   "6": 672,
+   "7": 340,
+   "8": 410,
+   "9": 148,
+   "10": 150,
+   "11": 79,
+   "12": 77,
+   "13": 46,
+   "14": 49,
+   "15": 15,
+   "16": 33,
+   "17": 10,
+   "18": 17,
+   "19": 7,
+   "20": 64
+  },
+  "theo_so_dong": {
+   "4": {
+    "dat": 1983,
+    "truot": 1920
+   },
+   "8": {
+    "dat": 238,
+    "truot": 12892
+   },
+   "12": {
+    "dat": 192,
+    "truot": 744
+   },
+   "16": {
+    "dat": 288,
+    "truot": 2528
+   },
+   "20": {
+    "dat": 129,
+    "truot": 712
+   },
+   "24": {
+    "dat": 108,
+    "truot": 473
+   },
+   "28": {
+    "dat": 142,
+    "truot": 794
+   },
+   "32": {
+    "dat": 34,
+    "truot": 248
+   },
+   "36": {
+    "dat": 11,
+    "truot": 103
+   },
+   "40": {
+    "dat": 6,
+    "truot": 138
+   },
+   "44": {
+    "dat": 7,
+    "truot": 40
+   },
+   "48": {
+    "dat": 0,
+    "truot": 78
+   },
+   "52": {
+    "dat": 4,
+    "truot": 90
+   },
+   "56": {
+    "dat": 3,
+    "truot": 283
+   },
+   "60": {
+    "dat": 0,
+    "truot": 21
+   },
+   "64": {
+    "dat": 0,
+    "truot": 74
+   },
+   "68": {
+    "dat": 0,
+    "truot": 9
+   },
+   "72": {
+    "dat": 0,
+    "truot": 22
+   },
+   "76": {
+    "dat": 0,
+    "truot": 5
+   },
+   "80": {
+    "dat": 0,
+    "truot": 19
+   },
+   "84": {
+    "dat": 0,
+    "truot": 7
+   },
+   "92": {
+    "dat": 0,
+    "truot": 2
+   },
+   "96": {
+    "dat": 0,
+    "truot": 6
+   },
+   "100": {
+    "dat": 0,
+    "truot": 5
+   },
+   "104": {
+    "dat": 1,
+    "truot": 2
+   },
+   "108": {
+    "dat": 0,
+    "truot": 2
+   },
+   "128": {
+    "dat": 0,
+    "truot": 1
+   },
+   "156": {
+    "dat": 0,
+    "truot": 2
+   }
+  }
+ },
+ "vi_du_dat": [
+  {
+   "id": 2881,
+   "tieu_de": "",
+   "tho": "Ai nắn thân em khéo trĩnh tròn,\nLàn da trắng mịn, ruột như son.\nNgọt thơm thỏa dạ người quân tử,\nDuyên nợ mặn nồng với nước non.\n\nThân em vừa trắng lại vừa tròn,\nBảy nổi ba chìm với nước non.\nRắn nát mặc dầu tay kẻ nặn,\nMà em vẫn giữ một lòng son.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('tròn' - 'son' - 'non').",
+    "[Khổ 2] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('tròn' - 'non' - 'son')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3209,
+   "tieu_de": "",
+   "tho": "Bấy lâu sát ngõ chẳng ngăn tường,\nKhông dám sờ tay sợ lấm hương.\nXiêm áo đêm nay tề chỉnh quá,\nMuốn ôm hồn cúc ở trong sương.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('tường' - 'hương' - 'sương')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3274,
+   "tieu_de": "Viết sau khi hoàn thành “Từ điển Truyện Kiều”",
+   "tho": "Ông hỏi đời sau ai khóc mình,\nMà nay bốn biển lại lừng danh.\nCho hay mọi cái đều mây nổi,\nCòn với non sông một chữ tình.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('mình' - 'danh' - 'tình')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3520,
+   "tieu_de": "Pháp thân Lục Tổ",
+   "tho": "Nhục thân lai khứ ngộ chân thân,\nSắc tức là không... chuyển pháp luân.\nThể tính xưa nay \"vô nhất vật\",\nBồ đề như thị chứng phù vân.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('thân' - 'luân' - 'vân')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3566,
+   "tieu_de": "Lại gặp",
+   "tho": "Ta đã về đây lại gặp mình,\nCõi đời nghiêng ngửa giấc u minh.\nNíu tay cười xuống hoàng hôn cũ,\nVớt mắt em về bến hóa sinh.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('mình' - 'minh' - 'sinh')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3711,
+   "tieu_de": "Cây bàng mùa rét",
+   "tho": "Lá như tự cháy ở bên trong,\nCây đứng như thiêu giữa cánh đồng.\nThu hết màu xanh cho tháng hạ,\nBây giờ thành lửa sưởi ngày đông.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('trong' - 'đồng' - 'đông')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3721,
+   "tieu_de": "Áo đỏ",
+   "tho": "Áo đỏ em đi giữa phố đông,\nCây xanh như cũng ánh theo hồng.\nEm đi lửa cháy trong bao mắt,\nAnh đứng thành tro em biết không?",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('đông' - 'hồng' - 'không')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3835,
+   "tieu_de": "“Nghĩ sâu địa ngục”",
+   "tho": "Nghĩ sâu địa ngục phát Bồ-đề,\nTrở gót quê sen chớ lại mê!\nNong nả lối xưa nên sớm bước,\nKẻo khi trời tối lạc đường về.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule2_dat": true,
+   "rule2_cach_doc": "4 dòng → 1 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 0,
+   "rule2_loi_nang": 0,
+   "rule2_loi_nhe": 0,
+   "rule2_loi": [],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('đề' - 'mê' - 'về')."
+   ],
+   "rule2_modern_loi": []
+  }
+ ],
+ "vi_du_truot": [
+  {
+   "id": 1,
+   "tieu_de": "BÂNG KHUÂNG",
+   "tho": "Đã biết không nên nhớ một người,\nMà còn khắc khoải đến không nguôi.\nĐầu mai bóng mải bên sườn núi,\nCuối buổi hình xa ở mạn đồi.\nMấy bận đi qua lòng định gọi,\nĐôi lần đứng lại dạ dừng thôi.\nNhìn theo một quãng rồi hai lối,\nĐể cứ bâng khuâng hận nửa đời.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Sai Vần] [CRITICAL!] Khổ 1: Từ cuối Dòng 1 ('người') chưa vần với Dòng 2 ('nguôi'). Gợi ý: -uôi | Từ cuối Dòng 4 ('đồi') chưa vần với Dòng 2 ('nguôi'). Gợi ý: -uôi",
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('gọi' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng."
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('gọi' - 'thôi' - 'đời')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 3,
+   "tieu_de": "QUÊ HƯƠNG",
+   "tho": "Đã bấy lâu nay cứ miệt mài,\nTrong vòng luẩn quẩn kiếm sinh nhai.\nVề bên giếng nước rêu phong kín,\nNép dưới hàng cau nắng đổ dài.\nNhớ mãi đầu cha phơ mái tóc,\nThương hoài áo mẹ bạc màu vai.\nNhìn theo lối cũ vàng hoa cải,\nThấy chậm bàn chân nặng gót hài.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('tóc' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng.",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('tóc') chưa vần với Dòng 6 ('vai'). Gợi ý: -ai, -ay, -oi, -ui, -ôi, -ơi, -ươi"
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('mài' - 'nhai' - 'dài').",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc)."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 4,
+   "tieu_de": "V U A V Ọ N G C Ổ",
+   "tho": "Kính cẩn nghiêng mình biệt viễn châu,\nÔng vua Vọng cổ đã về chầu.\nThiên đường viết tiếp làn tân cổ,\nThượng giới đàn hoài điệu sáu câu.\nThập lục huyền cầm ngân nức nở,\nTình anh bán chiếu trỗi thương sầu.\nMàn nhung hé mở người không thấy,\nBảy bá ôm cầm khảy tận đâu.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('nở' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng.",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('nở') chưa vần với Dòng 6 ('sầu'). Gợi ý: -âu"
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('châu' - 'chầu' - 'câu').",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc)."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 7,
+   "tieu_de": "LẺ BÓNG",
+   "tho": "Một sáng sương mù khẽ rảo bay,\nLàm đau cái lạnh giữa thu gầy.\nHoa cài ngọn cỏ thuyền trôi đấy,\nGió thổi lưng trời dạ đỡ cay.\nCảnh cũ còn đây tình sống dậy,\nNgười xưa đã vắng mộng dâng đầy.\nĐan vào nỗi nhớ nhờ sông chảy,\nCuộn những tơ lòng gửi áng mây.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Sai Vần] [CRITICAL!] Khổ 1: Từ cuối Dòng 1 ('bay') chưa vần với Dòng 2 ('gầy'). Gợi ý: -ây | Từ cuối Dòng 4 ('cay') chưa vần với Dòng 2 ('gầy'). Gợi ý: -ây",
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('dậy' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng."
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('dậy' - 'đầy' - 'mây')."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 14,
+   "tieu_de": "BẼ BÀNG",
+   "tho": "Đâu bởi mùa thu thiếu sắc vàng,\nMà người thuở ấy vội sang ngang.\nĐò chiều ngơ ngẩn mong đầu bãi,\nTrăng sớm miên man ngóng cuối làng.\nMặc bến phơi mình mưa xối xả,\nĐể thuyền trơ mạn nắng chang chang.\nGió lùa lau sậy bay phơ phất,\nMột chút ưu tư hóa bẽ bàng.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('xả' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng.",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('xả') chưa vần với Dòng 6 ('chang'). Gợi ý: -ang, -ương"
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('vàng' - 'ngang' - 'làng').",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc)."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 15,
+   "tieu_de": "GIẤC NGỦ TRẦN GIAN",
+   "tho": "Hàng đêm ngủ lại dưới trăng trời,\nMộng nửa canh giờ gió bỗng rơi.\nChợt nghĩ trên đầu tinh tú chuyển,\nHình như đối diện dải mây rời.\nNơi nằm có sẵn vài gang mộ,\nChỗ đẻ đâu thừa một tấc nôi.\nHiểu rõ càn khôn là ngục tối,\nThì xin ánh lửa phực ngang người.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('mộ' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng.",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('mộ') chưa vần với Dòng 6 ('nôi'). Gợi ý: -ôi, -ai, -oi, -ui, -ơi, -ươi"
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('trời' - 'rơi' - 'rời').",
+    "[Khổ 2] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng)."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 16,
+   "tieu_de": "CHIỀU ĐẦU ĐÔNG",
+   "tho": "Lãng đãng gót sen dạo bước hồng,\nSe se chiều lạnh tiết đầu đông.\nGió đưa sáo lá lao xao thổi,\nSóng vỗ đàn bờ óc ách bồng.\nThương liễu vặn mình run rẩy lá,\nXót hoa nép cánh ngập ngừng bông.\nBóng câu thấp thoáng buông màn biếc,\nKỷ niệm chiều xưa ngập cõi lòng.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('lá' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng.",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('lá') chưa vần với Dòng 6 ('bông'). Gợi ý: -ông, -ong, -ung"
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('hồng' - 'đông' - 'bồng').",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc)."
+   ],
+   "rule2_modern_loi": []
+  },
+  {
+   "id": 18,
+   "tieu_de": "XUÂN CUỐI",
+   "tho": "Trăm năm chững lại một giây thôi,\nBãi bể nương dâu vật đổi rời.\nCảnh đó người đây tay níu tuổi,\nVề tranh thủy mặc bước chân lơi.\n\nHoa già đỏ lửa run run vẫy,\nCội gốc oằn mình cõng nắng rơi.\nRực sáng tình nhân màu đỏ cuối,\nThần tiên một khắc tạc cho đời.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule2_dat": false,
+   "rule2_cach_doc": "8 dòng → 2 khổ tứ tuyệt",
+   "rule2_modern_dat": true,
+   "rule2_so_loi": 2,
+   "rule2_loi_nang": 1,
+   "rule2_loi_nhe": 1,
+   "rule2_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('vẫy' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng.",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('vẫy') chưa vần với Dòng 6 ('rơi'). Gợi ý: -ơi, -ai, -oi, -ui, -ôi, -ươi"
+   ],
+   "rule2_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 2] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 3] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 4] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('thôi' - 'rời' - 'lơi').",
+    "[Khổ 2] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 5] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Dòng 6] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 7] Niêm luật chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Dòng 8] Niêm luật chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng)."
+   ],
+   "rule2_modern_loi": []
+  }
+ ]
+}

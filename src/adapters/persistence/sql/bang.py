@@ -29,6 +29,24 @@ from sqlalchemy import Column, Float, Integer, MetaData, String, Table, Text
 
 metadata = MetaData()
 
+# Siêu dữ liệu một cuộc hội thoại — §15 của `AI_LLM_Chat_Web_UI_Plan.md`.
+#
+# Tách khỏi `tin_nhan` vì hai thứ có VÒNG ĐỜI khác nhau: tiêu đề và model đổi được
+# mà không đụng tới tin nhắn, và danh sách hội thoại phải liệt kê được mà không
+# phải quét toàn bộ bảng tin nhắn.
+#
+# `tenant_id` nằm trong khoá chính, như mọi bảng khác — ADR-0003.
+hoi_thoai = Table(
+    "hoi_thoai",
+    metadata,
+    Column("tenant_id", String(128), primary_key=True),
+    Column("conversation_id", String(256), primary_key=True),
+    Column("tieu_de", String(512), nullable=False, default=""),
+    Column("model", String(128), nullable=False, default=""),
+    Column("tao_luc", Float, nullable=False),
+    Column("cap_nhat_luc", Float, nullable=False),
+)
+
 tin_nhan = Table(
     "tin_nhan",
     metadata,

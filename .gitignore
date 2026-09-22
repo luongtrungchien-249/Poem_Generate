@@ -41,3 +41,5 @@ datalake/analysis/reports/
 # Giữ lại phần tóm tắt đọc được và số liệu máy đọc
 !datalake/analysis/TONG_HOP.md
 !datalake/analysis/tong_hop.json
+!datalake/analysis/tong_hop_rule2.json
+!datalake/analysis/tong_hop_rule3.json

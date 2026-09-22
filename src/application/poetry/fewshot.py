@@ -36,6 +36,11 @@ from application.poetry.dataset import MauTho, tu_khoa_yeu_cau
 from application.poetry.plan import PoetryPlan
 from application.poetry.requirement import PoetryRequirement
 
+# `rule.py` ĐÓNG BĂNG: chỉ GỌI, không bao giờ viết lại phép phân tích thanh ở
+# đây. Chú thích khuôn đưa vào prompt phải do CHÍNH bộ luật chấm bài sinh ra —
+# nếu không, mô hình được dạy một khuôn khác với khuôn dùng để đánh trượt nó.
+from application.rule import khuon_cua_dong, tach_tieng, thanh_cua
+
 CheDo: TypeAlias = Literal["zero_shot", "one_shot", "few_shot"]
 
 SO_VI_DU_TOI_DA = 3
@@ -152,10 +157,51 @@ def dung_khoi_vi_du(cac_vi_du: Sequence[ViDuDuocChon]) -> str:
     """
     if not cac_vi_du:
         return ""
-    khuc = ["Dưới đây là các bài ĐÚNG LUẬT để bạn nhìn khuôn. KHÔNG chép lại chữ nào."]
+    khuc = [
+        "Dưới đây là các bài ĐÚNG LUẬT để bạn nhìn khuôn. KHÔNG chép lại chữ nào.",
+        "Sau mỗi bài có bảng chỉ ra tiếng 2·4·6 của từng dòng và khuôn của dòng đó.",
+        "Bảng đó chỉ để bạn thấy khuôn nằm ở đâu. BÀI CỦA BẠN CHỈ GỒM CÁC DÒNG THƠ:",
+        "không kèm bảng, không kèm chú thích, không đánh dấu B/T.",
+    ]
     for i, vd in enumerate(cac_vi_du, start=1):
         m = vd.mau
         khuc.append("")
         khuc.append(f"--- Mẫu {i} (id={m.id}; {m.so_dong} dòng / {m.so_kho} khổ) ---")
         khuc.append(m.tho)
+        bang = _bang_khuon(m.tho)
+        if bang:
+            khuc.append("khuôn của từng dòng:")
+            khuc.append(bang)
     return "\n".join(khuc)
+
+
+# Tên khuôn hiện cho mô hình. `khuon_cua_dong` còn trả "pha" và "khong_xac_dinh";
+# hai mã đó không bao giờ xuất hiện ở đây vì mọi mẫu đều đã qua `kiem_tra_bai_tho`
+# — vẫn xử lý để một mẫu hỏng không làm sập việc dựng prompt.
+_TEN_KHUON = {"bang": "khuôn bằng (B T B)", "trac": "khuôn trắc (T B T)"}
+
+
+def _bang_khuon(tho: str) -> str:
+    """Chú thích tiếng 2·4·6 của từng dòng, tính bằng chính `rule.py`.
+
+    VÌ SAO CHÚ THÍCH THAY VÌ ĐƯA THƠ TRẦN:
+
+    Bài mẫu trần buộc mô hình tự suy ra khuôn `B T B` từ văn bản — đúng việc nó làm
+    dở nhất, và là nguyên nhân số một khiến bài bị đánh trượt (tầng thanh luật chặn
+    55,29% corpus). Chỉ thẳng ra tiếng nào mang thanh gì thì ví dụ dạy được điều nó
+    cần học, thay vì chỉ cho thấy một bài thơ hay.
+
+    Bảng để RIÊNG dưới bài, không gắn vào từng dòng thơ: gắn vào dòng thì mô hình
+    bắt chước và viết chú thích vào bài của nó, mà bộ đọc kết quả chỉ lấy bốn dòng
+    đầu không rỗng — một dòng chú thích lọt vào đó là hỏng cả ứng viên.
+    """
+    hang: list[str] = []
+    for so, dong in enumerate((d for d in tho.splitlines() if d.strip()), start=1):
+        tieng = tach_tieng(dong)
+        ten = _TEN_KHUON.get(khuon_cua_dong(tieng))
+        if ten is None:
+            # Dòng không đủ 7 tiếng thì P2/P4/P6 không còn là P2/P4/P6 của thể.
+            continue
+        bo_ba = "  ".join(f"{tieng[i]}={thanh_cua(tieng[i])}" for i in (1, 3, 5))
+        hang.append(f"  dòng {so}: {bo_ba}  -> {ten}")
+    return "\n".join(hang)

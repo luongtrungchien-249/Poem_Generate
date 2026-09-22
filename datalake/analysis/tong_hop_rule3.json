@@ -1,0 +1,3076 @@
+{
+ "thong_ke": {
+  "tong": 24366,
+  "rule3_dat": 3813,
+  "rule3_truot": 20553,
+  "ty_le_dat": 15.65,
+  "ty_le_truot": 84.35,
+  "nen_rule2": {
+   "rule2_dat": 3146,
+   "rule2_truot": 21220,
+   "rule2_ty_le_dat": 12.91,
+   "rule2_ly_do_truot": {
+    "Sai Vần": 30170,
+    "Lỗi Gieo Vần": 24049,
+    "Vi phạm Bằng/Trắc": 6959
+   }
+  },
+  "ly_do_truot_theo_luot": {
+   "Sai Vần": 30170,
+   "Lỗi Gieo Vần (thanh cuối không Bằng)": 24049
+  },
+  "ly_do_truot_theo_bai": {
+   "Lỗi Gieo Vần (thanh cuối không Bằng)": 17388,
+   "Sai Vần": 17300
+  },
+  "phan_bo_so_loi": {
+   "0": 3813,
+   "1": 4552,
+   "2": 9969,
+   "3": 2339,
+   "4": 1507,
+   "5": 592,
+   "6": 593,
+   "7": 236,
+   "8": 286,
+   "9": 105,
+   "10": 130,
+   "11": 52,
+   "12": 44,
+   "13": 21,
+   "14": 32,
+   "15": 8,
+   "16": 19,
+   "17": 6,
+   "18": 9,
+   "19": 6,
+   "20": 47
+  },
+  "theo_so_dong": {
+   "4": {
+    "dat": 2429,
+    "truot": 1474,
+    "ty_le_dat": 62.23
+   },
+   "8": {
+    "dat": 313,
+    "truot": 12817,
+    "ty_le_dat": 2.38
+   },
+   "12": {
+    "dat": 237,
+    "truot": 699,
+    "ty_le_dat": 25.32
+   },
+   "16": {
+    "dat": 359,
+    "truot": 2457,
+    "ty_le_dat": 12.75
+   },
+   "20": {
+    "dat": 148,
+    "truot": 693,
+    "ty_le_dat": 17.6
+   },
+   "24": {
+    "dat": 113,
+    "truot": 468,
+    "ty_le_dat": 19.45
+   },
+   "28": {
+    "dat": 145,
+    "truot": 791,
+    "ty_le_dat": 15.49
+   },
+   "32": {
+    "dat": 36,
+    "truot": 246,
+    "ty_le_dat": 12.77
+   },
+   "36": {
+    "dat": 11,
+    "truot": 103,
+    "ty_le_dat": 9.65
+   },
+   "40": {
+    "dat": 6,
+    "truot": 138,
+    "ty_le_dat": 4.17
+   },
+   "44": {
+    "dat": 7,
+    "truot": 40,
+    "ty_le_dat": 14.89
+   },
+   "48": {
+    "dat": 0,
+    "truot": 78,
+    "ty_le_dat": 0.0
+   },
+   "52": {
+    "dat": 4,
+    "truot": 90,
+    "ty_le_dat": 4.26
+   },
+   "56": {
+    "dat": 3,
+    "truot": 283,
+    "ty_le_dat": 1.05
+   },
+   "60": {
+    "dat": 0,
+    "truot": 21,
+    "ty_le_dat": 0.0
+   },
+   "64": {
+    "dat": 1,
+    "truot": 73,
+    "ty_le_dat": 1.35
+   },
+   "68": {
+    "dat": 0,
+    "truot": 9,
+    "ty_le_dat": 0.0
+   },
+   "72": {
+    "dat": 0,
+    "truot": 22,
+    "ty_le_dat": 0.0
+   },
+   "76": {
+    "dat": 0,
+    "truot": 5,
+    "ty_le_dat": 0.0
+   },
+   "80": {
+    "dat": 0,
+    "truot": 19,
+    "ty_le_dat": 0.0
+   },
+   "84": {
+    "dat": 0,
+    "truot": 7,
+    "ty_le_dat": 0.0
+   },
+   "92": {
+    "dat": 0,
+    "truot": 2,
+    "ty_le_dat": 0.0
+   },
+   "96": {
+    "dat": 0,
+    "truot": 6,
+    "ty_le_dat": 0.0
+   },
+   "100": {
+    "dat": 0,
+    "truot": 5,
+    "ty_le_dat": 0.0
+   },
+   "104": {
+    "dat": 1,
+    "truot": 2,
+    "ty_le_dat": 33.33
+   },
+   "108": {
+    "dat": 0,
+    "truot": 2,
+    "ty_le_dat": 0.0
+   },
+   "128": {
+    "dat": 0,
+    "truot": 1,
+    "ty_le_dat": 0.0
+   },
+   "156": {
+    "dat": 0,
+    "truot": 2,
+    "ty_le_dat": 0.0
+   }
+  }
+ },
+ "vi_du_dat": [
+  {
+   "id": 72,
+   "tieu_de": "TRẢ HƯƠNG",
+   "tho": "Nhác bóng xuân hồng ngơ ngác đông,\nGió xa se cuộn rối tơ lòng.\nNgười đi biết có còn ươm mộng,\nXuân ấy tròn nguyên một chữ nồng.\n\nRồi mai én lượn mỏi từng không,\nVương níu mà chi cải đã ngồng.\nĐem chưng thương nhớ đêm đồng vọng,\nHương trả về nơi lúa ủ đòng.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule3_dat": true,
+   "rule3_so_loi": 0,
+   "rule3_loi_nang": 0,
+   "rule3_loi_nhe": 0,
+   "rule3_loi": [],
+   "rule3_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('đông' - 'lòng' - 'nồng').",
+    "[Khổ 2] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 5] Luật Bằng/Trắc chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('không' - 'ngồng' - 'đòng')."
+   ],
+   "bang_chung": {
+    "dong": [
+     {
+      "so": 1,
+      "van_ban": "Nhác bóng xuân hồng ngơ ngác đông,",
+      "so_tieng": 7,
+      "tieng": [
+       "Nhác",
+       "bóng",
+       "xuân",
+       "hồng",
+       "ngơ",
+       "ngác",
+       "đông"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "B",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "bóng",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "hồng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ngác",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "đông",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 2,
+      "van_ban": "Gió xa se cuộn rối tơ lòng.",
+      "so_tieng": 7,
+      "tieng": [
+       "Gió",
+       "xa",
+       "se",
+       "cuộn",
+       "rối",
+       "tơ",
+       "lòng"
+      ],
+      "thanh": [
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "xa",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "cuộn",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "tơ",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "lòng",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 3,
+      "van_ban": "Người đi biết có còn ươm mộng,",
+      "so_tieng": 7,
+      "tieng": [
+       "Người",
+       "đi",
+       "biết",
+       "có",
+       "còn",
+       "ươm",
+       "mộng"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "đi",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "có",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ươm",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "mộng",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 4,
+      "van_ban": "Xuân ấy tròn nguyên một chữ nồng.",
+      "so_tieng": 7,
+      "tieng": [
+       "Xuân",
+       "ấy",
+       "tròn",
+       "nguyên",
+       "một",
+       "chữ",
+       "nồng"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "ấy",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nguyên",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "chữ",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "nồng",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 5,
+      "van_ban": "Rồi mai én lượn mỏi từng không,",
+      "so_tieng": 7,
+      "tieng": [
+       "Rồi",
+       "mai",
+       "én",
+       "lượn",
+       "mỏi",
+       "từng",
+       "không"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "mai",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "lượn",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "từng",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "không",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 6,
+      "van_ban": "Vương níu mà chi cải đã ngồng.",
+      "so_tieng": 7,
+      "tieng": [
+       "Vương",
+       "níu",
+       "mà",
+       "chi",
+       "cải",
+       "đã",
+       "ngồng"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "níu",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "chi",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "đã",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "ngồng",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 7,
+      "van_ban": "Đem chưng thương nhớ đêm đồng vọng,",
+      "so_tieng": 7,
+      "tieng": [
+       "Đem",
+       "chưng",
+       "thương",
+       "nhớ",
+       "đêm",
+       "đồng",
+       "vọng"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "chưng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nhớ",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "đồng",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "vọng",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 8,
+      "van_ban": "Hương trả về nơi lúa ủ đòng.",
+      "so_tieng": 7,
+      "tieng": [
+       "Hương",
+       "trả",
+       "về",
+       "nơi",
+       "lúa",
+       "ủ",
+       "đòng"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "trả",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nơi",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ủ",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "đòng",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "B"
+     }
+    ],
+    "cap_van_bo_kiem_nhin": [
+     {
+      "cap": "Khổ 1: dòng 1 ↔ dòng 2",
+      "tieng": [
+       "đông",
+       "lòng"
+      ],
+      "van": [
+       "ông",
+       "ong"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 1: dòng 2 ↔ dòng 4",
+      "tieng": [
+       "lòng",
+       "nồng"
+      ],
+      "van": [
+       "ong",
+       "ông"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 5 ↔ dòng 6",
+      "tieng": [
+       "không",
+       "ngồng"
+      ],
+      "van": [
+       "ông",
+       "ông"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 6 ↔ dòng 8",
+      "tieng": [
+       "ngồng",
+       "đòng"
+      ],
+      "van": [
+       "ông",
+       "ong"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": 2698,
+   "tieu_de": "",
+   "tho": "Anh lấy nỗi đau làm mật ong,\nChao ôi từng giọt chảy như lòng.\nEm biết đời ong đi vạn dặm,\nChắt cả mùa xuân giọt mật trong.",
+   "so_dong": 4,
+   "rule1_dat": true,
+   "rule3_dat": true,
+   "rule3_so_loi": 0,
+   "rule3_loi_nang": 0,
+   "rule3_loi_nhe": 0,
+   "rule3_loi": [],
+   "rule3_dat_chuan": [
+    "Cấu trúc: 4 dòng (chia thành 1 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('ong' - 'lòng' - 'trong')."
+   ],
+   "bang_chung": {
+    "dong": [
+     {
+      "so": 1,
+      "van_ban": "Anh lấy nỗi đau làm mật ong,",
+      "so_tieng": 7,
+      "tieng": [
+       "Anh",
+       "lấy",
+       "nỗi",
+       "đau",
+       "làm",
+       "mật",
+       "ong"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "lấy",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "đau",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "mật",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "ong",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 2,
+      "van_ban": "Chao ôi từng giọt chảy như lòng.",
+      "so_tieng": 7,
+      "tieng": [
+       "Chao",
+       "ôi",
+       "từng",
+       "giọt",
+       "chảy",
+       "như",
+       "lòng"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "ôi",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "giọt",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "như",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "lòng",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 3,
+      "van_ban": "Em biết đời ong đi vạn dặm,",
+      "so_tieng": 7,
+      "tieng": [
+       "Em",
+       "biết",
+       "đời",
+       "ong",
+       "đi",
+       "vạn",
+       "dặm"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "B",
+       "T",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "biết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "ong",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "vạn",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "dặm",
+      "van_cuoi": "ăm",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 4,
+      "van_ban": "Chắt cả mùa xuân giọt mật trong.",
+      "so_tieng": 7,
+      "tieng": [
+       "Chắt",
+       "cả",
+       "mùa",
+       "xuân",
+       "giọt",
+       "mật",
+       "trong"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "cả",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "xuân",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "mật",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "trong",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "B"
+     }
+    ],
+    "cap_van_bo_kiem_nhin": [
+     {
+      "cap": "Khổ 1: dòng 1 ↔ dòng 2",
+      "tieng": [
+       "ong",
+       "lòng"
+      ],
+      "van": [
+       "ong",
+       "ong"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 1: dòng 2 ↔ dòng 4",
+      "tieng": [
+       "lòng",
+       "trong"
+      ],
+      "van": [
+       "ong",
+       "ong"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": 4117,
+   "tieu_de": "Tôi mang Hồ Gươm đi",
+   "tho": "Sao Hồ Gươm biết tôi chia xa?\nMà run cho mọi bóng cây nhòa,\nMà im im hết nghìn tăm cá,\nMà thở chiều lên khắp cỏ hoa?\n\nGió níu hoàng hôn xuống đáy tranh,\nLá rụng, trời xao động cổ thành,\nĐổi dòng, sông gửi hồn ngưng đọng,\nMượn hồ trả kiếm lại trời xanh.\n\nTôi muốn mang hồ đi trú đông,\nMà không khiêng vác được Sông Hồng,\nMà không gói nổi heo may rét,\nĐành để hồ cho gió bấc trông!\n\nSao Hồ Gươm biết tôi ra đây?\nMà thương ôm bóng kẻ lưu đầy,\nMà lau đôi mắt tôi bằng sóng,\nMà cả trời kia xuống hết cây...",
+   "so_dong": 16,
+   "rule1_dat": true,
+   "rule3_dat": true,
+   "rule3_so_loi": 0,
+   "rule3_loi_nang": 0,
+   "rule3_loi_nhe": 0,
+   "rule3_loi": [],
+   "rule3_dat_chuan": [
+    "Cấu trúc: 16 dòng (chia thành 4 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 1] Luật Bằng/Trắc chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('xa' - 'nhòa' - 'hoa').",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('tranh' - 'thành' - 'xanh').",
+    "[Khổ 3] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 9] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 3: Từ cuối các dòng 9, 10, 12 hiệp vần chuẩn xác ('đông' - 'Hồng' - 'trông').",
+    "[Khổ 4] Xác định được Luật Bằng (do từ 2 câu 1 là thanh Bằng).",
+    "[Dòng 13] Luật Bằng/Trắc chuẩn xác (2 Bằng - 4 Trắc - 6 Bằng).",
+    "[Gieo Vần] Khổ 4: Từ cuối các dòng 13, 14, 16 hiệp vần chuẩn xác ('đây' - 'đầy' - 'cây')."
+   ],
+   "bang_chung": {
+    "dong": [
+     {
+      "so": 1,
+      "van_ban": "Sao Hồ Gươm biết tôi chia xa?",
+      "so_tieng": 7,
+      "tieng": [
+       "Sao",
+       "Hồ",
+       "Gươm",
+       "biết",
+       "tôi",
+       "chia",
+       "xa"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "B",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "Hồ",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "biết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "chia",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "xa",
+      "van_cuoi": "a",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 2,
+      "van_ban": "Mà run cho mọi bóng cây nhòa,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "run",
+       "cho",
+       "mọi",
+       "bóng",
+       "cây",
+       "nhòa"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "run",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "mọi",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "cây",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "nhòa",
+      "van_cuoi": "a",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 3,
+      "van_ban": "Mà im im hết nghìn tăm cá,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "im",
+       "im",
+       "hết",
+       "nghìn",
+       "tăm",
+       "cá"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "im",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "hết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "tăm",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "cá",
+      "van_cuoi": "a",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 4,
+      "van_ban": "Mà thở chiều lên khắp cỏ hoa?",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "thở",
+       "chiều",
+       "lên",
+       "khắp",
+       "cỏ",
+       "hoa"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "thở",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "lên",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "cỏ",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "hoa",
+      "van_cuoi": "a",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 5,
+      "van_ban": "Gió níu hoàng hôn xuống đáy tranh,",
+      "so_tieng": 7,
+      "tieng": [
+       "Gió",
+       "níu",
+       "hoàng",
+       "hôn",
+       "xuống",
+       "đáy",
+       "tranh"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "níu",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "hôn",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "đáy",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "tranh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 6,
+      "van_ban": "Lá rụng, trời xao động cổ thành,",
+      "so_tieng": 7,
+      "tieng": [
+       "Lá",
+       "rụng",
+       "trời",
+       "xao",
+       "động",
+       "cổ",
+       "thành"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "rụng",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "xao",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "cổ",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "thành",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 7,
+      "van_ban": "Đổi dòng, sông gửi hồn ngưng đọng,",
+      "so_tieng": 7,
+      "tieng": [
+       "Đổi",
+       "dòng",
+       "sông",
+       "gửi",
+       "hồn",
+       "ngưng",
+       "đọng"
+      ],
+      "thanh": [
+       "T",
+       "B",
+       "B",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "dòng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "gửi",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ngưng",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "đọng",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 8,
+      "van_ban": "Mượn hồ trả kiếm lại trời xanh.",
+      "so_tieng": 7,
+      "tieng": [
+       "Mượn",
+       "hồ",
+       "trả",
+       "kiếm",
+       "lại",
+       "trời",
+       "xanh"
+      ],
+      "thanh": [
+       "T",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "hồ",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "kiếm",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "trời",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "xanh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 9,
+      "van_ban": "Tôi muốn mang hồ đi trú đông,",
+      "so_tieng": 7,
+      "tieng": [
+       "Tôi",
+       "muốn",
+       "mang",
+       "hồ",
+       "đi",
+       "trú",
+       "đông"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "B",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "muốn",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "hồ",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "trú",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "đông",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 10,
+      "van_ban": "Mà không khiêng vác được Sông Hồng,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "không",
+       "khiêng",
+       "vác",
+       "được",
+       "Sông",
+       "Hồng"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "không",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "vác",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "Sông",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "Hồng",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 11,
+      "van_ban": "Mà không gói nổi heo may rét,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "không",
+       "gói",
+       "nổi",
+       "heo",
+       "may",
+       "rét"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "không",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nổi",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "may",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "rét",
+      "van_cuoi": "et",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 12,
+      "van_ban": "Đành để hồ cho gió bấc trông!",
+      "so_tieng": 7,
+      "tieng": [
+       "Đành",
+       "để",
+       "hồ",
+       "cho",
+       "gió",
+       "bấc",
+       "trông"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "để",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "cho",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "bấc",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "trông",
+      "van_cuoi": "ông",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 13,
+      "van_ban": "Sao Hồ Gươm biết tôi ra đây?",
+      "so_tieng": 7,
+      "tieng": [
+       "Sao",
+       "Hồ",
+       "Gươm",
+       "biết",
+       "tôi",
+       "ra",
+       "đây"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "B",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "Hồ",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "biết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ra",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "đây",
+      "van_cuoi": "ây",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 14,
+      "van_ban": "Mà thương ôm bóng kẻ lưu đầy,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "thương",
+       "ôm",
+       "bóng",
+       "kẻ",
+       "lưu",
+       "đầy"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "thương",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "bóng",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "lưu",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "đầy",
+      "van_cuoi": "ây",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 15,
+      "van_ban": "Mà lau đôi mắt tôi bằng sóng,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "lau",
+       "đôi",
+       "mắt",
+       "tôi",
+       "bằng",
+       "sóng"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "B",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "lau",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "mắt",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "bằng",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "sóng",
+      "van_cuoi": "ong",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 16,
+      "van_ban": "Mà cả trời kia xuống hết cây...",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "cả",
+       "trời",
+       "kia",
+       "xuống",
+       "hết",
+       "cây"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "cả",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "kia",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "hết",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "cây",
+      "van_cuoi": "ây",
+      "thanh_cuoi": "B"
+     }
+    ],
+    "cap_van_bo_kiem_nhin": [
+     {
+      "cap": "Khổ 1: dòng 1 ↔ dòng 2",
+      "tieng": [
+       "xa",
+       "nhòa"
+      ],
+      "van": [
+       "a",
+       "a"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 1: dòng 2 ↔ dòng 4",
+      "tieng": [
+       "nhòa",
+       "hoa"
+      ],
+      "van": [
+       "a",
+       "a"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 5 ↔ dòng 6",
+      "tieng": [
+       "tranh",
+       "thành"
+      ],
+      "van": [
+       "anh",
+       "anh"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 6 ↔ dòng 8",
+      "tieng": [
+       "thành",
+       "xanh"
+      ],
+      "van": [
+       "anh",
+       "anh"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 3: dòng 9 ↔ dòng 10",
+      "tieng": [
+       "đông",
+       "Hồng"
+      ],
+      "van": [
+       "ông",
+       "ông"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 3: dòng 10 ↔ dòng 12",
+      "tieng": [
+       "Hồng",
+       "trông"
+      ],
+      "van": [
+       "ông",
+       "ông"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 4: dòng 13 ↔ dòng 14",
+      "tieng": [
+       "đây",
+       "đầy"
+      ],
+      "van": [
+       "ây",
+       "ây"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 4: dòng 14 ↔ dòng 16",
+      "tieng": [
+       "đầy",
+       "cây"
+      ],
+      "van": [
+       "ây",
+       "ây"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "vi_du_truot": [
+  {
+   "id": 1,
+   "tieu_de": "BÂNG KHUÂNG",
+   "tho": "Đã biết không nên nhớ một người,\nMà còn khắc khoải đến không nguôi.\nĐầu mai bóng mải bên sườn núi,\nCuối buổi hình xa ở mạn đồi.\nMấy bận đi qua lòng định gọi,\nĐôi lần đứng lại dạ dừng thôi.\nNhìn theo một quãng rồi hai lối,\nĐể cứ bâng khuâng hận nửa đời.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule3_dat": false,
+   "rule3_so_loi": 2,
+   "rule3_loi_nang": 1,
+   "rule3_loi_nhe": 1,
+   "rule3_loi": [
+    "[Sai Vần] [CRITICAL!] Khổ 1: Từ cuối Dòng 1 ('người') chưa vần với Dòng 2 ('nguôi'). Gợi ý: -uôi | Từ cuối Dòng 4 ('đồi') chưa vần với Dòng 2 ('nguôi'). Gợi ý: -uôi",
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('gọi' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng."
+   ],
+   "rule3_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('gọi' - 'thôi' - 'đời')."
+   ],
+   "bang_chung": {
+    "dong": [
+     {
+      "so": 1,
+      "van_ban": "Đã biết không nên nhớ một người,",
+      "so_tieng": 7,
+      "tieng": [
+       "Đã",
+       "biết",
+       "không",
+       "nên",
+       "nhớ",
+       "một",
+       "người"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "biết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nên",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "một",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "người",
+      "van_cuoi": "ươi",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 2,
+      "van_ban": "Mà còn khắc khoải đến không nguôi.",
+      "so_tieng": 7,
+      "tieng": [
+       "Mà",
+       "còn",
+       "khắc",
+       "khoải",
+       "đến",
+       "không",
+       "nguôi"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "còn",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "khoải",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "không",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "nguôi",
+      "van_cuoi": "uôi",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 3,
+      "van_ban": "Đầu mai bóng mải bên sườn núi,",
+      "so_tieng": 7,
+      "tieng": [
+       "Đầu",
+       "mai",
+       "bóng",
+       "mải",
+       "bên",
+       "sườn",
+       "núi"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "mai",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "mải",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "sườn",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "núi",
+      "van_cuoi": "ui",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 4,
+      "van_ban": "Cuối buổi hình xa ở mạn đồi.",
+      "so_tieng": 7,
+      "tieng": [
+       "Cuối",
+       "buổi",
+       "hình",
+       "xa",
+       "ở",
+       "mạn",
+       "đồi"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "buổi",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "xa",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "mạn",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "đồi",
+      "van_cuoi": "ôi",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 5,
+      "van_ban": "Mấy bận đi qua lòng định gọi,",
+      "so_tieng": 7,
+      "tieng": [
+       "Mấy",
+       "bận",
+       "đi",
+       "qua",
+       "lòng",
+       "định",
+       "gọi"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "B",
+       "T",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "bận",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "qua",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "định",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "gọi",
+      "van_cuoi": "oi",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 6,
+      "van_ban": "Đôi lần đứng lại dạ dừng thôi.",
+      "so_tieng": 7,
+      "tieng": [
+       "Đôi",
+       "lần",
+       "đứng",
+       "lại",
+       "dạ",
+       "dừng",
+       "thôi"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "lần",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "lại",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "dừng",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "thôi",
+      "van_cuoi": "ôi",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 7,
+      "van_ban": "Nhìn theo một quãng rồi hai lối,",
+      "so_tieng": 7,
+      "tieng": [
+       "Nhìn",
+       "theo",
+       "một",
+       "quãng",
+       "rồi",
+       "hai",
+       "lối"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "theo",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "quãng",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "hai",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "lối",
+      "van_cuoi": "ôi",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 8,
+      "van_ban": "Để cứ bâng khuâng hận nửa đời.",
+      "so_tieng": 7,
+      "tieng": [
+       "Để",
+       "cứ",
+       "bâng",
+       "khuâng",
+       "hận",
+       "nửa",
+       "đời"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "cứ",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "khuâng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "nửa",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "đời",
+      "van_cuoi": "ơi",
+      "thanh_cuoi": "B"
+     }
+    ],
+    "cap_van_bo_kiem_nhin": [
+     {
+      "cap": "Khổ 1: dòng 1 ↔ dòng 2",
+      "tieng": [
+       "người",
+       "nguôi"
+      ],
+      "van": [
+       "ươi",
+       "uôi"
+      ],
+      "hiep": false,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 1: dòng 2 ↔ dòng 4",
+      "tieng": [
+       "nguôi",
+       "đồi"
+      ],
+      "van": [
+       "uôi",
+       "ôi"
+      ],
+      "hiep": false,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 5 ↔ dòng 6",
+      "tieng": [
+       "gọi",
+       "thôi"
+      ],
+      "van": [
+       "oi",
+       "ôi"
+      ],
+      "hiep": true,
+      "thanh": [
+       "T",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 6 ↔ dòng 8",
+      "tieng": [
+       "thôi",
+       "đời"
+      ],
+      "van": [
+       "ôi",
+       "ơi"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": 36,
+   "tieu_de": "NGÔI NHÀ HẠNH PHÚC",
+   "tho": "Lá trải bên thềm nhuộm nếp tranh,\nLời yêu ước nguyện mãi song hành.\nLen dòng gió ấm xua chiều quạnh,\nLựa dải tơ mềm buộc nắng hanh.\nLuống cỏ xanh tươi chồng trỉa nhánh,\nLề hoa rực thắm vợ vun cành.\nLam chiều quyện ngõ viền tiên cảnh,\nLạc nẻo chân tình đẹp ngỡ tranh.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule3_dat": false,
+   "rule3_so_loi": 1,
+   "rule3_loi_nang": 0,
+   "rule3_loi_nhe": 1,
+   "rule3_loi": [
+    "[Lỗi Gieo Vần Khổ 2] Dòng 5 ('nhánh' - Trắc) sai thanh điệu. Từ cuối các câu 1, 2 và 4 bắt buộc phải là vần Bằng."
+   ],
+   "rule3_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 1: Từ cuối các dòng 1, 2, 4 hiệp vần chuẩn xác ('tranh' - 'hành' - 'hanh').",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Gieo Vần] Khổ 2: Từ cuối các dòng 5, 6, 8 hiệp vần chuẩn xác ('nhánh' - 'cành' - 'tranh')."
+   ],
+   "bang_chung": {
+    "dong": [
+     {
+      "so": 1,
+      "van_ban": "Lá trải bên thềm nhuộm nếp tranh,",
+      "so_tieng": 7,
+      "tieng": [
+       "Lá",
+       "trải",
+       "bên",
+       "thềm",
+       "nhuộm",
+       "nếp",
+       "tranh"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "trải",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "thềm",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "nếp",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "tranh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 2,
+      "van_ban": "Lời yêu ước nguyện mãi song hành.",
+      "so_tieng": 7,
+      "tieng": [
+       "Lời",
+       "yêu",
+       "ước",
+       "nguyện",
+       "mãi",
+       "song",
+       "hành"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "yêu",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nguyện",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "song",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "hành",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 3,
+      "van_ban": "Len dòng gió ấm xua chiều quạnh,",
+      "so_tieng": 7,
+      "tieng": [
+       "Len",
+       "dòng",
+       "gió",
+       "ấm",
+       "xua",
+       "chiều",
+       "quạnh"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "dòng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "ấm",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "chiều",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "quạnh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 4,
+      "van_ban": "Lựa dải tơ mềm buộc nắng hanh.",
+      "so_tieng": 7,
+      "tieng": [
+       "Lựa",
+       "dải",
+       "tơ",
+       "mềm",
+       "buộc",
+       "nắng",
+       "hanh"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "dải",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "mềm",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "nắng",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "hanh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 5,
+      "van_ban": "Luống cỏ xanh tươi chồng trỉa nhánh,",
+      "so_tieng": 7,
+      "tieng": [
+       "Luống",
+       "cỏ",
+       "xanh",
+       "tươi",
+       "chồng",
+       "trỉa",
+       "nhánh"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "B",
+       "T",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "cỏ",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "tươi",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "trỉa",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "nhánh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 6,
+      "van_ban": "Lề hoa rực thắm vợ vun cành.",
+      "so_tieng": 7,
+      "tieng": [
+       "Lề",
+       "hoa",
+       "rực",
+       "thắm",
+       "vợ",
+       "vun",
+       "cành"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "hoa",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "thắm",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "vun",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "cành",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 7,
+      "van_ban": "Lam chiều quyện ngõ viền tiên cảnh,",
+      "so_tieng": 7,
+      "tieng": [
+       "Lam",
+       "chiều",
+       "quyện",
+       "ngõ",
+       "viền",
+       "tiên",
+       "cảnh"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "chiều",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "ngõ",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "tiên",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "cảnh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 8,
+      "van_ban": "Lạc nẻo chân tình đẹp ngỡ tranh.",
+      "so_tieng": 7,
+      "tieng": [
+       "Lạc",
+       "nẻo",
+       "chân",
+       "tình",
+       "đẹp",
+       "ngỡ",
+       "tranh"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "nẻo",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "tình",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ngỡ",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "tranh",
+      "van_cuoi": "anh",
+      "thanh_cuoi": "B"
+     }
+    ],
+    "cap_van_bo_kiem_nhin": [
+     {
+      "cap": "Khổ 1: dòng 1 ↔ dòng 2",
+      "tieng": [
+       "tranh",
+       "hành"
+      ],
+      "van": [
+       "anh",
+       "anh"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 1: dòng 2 ↔ dòng 4",
+      "tieng": [
+       "hành",
+       "hanh"
+      ],
+      "van": [
+       "anh",
+       "anh"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 5 ↔ dòng 6",
+      "tieng": [
+       "nhánh",
+       "cành"
+      ],
+      "van": [
+       "anh",
+       "anh"
+      ],
+      "hiep": true,
+      "thanh": [
+       "T",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 6 ↔ dòng 8",
+      "tieng": [
+       "cành",
+       "tranh"
+      ],
+      "van": [
+       "anh",
+       "anh"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": 2986,
+   "tieu_de": "",
+   "tho": "Nắng đậu cành thơ mây trắng bay,\nVai nghiêng đổ nửa giọt trăng đầy.\nEm nghiêng rót cả làn hương ngát,\nCạn hết nguyên bầu bóng ngực say.\n\nTà yếm trinh trong đỡ cánh tay,\nNgà non dáng trẻ nét thơ ngây.\nTrời khôn khéo buộc chùm tơ rối,\nĐể chết trong hồn cả áng mây.",
+   "so_dong": 8,
+   "rule1_dat": true,
+   "rule3_dat": false,
+   "rule3_so_loi": 2,
+   "rule3_loi_nang": 2,
+   "rule3_loi_nhe": 0,
+   "rule3_loi": [
+    "[Sai Vần] [CRITICAL!] Khổ 1: Từ cuối Dòng 1 ('bay') chưa vần với Dòng 2 ('đầy'). Gợi ý: -ây | Từ cuối Dòng 4 ('say') chưa vần với Dòng 2 ('đầy'). Gợi ý: -ây",
+    "[Sai Vần] [CRITICAL!] Khổ 2: Từ cuối Dòng 5 ('tay') chưa vần với Dòng 6 ('ngây'). Gợi ý: -ây"
+   ],
+   "rule3_dat_chuan": [
+    "Cấu trúc: 8 dòng (chia thành 2 khổ 4 câu).",
+    "Số tiếng: Tất cả các dòng đều đạt chuẩn 7 tiếng.",
+    "[Khổ 1] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 1] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc).",
+    "[Khổ 2] Xác định được Luật Trắc (do từ 2 câu 1 là thanh Trắc).",
+    "[Dòng 5] Luật Bằng/Trắc chuẩn xác (2 Trắc - 4 Bằng - 6 Trắc)."
+   ],
+   "bang_chung": {
+    "dong": [
+     {
+      "so": 1,
+      "van_ban": "Nắng đậu cành thơ mây trắng bay,",
+      "so_tieng": 7,
+      "tieng": [
+       "Nắng",
+       "đậu",
+       "cành",
+       "thơ",
+       "mây",
+       "trắng",
+       "bay"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "B",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "đậu",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "thơ",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "trắng",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "bay",
+      "van_cuoi": "ay",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 2,
+      "van_ban": "Vai nghiêng đổ nửa giọt trăng đầy.",
+      "so_tieng": 7,
+      "tieng": [
+       "Vai",
+       "nghiêng",
+       "đổ",
+       "nửa",
+       "giọt",
+       "trăng",
+       "đầy"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "nghiêng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "nửa",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "trăng",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "đầy",
+      "van_cuoi": "ây",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 3,
+      "van_ban": "Em nghiêng rót cả làn hương ngát,",
+      "so_tieng": 7,
+      "tieng": [
+       "Em",
+       "nghiêng",
+       "rót",
+       "cả",
+       "làn",
+       "hương",
+       "ngát"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "nghiêng",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "cả",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "hương",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "ngát",
+      "van_cuoi": "at",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 4,
+      "van_ban": "Cạn hết nguyên bầu bóng ngực say.",
+      "so_tieng": 7,
+      "tieng": [
+       "Cạn",
+       "hết",
+       "nguyên",
+       "bầu",
+       "bóng",
+       "ngực",
+       "say"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "hết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "bầu",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "ngực",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "say",
+      "van_cuoi": "ay",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 5,
+      "van_ban": "Tà yếm trinh trong đỡ cánh tay,",
+      "so_tieng": 7,
+      "tieng": [
+       "Tà",
+       "yếm",
+       "trinh",
+       "trong",
+       "đỡ",
+       "cánh",
+       "tay"
+      ],
+      "thanh": [
+       "B",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "yếm",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "trong",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "cánh",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "tay",
+      "van_cuoi": "ay",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 6,
+      "van_ban": "Ngà non dáng trẻ nét thơ ngây.",
+      "so_tieng": 7,
+      "tieng": [
+       "Ngà",
+       "non",
+       "dáng",
+       "trẻ",
+       "nét",
+       "thơ",
+       "ngây"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "T",
+       "B",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "non",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "trẻ",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "thơ",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "ngây",
+      "van_cuoi": "ây",
+      "thanh_cuoi": "B"
+     },
+     {
+      "so": 7,
+      "van_ban": "Trời khôn khéo buộc chùm tơ rối,",
+      "so_tieng": 7,
+      "tieng": [
+       "Trời",
+       "khôn",
+       "khéo",
+       "buộc",
+       "chùm",
+       "tơ",
+       "rối"
+      ],
+      "thanh": [
+       "B",
+       "B",
+       "T",
+       "T",
+       "B",
+       "B",
+       "T"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "khôn",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "buộc",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "tơ",
+        "thanh": "Bằng"
+       }
+      ],
+      "khuon_2_4_6": "B-T-B",
+      "tieng_cuoi": "rối",
+      "van_cuoi": "ôi",
+      "thanh_cuoi": "T"
+     },
+     {
+      "so": 8,
+      "van_ban": "Để chết trong hồn cả áng mây.",
+      "so_tieng": 7,
+      "tieng": [
+       "Để",
+       "chết",
+       "trong",
+       "hồn",
+       "cả",
+       "áng",
+       "mây"
+      ],
+      "thanh": [
+       "T",
+       "T",
+       "B",
+       "B",
+       "T",
+       "T",
+       "B"
+      ],
+      "vi_tri_2_4_6": [
+       {
+        "vi_tri": 2,
+        "tieng": "chết",
+        "thanh": "Trắc"
+       },
+       {
+        "vi_tri": 4,
+        "tieng": "hồn",
+        "thanh": "Bằng"
+       },
+       {
+        "vi_tri": 6,
+        "tieng": "áng",
+        "thanh": "Trắc"
+       }
+      ],
+      "khuon_2_4_6": "T-B-T",
+      "tieng_cuoi": "mây",
+      "van_cuoi": "ây",
+      "thanh_cuoi": "B"
+     }
+    ],
+    "cap_van_bo_kiem_nhin": [
+     {
+      "cap": "Khổ 1: dòng 1 ↔ dòng 2",
+      "tieng": [
+       "bay",
+       "đầy"
+      ],
+      "van": [
+       "ay",
+       "ây"
+      ],
+      "hiep": false,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 1: dòng 2 ↔ dòng 4",
+      "tieng": [
+       "đầy",
+       "say"
+      ],
+      "van": [
+       "ây",
+       "ay"
+      ],
+      "hiep": false,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 5 ↔ dòng 6",
+      "tieng": [
+       "tay",
+       "ngây"
+      ],
+      "van": [
+       "ay",
+       "ây"
+      ],
+      "hiep": false,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     },
+     {
+      "cap": "Khổ 2: dòng 6 ↔ dòng 8",
+      "tieng": [
+       "ngây",
+       "mây"
+      ],
+      "van": [
+       "ây",
+       "ây"
+      ],
+      "hiep": true,
+      "thanh": [
+       "B",
+       "B"
+      ]
+     }
+    ]
+   }
+  }
+ ]
+}

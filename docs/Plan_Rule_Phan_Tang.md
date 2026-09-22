@@ -760,7 +760,7 @@ Cột *"khi lập plan"* là 17/09, cột *"hiện tại"* đo ngày 18/09 sau k
 
 | Hạng mục | Khi lập plan | Hiện tại |
 |---|---|---|
-| `rule.py` | 816 dòng | **2.200 dòng**, 45 hàm |
+| `rule.py` | 816 dòng | **2.238 dòng**, 46 hàm |
 | Số điều luật | 29 | **30** (H4 bổ sung 18/09) |
 | Tiêu chí chặn | 5 | **7** |
 | Test riêng của `rule.py` | 45 | **126** (`test_rule.py` 37 + `test_rule_tang.py` 52, có tham số hoá) |
@@ -778,3 +778,76 @@ Cột *"khi lập plan"* là 17/09, cột *"hiện tại"* đo ngày 18/09 sau k
 | `datalake/scripts/doi_soat_ket_qua.py` | Kiểm chứng độc lập: phân hoạch id, lấy mẫu chạy lại |
 | `datalake/scripts/so_sanh_ban_luat.py` | So hai bản luật bằng cách chạy song song |
 | `datalake/scripts/doi_soat_tai_lieu.py` | **Chặn số liệu bịa trong tài liệu** — đối chiếu mọi con số trong ba tài liệu với nguồn sinh ra nó. Đã cắm vào CI |
+
+---
+
+## 12. SỬA `rule.py` — 21/09/2026, phép lùi âm đầu (T8)
+
+**Duyệt:** chủ dự án, 21/09/2026. **Băm đổi từ** `9f808d59…` **sang** bản mới ở
+`tests/architecture/test_rule_dong_bang.py`.
+
+### 12.1. Lỗi
+
+Cắt âm đầu theo khớp **dài nhất** là đúng cho hầu hết ca (`ngh` phải thử trước `ng`),
+nhưng sai ở một chỗ có thật:
+
+```
+van_cua("gìn")  = "n"     ← sai, phải là "in"     ("gi" + "n", đúng ra "g" + "ìn")
+van_cua("nhìn") = "in"
+hiep_van("gìn", "nhìn")  ->  False        ❌
+```
+
+Một bài gieo `gìn` với `nhìn` bị chấm là **không hiệp vần** — sai ở tầng 5, chạy hằng
+ngày. Chú thích §5 của `rule.py` đã lường trước ca này (*"'gì' không phải là 'gi' +
+rỗng, mà là 'g' + 'ì'"*) nhưng phép lùi cũ chỉ chạy khi phần dư **rỗng**, không chạy khi
+phần dư **không có nguyên âm**. `gian`, `giết`, `giữ` đúng chỉ vì phần dư (`an`, `êt`,
+`ư`) tình cờ hợp lệ.
+
+### 12.2. Sửa
+
+Thêm `_am_dau_kha_di`: ưu tiên khớp dài nhất **mà phần dư còn nguyên âm**; không có thì
+lùi về quy tắc cũ. Dùng chung cho `van_cua` và `phan_tich_am_tiet`.
+
+Tiêu chí là *"có nguyên âm"* chứ **không** phải *"tra được trong bảng âm chính"* — hẹp
+hơn thì an toàn hơn, và nới tay ở đây là đổi kết quả của **mọi** phép so vần có `gi`
+cùng một lúc. Test `tests/unit/application/test_van_gin.py` ghim cả hai chiều: ca hỏng
+phải sửa được, và `gian`/`giết`/`giữ`/`giờ`/`giàu`/`nghiêng`/`quà`/`chuyện`/`thuở` phải
+giữ nguyên kết quả cũ.
+
+**Phạm vi cố ý hẹp.** Không kèm bảng âm chính, không kèm phép kiểm âm tiết hợp lệ, không
+kèm H5 — QĐ-TTS-1 (`docs/Plan_TTS_Tieu_De_Reviewer.md` §3) đã đóng phần đó. Một lượt sửa
+file đóng băng mang đúng một lý do, để sau còn tra được thay đổi nào gây hệ quả nào.
+
+### 12.3. Đo lại toàn corpus — N4
+
+Chạy `datalake/scripts/kiem_tra_toan_bo.py` trên toàn bộ **67.150** bản ghi:
+
+| Thống kê | Trước | Sau | Chênh |
+| -------- | ----- | --- | ----- |
+| `bai_dat` | 24.366 | **24.366** | **0** |
+| `cum_co_van_chan` | 189.415 | 189.422 | **+7** |
+| `bai_dat_co_van_lung` | 13.532 | 13.533 | +1 |
+| sơ đồ `axax` | 37.312 | 37.314 | +2 |
+| sơ đồ `aaxa` | 32.145 | 32.147 | +2 |
+| sơ đồ `xaxa` | 26.805 | 26.806 | +1 |
+| sơ đồ `aaaa` | 19.921 | 19.923 | +2 |
+| sơ đồ `xaax` | 17.079 | 17.081 | +2 |
+| sơ đồ `xxaa` | 17.002 | 17.004 | +2 |
+| sơ đồ `xaaa` | 7.393 | 7.391 | −2 |
+| sơ đồ `axxa` | 4.200 | 4.198 | −2 |
+
+Đọc bảng này cho đúng: **không bài nào đổi phán quyết**. Các cụm chỉ **chuyển từ sơ đồ ít
+vần sang sơ đồ nhiều vần hơn** — đó là lý do `xaaa` và `axxa` giảm trong khi tổng
+`cum_co_van_chan` tăng. Hướng thay đổi đúng như đã lường trước khi chạy: phép sửa chỉ
+khiến những cặp trước đây *không* được nhận ra là hiệp vần nay được nhận ra; không cặp
+nào đang hiệp bị mất.
+
+`doi_soat` của lượt đo: `khop = true`, không lỗi.
+
+### 12.4. Tài liệu đã cập nhật theo số mới
+
+`doi_soat_tai_lieu.py` đỏ 20 chỗ sau khi đo — **đúng như cơ chế phải làm**, vì ba tài
+liệu còn trích số cũ. Đã cập nhật: `Report_stage_of_rule.md`,
+`Report_analyst_17-09_pass-notpass.md`, và mục 11 của chính tài liệu này (`rule.py`:
+2.200 → **2.238 dòng**, 45 → **46 hàm**). Chạy lại: ✅ *"Mọi con số trong tài liệu đều
+truy được về nguồn."*

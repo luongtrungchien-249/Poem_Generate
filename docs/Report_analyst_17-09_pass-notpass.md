@@ -275,7 +275,7 @@ dấu hiệu corpus nghiêng mạnh về cấu trúc khổ tứ tuyệt.
 ### 3.3. Sơ đồ vần — cụm bốn dòng có vần chân
 
 Đếm theo **cụm**, không theo bài: một bài dài có nhiều cụm bốn dòng liên tiếp.
-Tổng **189.415 cụm có vần chân** trên 24.366 bài, trung bình **7,77 cụm mỗi bài**.
+Tổng **189.422 cụm có vần chân** trên 24.366 bài, trung bình **7,77 cụm mỗi bài**.
 
 Từ QĐ-7b (18/09/2026) tiêu chí là *"cụm phải có ít nhất một cặp hiệp vần chân"*,
 không phải *"phải khớp một trong bốn sơ đồ §5.2"*. Bảng dưới vì vậy gồm **mọi** sơ
@@ -283,18 +283,18 @@ không phải *"phải khớp một trong bốn sơ đồ §5.2"*. Bảng dướ
 
 | Sơ đồ | Số cụm | Tỷ lệ | Ghi chú |
 |---|---:|---:|---|
-| `axax` | 37.312 | 19,70% | D1–D3 hiệp, D2–D4 buông |
-| `aaxa` | 32.145 | 16,97% | **Vần ba dòng, kế thừa Đường luật** (§5.2) |
-| `xaxa` | 26.805 | 14,15% | D2–D4 hiệp |
-| `aaaa` | 19.921 | 10,52% | **Độc vận cả cụm** — trước QĐ-7b bị loại |
-| `xaax` | 17.079 | 9,02% | |
-| `xxaa` | 17.002 | 8,98% | |
+| `axax` | 37.314 | 19,70% | D1–D3 hiệp, D2–D4 buông |
+| `aaxa` | 32.147 | 16,97% | **Vần ba dòng, kế thừa Đường luật** (§5.2) |
+| `xaxa` | 26.806 | 14,15% | D2–D4 hiệp |
+| `aaaa` | 19.923 | 10,52% | **Độc vận cả cụm** — trước QĐ-7b bị loại |
+| `xaax` | 17.081 | 9,02% | |
+| `xxaa` | 17.004 | 8,98% | |
 | `aaax` | 7.396 | 3,90% | |
-| `xaaa` | 7.393 | 3,90% | |
+| `xaaa` | 7.391 | 3,90% | |
 | `axaa` | 6.185 | 3,27% | |
 | `aaxx` | 5.710 | 3,01% | |
 | `abab` | 4.039 | 2,13% | **Vần cách** (§5.2) |
-| `axxa` | 4.200 | 2,22% | |
+| `axxa` | 4.198 | 2,22% | |
 | `aabb` | 2.441 | 1,29% | **Vần liền** (§5.2) |
 | `abba` | 1.176 | 0,62% | **Vần ôm** (§5.2) |
 | `????` và biến thể | 611 | 0,32% | Quan hệ vần **không bắc cầu** — cụm không quy về sơ đồ chữ cái, nhưng **vẫn có vần chân** |
@@ -307,7 +307,7 @@ không tồn tại.
 
 | Đặc điểm | Số bài | Tỷ lệ | Ghi chú |
 |---|---:|---:|---|
-| Có vần lưng ở P4/P5 | 13.532 | 55,54% | S1 (gộp S7) là **quyền** — làm dòng thơ dính chặt hơn |
+| Có vần lưng ở P4/P5 | 13.533 | 55,54% | S1 (gộp S7) là **quyền** — làm dòng thơ dính chặt hơn |
 | Có cặp vần lệch lớp thanh | 9.168 | 37,63% | S9 **cho phép** — ví dụ `xanh` (B) hiệp `mảnh` (T) |
 
 ### 3.5. Nhịp — số liệu này KHÔNG dùng được
