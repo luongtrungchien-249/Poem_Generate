@@ -94,6 +94,14 @@ def _bam(van_ban: str) -> str:
     return hashlib.sha256(chuan.encode("utf-8")).hexdigest()
 
 
+DONG_TOI_THIEU = 4  # H3: văn bản dưới 4 dòng không thể là một bài của thể này.
+
+
+def co_dang_bai_tho(van_ban: str) -> bool:
+    """Văn bản CÓ HÌNH DẠNG một bản nháp thơ (≥ 4 dòng không rỗng)? Không phán luật."""
+    return sum(1 for d in van_ban.splitlines() if d.strip()) >= DONG_TOI_THIEU
+
+
 def _chien_luoc_cho_luot(luot: int) -> ChienLuoc:
     return THANG_LEO_THANG[min(luot, len(THANG_LEO_THANG) - 1)]
 
@@ -189,6 +197,8 @@ async def generate_with_verification(
             ctx=ctx,
             should_stop_hook=should_stop_hook,
             default_model=default_model,
+            # GĐ3.4: đừng để một câu dẫn thế chỗ bài thơ mô hình vừa đưa đi kiểm.
+            la_ban_nhap=co_dang_bai_tho,
         )
         # So khớp tagged union bằng `isinstance`, đúng quy ước của dự án: nó thu
         # hẹp kiểu ở CẢ HAI nhánh, còn TypeGuard (`is_ok`/`is_err`) chỉ thu hẹp ở

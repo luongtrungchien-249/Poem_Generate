@@ -268,6 +268,11 @@ Chủ dự án chốt theo khuyến nghị: **QĐ-P2** chặn dòng chép nguyê
    cứng `"Đã hoàn thành các bước suy luận."` (`generate.py`). Chưa phân biệt được vì bản nháp
    trượt chưa từng được lưu. **Đã thêm** `OutputKhongDat.ban_nhap_cuoi` (ẩn khỏi `repr`, API không
    đọc, có test ghim) và `do_that.py` ghi nó ra — lượt đo kế tiếp sẽ trả lời.
+   ✅ **Đã sửa kịch bản khả dĩ nhất:** mô hình đưa bài vào tham số `van_ban` của `kiem_tra_tho` rồi
+   kết thúc bằng một câu dẫn. `generate_react_loop` nhận thêm `la_ban_nhap` (chỉ đường thơ truyền:
+   `verify_output.co_dang_bai_tho`, ≥ 4 dòng); khi lời cuối không phải bài thơ, vòng trả bản nháp
+   gần nhất lấy từ văn bản hoặc tham số tool. Kết quả vẫn qua cổng kiểm đầy đủ. Đường chat
+   thường không đổi. Test: `test_react_giu_ban_nhap.py`. Hiệu quả thật cần lượt đo kế tiếp.
 4. ✅ `Makefile`: `arch` chạy `PYTHONPATH=src lint-imports`. README cập nhật số đo thật.
 
 **Còn lại, đều cần A/B trả tiền trước khi bật (R6):** khung cấp dòng (GĐ2.2, QĐ-P5), thi liệu (GĐ2.3),

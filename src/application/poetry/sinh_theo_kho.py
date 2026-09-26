@@ -53,6 +53,7 @@ import re
 from dataclasses import dataclass
 
 from application.pipeline.stages.generate import generate_react_loop
+from application.pipeline.stages.verify_output import co_dang_bai_tho
 from application.poem_verifier import dung_bien_ban
 from application.poetry.diem_tuan_thu import do_diem_tuan_thu
 from application.poetry.doi_chieu_chep import tim_dong_chep
@@ -350,6 +351,7 @@ async def _cuu_kho_bang_react(
         rate_limiter=rate_limiter or _NganSachLuonMo(),
         ctx=ctx,
         default_model=default_model,
+        la_ban_nhap=co_dang_bai_tho,
     )
     if isinstance(kq, Err):
         return None
