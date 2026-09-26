@@ -17,6 +17,7 @@ from adapters.llm.mock import MockLLMClient
 from adapters.llm.openai import OpenAIClient
 from adapters.llm.resilience import FallbackManager
 from adapters.llm.router import ModelRouter
+from adapters.llm.theo_model import LLMClientTheoModel
 from adapters.llm.vllm import VLLMClient
 from adapters.persistence.corpus import JsonlPoemCorpus, duong_dan_mac_dinh
 from adapters.persistence.corpus.chi_muc_dong import (
@@ -103,6 +104,40 @@ class AppContainer:
 
 
 def _build_llm(settings: Settings) -> LLMClient:
+    """Client cho provider mặc định, và định tuyến theo model khi có nhiều khoá.
+
+    Có khoá cho HƠN MỘT provider (vd. `OPENAI_API_KEY` và `GOOGLE_API_KEY`) thì trả
+    `LLMClientTheoModel`: `gemini-*` đi Google, `gpt-*` đi OpenAI, … — cả đường thơ,
+    chat lẫn model dự phòng trong `tiers` đều tới đúng nhà cung cấp. Chỉ một khoá thì
+    trả thẳng client đó, đúng hành vi cũ.
+    """
+    mot = _build_mot_llm(settings)
+    if isinstance(mot, MockLLMClient):
+        # Provider mặc định thiếu khoá: giữ nguyên hành vi lùi về mock, KHÔNG âm thầm
+        # đổi sang provider khác — đổi nhà cung cấp là quyết định của người vận hành.
+        return mot
+
+    s = settings.secrets
+    clients: dict[str, LLMClient] = {settings.llm.default_provider: mot, "mock": MockLLMClient()}
+    if s.openai_api_key and "openai" not in clients:
+        clients["openai"] = OpenAIClient(api_key=s.openai_api_key, base_url=settings.llm.openai_base_url)
+    if s.google_api_key and "google" not in clients:
+        clients["google"] = GoogleAIClient(api_key=s.google_api_key, base_url=settings.llm.google_base_url)
+    if s.anthropic_api_key and "anthropic" not in clients:
+        clients["anthropic"] = AnthropicClient(api_key=s.anthropic_api_key)
+    if len(clients) <= 2:  # provider mặc định + mock
+        return mot
+
+    danh_muc = ModelRouter(config_path=str(settings.models_catalog_path)).models
+    return LLMClientTheoModel(
+        clients,
+        provider_mac_dinh=settings.llm.default_provider,
+        model_mac_dinh=settings.llm.default_model,
+        provider_cua_model={ten: str(c.get("provider", "")) for ten, c in danh_muc.items()},
+    )
+
+
+def _build_mot_llm(settings: Settings) -> LLMClient:
     """Chọn provider theo cấu hình; thiếu khoá thì lùi về mock nếu dev cho phép."""
     provider = settings.llm.default_provider
     secrets = settings.secrets
@@ -247,7 +282,10 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         streamer=llm,
         generator=llm,
         default_model=settings.llm.default_model,
-        router=ModelRouter(config_path=str(settings.models_catalog_path)),
+        router=ModelRouter(
+            config_path=str(settings.models_catalog_path),
+            provider=settings.llm.default_provider,
+        ),
         fallback_mgr=FallbackManager(),
         cache_mgr=LLMCacheManager(cache_repo=cache_repo),
         token_mgr=token_mgr,

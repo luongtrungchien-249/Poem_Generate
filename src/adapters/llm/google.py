@@ -172,7 +172,10 @@ def _doc_phan_hoi(data: dict[str, Any], model: str) -> LLMResponse:
 
     usage = data.get("usageMetadata", {})
     prompt_tokens = usage.get("promptTokenCount", 0)
-    completion_tokens = usage.get("candidatesTokenCount", 0)
+    # Gemini 2.5 "suy nghĩ" trước khi trả lời, và token suy nghĩ TÍNH TIỀN như token
+    # ra — nhưng nằm ở `thoughtsTokenCount`, không nằm trong `candidatesTokenCount`.
+    # Bỏ sót nó là báo chi phí thấp hơn thật.
+    completion_tokens = usage.get("candidatesTokenCount", 0) + usage.get("thoughtsTokenCount", 0)
 
     return LLMResponse(
         content=content,

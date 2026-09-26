@@ -56,6 +56,36 @@ models:
     output_cost_per_million: 15.00
     cached_input_cost_per_million: 0.30
 
+  # Google (Gemini API) — dùng GOOGLE_API_KEY. Giá USD / 1 triệu token theo bảng giá
+  # công khai của Google AI (bậc trả phí); KIỂM LẠI trước khi tin số chi phí.
+  # Token "suy nghĩ" của dòng 2.5 tính như token ra (xem adapters/llm/google.py).
+  gemini-2.5-flash-lite:
+    provider: "google"
+    tier: "cheap"
+    context_window: 1048576
+    max_output_tokens: 65536
+    input_cost_per_million: 0.10
+    output_cost_per_million: 0.40
+    cached_input_cost_per_million: 0.025
+
+  gemini-2.5-flash:
+    provider: "google"
+    tier: "standard"
+    context_window: 1048576
+    max_output_tokens: 65536
+    input_cost_per_million: 0.30
+    output_cost_per_million: 2.50
+    cached_input_cost_per_million: 0.075
+
+  gemini-2.5-pro:
+    provider: "google"
+    tier: "reasoning"
+    context_window: 1048576
+    max_output_tokens: 65536
+    input_cost_per_million: 1.25
+    output_cost_per_million: 10.00
+    cached_input_cost_per_million: 0.31
+
   # vLLM / Self-hosted
   meta-llama-3.1-8b-instruct:
     provider: "vllm"
@@ -85,3 +115,18 @@ tiers:
   reasoning:
     primary: "o1-preview"
     fallback: ["gpt-4o", "mock-gpt"]
+
+# Bộ tier theo PROVIDER MẶC ĐỊNH (DEFAULT_PROVIDER). Provider không khai ở đây thì
+# dùng `tiers` chung ở trên. Có nhiều khoá thì model dự phòng khác provider vẫn tới
+# đúng nơi nhờ `adapters/llm/theo_model.py`; thiếu khoá thì bị bỏ qua để thử model sau.
+tiers_theo_provider:
+  google:
+    cheap:
+      primary: "gemini-2.5-flash-lite"
+      fallback: ["gemini-2.5-flash", "gpt-4o-mini", "mock-gpt"]
+    standard:
+      primary: "gemini-2.5-flash"
+      fallback: ["gemini-2.5-flash-lite", "gpt-4o", "mock-gpt"]
+    reasoning:
+      primary: "gemini-2.5-pro"
+      fallback: ["gemini-2.5-flash", "mock-gpt"]

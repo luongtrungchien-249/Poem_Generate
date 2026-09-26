@@ -228,7 +228,9 @@ def test_container_dung_duoc_GoogleAIClient():
 
     from bootstrap import container
 
-    nguon = inspect.getsource(container._build_llm)
+    # Nhánh chọn một provider nằm ở `_build_mot_llm`; `_build_llm` bọc thêm bộ định
+    # tuyến theo model khi có nhiều khoá. Đọc cả hai.
+    nguon = inspect.getsource(container._build_llm) + inspect.getsource(container._build_mot_llm)
     assert 'provider == "google"' in nguon
     assert "GoogleAIClient" in nguon
     assert "google_api_key" in nguon

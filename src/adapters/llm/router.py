@@ -7,18 +7,26 @@ import yaml
 class ModelRouter:
     """Intelligently routes requests to the optimal model based on tier, query complexity, and budget."""
 
-    def __init__(self, config_path: str | None = None) -> None:
+    def __init__(self, config_path: str | None = None, provider: str | None = None) -> None:
         self.tiers: dict[str, dict[str, Any]] = {}
         self.models: dict[str, dict[str, Any]] = {}
         self._load_config(config_path)
+        # Bộ tier RIÊNG của provider mặc định, nếu `models.yaml` khai. Không có thì
+        # các tier chung (trỏ vào OpenAI) giữ nguyên — đúng hành vi cũ. Thiếu bước
+        # này thì DEFAULT_PROVIDER=google vẫn chọn `gpt-4o-mini` cho chat.
+        rieng = self._tiers_theo_provider.get(provider or "")
+        if rieng:
+            self.tiers = rieng
 
     def _load_config(self, config_path: str | None) -> None:
+        self._tiers_theo_provider: dict[str, dict[str, dict[str, Any]]] = {}
         path = Path(config_path) if config_path else Path(__file__).parents[3] / "configs" / "models.yaml"
         if path.exists():
             with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
                 self.models = data.get("models", {})
                 self.tiers = data.get("tiers", {})
+                self._tiers_theo_provider = data.get("tiers_theo_provider", {})
         else:
             self.tiers = {
                 "cheap": {"primary": "gpt-4o-mini", "fallback": ["mock-gpt"]},
