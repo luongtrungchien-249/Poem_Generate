@@ -12,6 +12,7 @@ from functools import lru_cache
 from adapters.llm.anthropic import AnthropicClient
 from adapters.llm.caching import LLMCacheManager
 from adapters.llm.chat_port import ChatLlmAdapter
+from adapters.llm.google import GoogleAIClient
 from adapters.llm.mock import MockLLMClient
 from adapters.llm.openai import OpenAIClient
 from adapters.llm.resilience import FallbackManager
@@ -115,6 +116,15 @@ def _build_llm(settings: Settings) -> LLMClient:
             raise RuntimeError("Thiếu ANTHROPIC_API_KEY và cấu hình không cho phép lùi về mock.")
         return MockLLMClient()
 
+    if provider == "google":
+        if secrets.google_api_key:
+            return GoogleAIClient(
+                api_key=secrets.google_api_key, base_url=settings.llm.google_base_url
+            )
+        if not settings.llm.mock_fallback_on_missing_key:
+            raise RuntimeError("Thiếu GOOGLE_API_KEY và cấu hình không cho phép lùi về mock.")
+        return MockLLMClient()
+
     if provider == "vllm":
         return VLLMClient(base_url=settings.llm.vllm_base_url)
 
@@ -181,8 +191,33 @@ def build_container(settings: Settings | None = None) -> AppContainer:
     token_mgr = TokenManager()
     retriever = HybridRetriever(vector_repo=vector_repo, embedder=llm, rrf_k=settings.rag.rrf_k)
 
+    # Ba thứ này phải dựng TRƯỚC khi đăng ký tool, vì tool `sinh_tho` cần cả ba:
+    # nó gọi thẳng `sinh_bai_tho`, vốn đòi llm + tools + rate_limiter.
+    #
+    # `RegistryToolExecutor` là một KHUNG NHÌN vào sổ đăng ký, đọc lúc gọi chứ
+    # không chụp ảnh lúc dựng — nên truyền nó vào trước khi đăng ký xong vẫn đúng.
+    chat_llm = ChatLlmAdapter(llm, default_model=settings.llm.default_model)
+    tool_executor = RegistryToolExecutor()
+    rate_limiter = (
+        # Bộ đếm DÙNG CHUNG khi có kho SQL: chạy N worker với bộ đếm trong RAM
+        # nghĩa là hạn mức thực tế bị nhân N — lỗ kiểm soát chi phí.
+        SqlRateLimiter(tao_engine(_dsn_luu_tru(settings)))
+        if settings.storage.kind in ("sqlite", "sql")
+        else InMemoryRateLimiter()
+    )
+
     # Đăng ký tool tường minh, đúng một lần, tại nơi duy nhất biết đủ phụ thuộc.
-    register_default_tools(retriever=retriever)
+    #
+    # `rate_limiter` đi xuống tận đây là CHỐT CHẶN CHI PHÍ DUY NHẤT của tool sinh
+    # thơ: `sinh_bai_tho` hỏi lại ngân sách ở MỖI khổ. Quên nó là mở đường cho một
+    # lượt chat đốt hết hạn mức ngày — một bài 20 dòng tốn tới ~36 lượt gọi.
+    register_default_tools(
+        retriever=retriever,
+        llm=chat_llm,
+        tools=tool_executor,
+        rate_limiter=rate_limiter,
+        default_model=settings.llm.default_model,
+    )
 
     return AppContainer(
         settings=settings,
@@ -205,15 +240,9 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         context_assembler=ContextAssembler(token_mgr=token_mgr),
         session_memory=SessionMemory(storage=relational_repo, token_mgr=token_mgr),
         profile_memory=ProfileMemory(),
-        chat_llm=ChatLlmAdapter(llm, default_model=settings.llm.default_model),
-        tools=RegistryToolExecutor(),
-        rate_limiter=(
-            # Bộ đếm DÙNG CHUNG khi có kho SQL: chạy N worker với bộ đếm trong RAM
-            # nghĩa là hạn mức thực tế bị nhân N — lỗ kiểm soát chi phí.
-            SqlRateLimiter(tao_engine(_dsn_luu_tru(settings)))
-            if settings.storage.kind in ("sqlite", "sql")
-            else InMemoryRateLimiter()
-        ),
+        chat_llm=chat_llm,
+        tools=tool_executor,
+        rate_limiter=rate_limiter,
         poem_verifier=PoemVerifierDayDu(),
         poem_corpus=JsonlPoemCorpus(duong_dan_mac_dinh(settings.project_root)),
     )

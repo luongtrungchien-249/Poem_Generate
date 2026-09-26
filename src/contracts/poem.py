@@ -75,6 +75,9 @@ class PoemResponse(BaseModel):
     # cổng kiểm, và lượt đó hỏng thì bài vẫn trả ra bình thường, chỉ không có tên.
     # Client phải chịu được rỗng — đừng dựng giao diện giả định luôn có tiêu đề.
     tieu_de: str = ""
+    # Hướng dẫn cho giọng đọc máy. Rỗng là hợp lệ: nó do một lượt gọi phụ sau
+    # cổng đặt ra, và lượt đó hỏng thì bài vẫn nguyên vẹn.
+    huong_dan_doc: str = ""
     dat: bool
     thuoc_the: bool
     dat_luat: bool

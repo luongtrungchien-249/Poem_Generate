@@ -38,6 +38,7 @@ from application.poetry.quality import (
 from application.poetry.reasoning import KetQuaSuyLuan, kiem_tra_chuoi_suy_luan
 from application.poetry.requirement import PoetryRequirement
 from application.ports.verifier import KetQuaKiemDinh, LoiKiemDinh, OutputSpec
+from application.prompting.builder import wrap_xml_tag
 from application.rule import PoemVerdict, kiem_tra_bai_tho
 
 
@@ -52,6 +53,13 @@ class BienBanDayDu:
     chat_luong: KetQuaChatLuong
     suy_luan: KetQuaSuyLuan
     van_ban_tho: str
+    # Ý kiến TƯ VẤN của Reviewer về mạch lạc / hình ảnh. Rỗng là bình thường —
+    # nó rỗng bất cứ khi nào Reviewer không chạy hoặc lượt gọi hỏng.
+    #
+    # ⛔ KHÔNG có trường điểm ở đây, và đó là cố ý. Chỉ CÂU NHẬN XÉT đi qua. Đưa
+    # `mach_lac`/`hinh_anh` vào biên bản là mở đường cho một con số của LLM chạm
+    # tới phán quyết — thứ `test_reviewer_khong_noi_vao_cong_chan` ghim để cấm.
+    nhan_xet_reviewer: str = ""
 
 
 class PoemVerifierDayDu:
@@ -64,6 +72,7 @@ class PoemVerifierDayDu:
         `chu_de`     str          — để chấm CL3
         `yeu_cau`    PoetryRequirement
         `ke_hoach`   PoetryPlan
+        `nhan_xet_reviewer`  str  — ý kiến tư vấn, CHỈ để nối vào biên bản
     Tham số lạ bị bỏ qua, đúng hợp đồng của `OutputSpec`.
     """
 
@@ -88,6 +97,10 @@ class PoemVerifierDayDu:
         chu_de = tham.get("chu_de")
         yeu_cau = tham.get("yeu_cau")
         ke_hoach = tham.get("ke_hoach")
+        # Reviewer chạy NGOÀI cổng (nó gọi mạng) rồi gửi kết quả vào qua đây. Đọc
+        # một chuỗi có sẵn thì `kiem` vẫn đồng bộ, thuần và tất định — đúng hợp
+        # đồng của `OutputVerifier`. Xem chú thích ở `_dung_bien_ban`.
+        nhan_xet = tham.get("nhan_xet_reviewer")
 
         cl = danh_gia_chat_luong(v, chu_de=chu_de if isinstance(chu_de, str) else None)
         sl = kiem_tra_chuoi_suy_luan(
@@ -105,6 +118,7 @@ class PoemVerifierDayDu:
             chat_luong=cl,
             suy_luan=sl,
             van_ban_tho=tho,
+            nhan_xet_reviewer=nhan_xet.strip() if isinstance(nhan_xet, str) else "",
         )
 
     # ---- hợp đồng OutputVerifier -------------------------------------------
@@ -209,6 +223,25 @@ class PoemVerifierDayDu:
                 "Chất lượng chưa đạt: "
                 + "; ".join(f"{c.ten} = {c.so_do} (cần {c.nguong})" for c in bb.chat_luong.chieu_hong)
             )
+
+        # 6. ĐIỂM SÁNG CẦN GIỮ — ý kiến tư vấn của Reviewer, nếu có.
+        #
+        # VÌ SAO Ở CUỐI: các khúc trên nói CÁI GÌ HỎNG, khúc này nói CÁI GÌ ĐÁNG
+        # GIỮ. Đặt cạnh câu "Các dòng ... đã đạt — GIỮ NGUYÊN" của `dung_bien_ban`
+        # vì hai câu cùng trả lời một câu hỏi: viết lại thì giữ lại những gì.
+        #
+        # 🩸 KHOẢNG TRỐNG NÀY ĐÃ TỪNG CÓ THẬT. `CHI_DAN_SUA["sua_dong"]` bảo mô
+        # hình *"giữ hình ảnh của chính dòng đó"*, nhưng không kênh nào chở thông
+        # tin hình ảnh nào đáng giữ. Mô hình được lệnh giữ mà không được cho biết
+        # giữ cái gì. Đây là kênh đó.
+        #
+        # ⛔ BỌC THẺ. `nhan_xet` do một mô hình viết ra, nên nó là DỮ LIỆU, không
+        # phải mệnh lệnh — đúng cách `dung_luot_yeu_cau` bọc ví dụ và kế hoạch.
+        # Không bọc thì một câu nhận xét trông giống chỉ dẫn sẽ được thi hành.
+        if bb.nhan_xet_reviewer:
+            khuc.append("")
+            khuc.append(wrap_xml_tag("diem_sang_can_giu", bb.nhan_xet_reviewer))
+            khuc.append("Đây là nhận xét THAM KHẢO, không phải lỗi phải sửa.")
 
         return "\n".join(k for k in khuc if k is not None).strip()
 

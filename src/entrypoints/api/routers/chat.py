@@ -9,10 +9,10 @@ from fastapi.responses import StreamingResponse
 from adapters.observability.metrics import metrics
 from adapters.observability.tracing import get_current_trace_id, trace_span
 from application.conversation import luu_luot
+from application.ports.llm import CallContext
 from application.prompting import SYSTEM_PROMPT_V1
 from application.prompting.builder import wrap_xml_tag
 from application.prompting.context import dung_khoi_boi_canh
-from application.prompting.instructions import CHI_DAN_TRO_GIUP_THO
 from contracts.chat import ChatRequest, ChatResponse, Message, Role
 from domain.guardrails.input import (
     check_forbidden_topics,
@@ -24,7 +24,14 @@ from domain.guardrails.output import enforce_output_guardrails
 from domain.guardrails.output.streaming import Chan, StreamingOutputGuard
 from entrypoints.api.deps import AppContainer, get_container
 from entrypoints.api.middleware.auth import tenant_scope_cua
-from entrypoints.api.ngan_sach import chan_neu_het_ngan_sach
+from entrypoints.api.ngan_sach import chan_neu_het_ngan_sach, pham_vi_ngan_sach
+
+# Trần số vòng gọi tool trong MỘT lượt chat.
+#
+# 4 là đủ cho mọi ca thật: hỏi thơ -> gọi `sinh_tho` -> thuật lại. Soi thơ -> gọi
+# `kiem_tra_tho` -> thuật lại. Vòng thứ ba trở đi gần như luôn là mô hình đang
+# kẹt, và mỗi vòng thêm là một lượt gọi model nữa có tính tiền.
+SO_VONG_TOOL_TOI_DA = 4
 
 router = APIRouter(prefix="/v1", tags=["Chat"])
 
@@ -154,7 +161,19 @@ async def chat_endpoint(
     # (`CACH_LAM_VIEC`), và hai cái nói hai điều NGƯỢC nhau về hình thức trả lời:
     # đường thơ cấm mọi lời dẫn vì bộ đọc chỉ lấy bốn dòng đầu, còn ở đây lời dẫn
     # lại là phần bắt buộc — đó là chỗ nói cho người dùng biết bài chưa qua kiểm.
-    chi_dan: list[str] = [SYSTEM_PROMPT_V1, CHI_DAN_TRO_GIUP_THO]
+    # ⛔ ĐÃ THỬ ĐƯA BẢNG LUẬT VÀO ĐÂY — GỠ RA 23/09/2026.
+    #
+    # Ngày 23/09 tôi thêm `BANG_LUAT_THO` vào đây để chat trả lời được câu "cần
+    # thanh gì". Chủ dự án bác: *"không cần bảng luật thơ, chỉ cần dựa theo rule.py
+    # để sinh thơ là được"* — và lý do sâu hơn thế.
+    #
+    # Có tool `kiem_tra_tho` chạy CHÍNH `rule.py` thì một bảng luật rời chỉ MỜI mô
+    # hình suy luận bằng tay, đúng thứ nó làm sai nhất. Bảng luật cho câu trả lời
+    # PHỎNG ĐOÁN; tool cho câu trả lời ĐÚNG. Đưa cả hai là để mô hình chọn cái rẻ.
+    # 23/09/2026: `CHI_DAN_TRO_GIUP_THO` nay NẰM SẴN trong `SYSTEM_PROMPT_V1`
+    # (gộp `instructions.py` vào `system.py`). Gửi thêm một lần nữa là trả tiền
+    # hai lần cho cùng một khối chữ, và cho mô hình đọc hai bản có thể lệch nhau.
+    chi_dan: list[str] = [SYSTEM_PROMPT_V1]
     if req.enable_rag and rag_context:
         template = app_container.prompt_reg.get("rag_answer", version="v1")
         rendered_sys, _ = template.render(context=rag_context, question=last_user_msg.content)
@@ -369,13 +388,42 @@ async def chat_endpoint(
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
     # Non-streaming response
+    #
+    # ════ CHAT CẦM TOOL TỪ 23/09/2026 ════
+    #
+    # 🩸 CHỖ HỎNG ĐƯỢC VÁ: đường này trước đây gọi `generate(...)` KHÔNG truyền
+    # `tools`. Nên tool `kiem_tra_tho` — đã đăng ký từ lâu và chạy chính `rule.py`
+    # — chưa bao giờ với tới được đường chat. Mô hình được bảo "đếm số tiếng, tra
+    # dấu tiếng 2, 4, 6" rồi phải làm bằng tay, đúng thứ nó làm sai nhất.
+    #
+    # Và không có tool nào SINH thơ, nên khi người dùng xin một bài, mô hình tự
+    # viết ở chất lượng p^n (≈0 % với bài 20 dòng) rồi dán nhãn "chưa qua kiểm".
+    #
+    # ⚠️ VÌ SAO KHÔNG DÙNG `generate_react_loop`. Nó có sẵn bảy chặn cứng và tôi đã
+    # định dùng lại. Nhưng nó trả về `str`, còn đường này cần `llm_resp.usage` để
+    # tính tiền và `llm_resp.model` cho response — thay thẳng là phải viết lại cả
+    # phần dựng response. Nên vòng dưới đây GIỮ `fallback_mgr` và hình dạng
+    # `llm_resp`, và mang theo đúng hai chặn mà đường này cần.
     with trace_span("llm_generate", {"model": chosen_model}):
+        mo_ta_tool = app_container.tools.specs()
+        # `tenant_id` đi theo ctx để tool biết mình chạy cho ai. Tool KHÔNG được
+        # đọc trạng thái toàn cục — sổ đăng ký dùng chung cho mọi request.
+        ctx_tool = CallContext(
+            scope=pham_vi_ngan_sach(tenant_id),
+            sender_id=tenant_id,
+            trace_id=get_current_trace_id() or "chat",
+        )
+
         async def call_llm(model_name: str):
             return await app_container.generator.generate(
                 messages=session_messages,
                 model=model_name,
                 temperature=req.temperature,
                 max_tokens=req.max_tokens,
+                tools=[
+                    {"name": t.name, "description": t.description, "parameters": t.parameters}
+                    for t in mo_ta_tool
+                ] or None,
             )
 
         llm_resp = await app_container.fallback_mgr.execute_with_fallback(
@@ -383,6 +431,45 @@ async def chat_endpoint(
             fallback_models=fallback_chain,
             func=call_llm,
         )
+
+        # CHẶN 1: trần vòng lặp. Không có trần thì một mô hình kẹt sẽ gọi tool mãi.
+        for _ in range(SO_VONG_TOOL_TOI_DA):
+            if not llm_resp.tool_calls:
+                break
+
+            # CHẶN 2: ngân sách ngày, hỏi lại MỖI vòng. Một lượt chat nay có thể
+            # kích hoạt `sinh_tho` — tốn tới ~36 lượt gọi model. Hỏi một lần ở đầu
+            # request rồi tin mãi là bỏ ngỏ chốt chặn chi phí.
+            if not await app_container.rate_limiter.within_daily_budget(
+                pham_vi_ngan_sach(tenant_id)
+            ):
+                break
+
+            ket_qua = await app_container.tools.call_many(llm_resp.tool_calls, ctx_tool)
+            session_messages.append(
+                Message(
+                    role=Role.ASSISTANT,
+                    content=llm_resp.content or "",
+                    tool_calls=[
+                        {
+                            "id": tc.id,
+                            "type": "function",
+                            "function": {"name": tc.name, "arguments": tc.arguments},
+                        }
+                        for tc in llm_resp.tool_calls
+                    ],
+                )
+            )
+            for r in ket_qua:
+                session_messages.append(
+                    Message(role=Role.TOOL, content=r.content, tool_call_id=r.call_id)
+                )
+
+            llm_resp = await app_container.fallback_mgr.execute_with_fallback(
+                primary_model=chosen_model,
+                fallback_models=fallback_chain,
+                func=call_llm,
+            )
 
     # 7. Output Guardrails
     verdict = None

@@ -47,10 +47,12 @@ class ServerConfig(BaseModel):
 
 
 class LLMConfig(BaseModel):
-    default_provider: Literal["openai", "anthropic", "vllm", "mock"] = "mock"
+    default_provider: Literal["openai", "anthropic", "google", "vllm", "mock"] = "mock"
     default_model: str = "gpt-4o-mini"
     default_tier: Literal["cheap", "standard", "reasoning"] = "cheap"
     openai_base_url: str = "https://api.openai.com/v1"
+    # Gemini API phục vụ cả Gemini lẫn Gemma qua cùng một endpoint.
+    google_base_url: str = "https://generativelanguage.googleapis.com/v1beta"
     vllm_base_url: str = "http://localhost:8000/v1"
     mock_fallback_on_missing_key: bool = True
 
@@ -102,6 +104,7 @@ class Secrets(BaseSettings):
 
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    google_api_key: str | None = Field(default=None, alias="GOOGLE_API_KEY")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     redis_url: str | None = Field(default=None, alias="REDIS_URL")
     qdrant_url: str | None = Field(default=None, alias="QDRANT_URL")
@@ -159,8 +162,8 @@ def _kiem_lua_chon(gia_tri: object, hop_le: tuple[_T, ...], ten: str) -> _T:
 
 
 ENV_HOP_LE: tuple[Env, ...] = ("dev", "staging", "production")
-PROVIDER_HOP_LE: tuple[Literal["openai", "anthropic", "vllm", "mock"], ...] = (
-    "openai", "anthropic", "vllm", "mock",
+PROVIDER_HOP_LE: tuple[Literal["openai", "anthropic", "google", "vllm", "mock"], ...] = (
+    "openai", "anthropic", "google", "vllm", "mock",
 )
 TIER_HOP_LE: tuple[Literal["cheap", "standard", "reasoning"], ...] = (
     "cheap", "standard", "reasoning",
@@ -245,6 +248,9 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
                 TIER_HOP_LE, "DEFAULT_TIER"
             ),
             openai_base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+            google_base_url=os.getenv(
+                "GOOGLE_BASE_URL", "https://generativelanguage.googleapis.com/v1beta"
+            ),
             vllm_base_url=os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1"),
             mock_fallback_on_missing_key=llm_raw.get("mock_fallback_on_missing_key", True),
         ),

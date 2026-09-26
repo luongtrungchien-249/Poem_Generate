@@ -48,8 +48,15 @@ THE_RANH_GIOI: frozenset[str] = frozenset(
         # đọc, không phải lệnh — và chính vì bài thơ do mô hình viết ra nên nó
         # càng phải bọc thẻ: một bài chứa dòng trông như chỉ dẫn sẽ bị khử ở đây.
         "bai_tho",
+        # Bản nháp chưa đạt, đưa cho vòng ReAct cứu khổ đọc (22/09/2026). Do mô
+        # hình viết ra nên phải bọc, y như `bai_tho`.
+        "ban_nhap_chua_dat",
         "bien_ban_kiem_dinh",
         "chi_dan_tu_nguoi_dung",
+        # Nhận xét tư vấn của Reviewer, nối vào biên bản sửa (22/09/2026). Do một
+        # mô hình viết ra nên phải bọc: một câu nhận xét trông giống chỉ dẫn mà
+        # không bọc thì lượt sửa sẽ thi hành nó thay vì đọc nó.
+        "diem_sang_can_giu",
         "ke_hoach_bat_buoc",
         "phan_da_viet",
         "tai_lieu",

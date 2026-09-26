@@ -36,6 +36,7 @@ sys.path.insert(0, str(GOC / "src"))
 sys.path.insert(0, str(GOC))
 
 import compare_rule as r2  # noqa: E402
+
 from application import rule as r1  # noqa: E402
 
 NGUON = GOC / "datalake/analysis/bai_dat.jsonl"

@@ -26,6 +26,9 @@ là khai báo dự định, còn phán quyết vẫn do `rule.py` đưa ra trên
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+from dataclasses import replace
+
 from application.poetry.plan import KhoPlan, PoetryPlan, kiem_tra_ke_hoach
 from application.poetry.requirement import PoetryRequirement
 
@@ -133,3 +136,68 @@ def mo_ta_ke_hoach_cho_mo_hinh(plan: PoetryPlan) -> str:
     if plan.hinh_anh:
         dong.append(f"  Hình ảnh gợi ý: {', '.join(plan.hinh_anh)}")
     return "\n".join(dong)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LẬP LẠI KẾ HOẠCH — 22/09/2026
+#
+# VẤN ĐỀ THẬT. Thang leo thang kết ở `sinh_lai_ca_bai`: "viết lại toàn bài từ
+# đầu". Nhưng KẾ HOẠCH thì không đổi — mô hình được bảo vứt cả bài rồi viết lại
+# theo đúng bản thiết kế vừa dẫn nó tới chỗ hỏng. Leo được tới đó nghĩa là chính
+# cách triển khai ấy đã không ăn.
+#
+# ⚠️ GIỚI HẠN, NÓI TRƯỚC KHÔNG GIẤU. Đây KHÔNG phải replanner của `compare_prompt.py`.
+# Bản cũ để một lượt gọi LLM nghĩ lại NỘI DUNG (chủ đề cốt lõi, hình ảnh, từ đắt
+# giá). Làm vậy ở đây đòi phá tính tất định của `lap_ke_hoach` — thứ cả docstring
+# module này bảo vệ, với lý do vẫn còn nguyên giá trị: mọi thứ suy ra được từ luật
+# thì giao cho mô hình chỉ thêm một chỗ hỏng.
+#
+# Nên hàm dưới đây chỉ đổi PHẦN SUY RA ĐƯỢC, theo bằng chứng trong biên bản, và
+# vẫn tất định. Nội dung của người dùng (`mach_cam_xuc`, `muc_tieu`) KHÔNG bị
+# đụng tới — đổi nó là quyết định thay tác giả.
+#
+# Muốn bản LLM thì đó là một quyết định riêng của chủ dự án, chưa chốt.
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Nhịp thay thế khi nhịp mặc định không ăn. 3/4 là kiểu duy nhất khác 4/3 mà tài
+# liệu §6 xếp ngang hàng về mức phổ biến; các kiểu còn lại lệch hơn hẳn.
+NHIP_THAY_THE = "3/4"
+
+
+def lap_lai_ke_hoach(plan: PoetryPlan, ma_loi: Sequence[str]) -> PoetryPlan:
+    """Kế hoạch mới cho lượt viết lại toàn bài. THUẦN và TẤT ĐỊNH.
+
+    Đổi đúng hai thứ, và chỉ khi có bằng chứng đòi đổi:
+
+        lỗi S2 (thanh luật)  -> ĐẢO PHA luân phiên khuôn giữa các khổ
+        lỗi S14 (nhịp)       -> đổi nhịp khai báo sang kiểu thay thế
+
+    Không lỗi nào trong hai loại đó thì trả về chính kế hoạch cũ: đổi bừa một kế
+    hoạch vốn không sai là làm hỏng thứ đang đúng, và làm mất luôn manh mối vì sao
+    bài trượt.
+
+    Vì sao ĐẢO PHA chứ không chọn ngẫu nhiên: `lap_ke_hoach` gợi ý khổ chẵn khuôn
+    `bang`, khổ lẻ khuôn `trac`. Nếu mô hình liên tục hỏng thanh luật thì rất có
+    thể nó đang vật lộn với đúng khuôn được gợi ý cho khổ đầu — đảo lại cho nó một
+    xuất phát khác, mà vẫn giữ tinh thần luân phiên của S2.
+    """
+    hong = set(ma_loi)
+    doi_khuon = "S2" in hong
+    doi_nhip = "S14" in hong
+    if not (doi_khuon or doi_nhip):
+        return plan
+
+    kho_moi = tuple(
+        KhoPlan(
+            so_dong=k.so_dong,
+            y_chinh=k.y_chinh,
+            khuon=(
+                ("trac" if k.khuon == "bang" else "bang") if doi_khuon and k.khuon else k.khuon
+            ),
+            nhip=(NHIP_THAY_THE if doi_nhip and k.nhip else k.nhip),
+        )
+        for k in plan.kho
+    )
+    # `replace` giữ nguyên mọi trường không nêu — `mach_cam_xuc`, `muc_tieu`,
+    # `hinh_anh` và hai chiến lược đều là nội dung, không phải thứ suy ra được.
+    return replace(plan, kho=kho_moi)

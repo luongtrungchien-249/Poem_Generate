@@ -33,24 +33,30 @@ from dataclasses import dataclass
 from typing import TypeAlias
 
 from application.pipeline.stages.verify_output import generate_with_verification
-from application.poetry.fewshot import dung_khoi_vi_du
+from application.poetry.fewshot import ViDuDuocChon, dung_khoi_vi_du
 from application.poetry.plan import PoetryPlan
-from application.poetry.planner import lap_ke_hoach_hop_le, mo_ta_ke_hoach_cho_mo_hinh
+from application.poetry.planner import (
+    lap_ke_hoach_hop_le,
+    lap_lai_ke_hoach,
+    mo_ta_ke_hoach_cho_mo_hinh,
+)
 from application.poetry.prompt import dung_luot_yeu_cau
 from application.poetry.requirement import (
     CanHoi,
     PoetryRequirement,
     danh_gia_du_thong_tin,
 )
+from application.poetry.reviewer import xin_nhan_xet
 from application.poetry.sinh_theo_kho import SO_UNG_VIEN_MAC_DINH, sinh_tung_kho
 from application.poetry.state import DauVetTrangThai
 from application.poetry.tieu_de import dat_tieu_de
+from application.poetry.tts_style import huong_dan_doc
 from application.poetry.verifier import BienBanDayDu, PoemVerifierDayDu
 from application.ports.llm import CallContext, LlmPort, UserMessage
 from application.ports.poem_corpus import PoemCorpusPort
 from application.ports.rate_limit import RateLimitPort
 from application.ports.tools import ToolPort
-from application.ports.verifier import OutputSpec
+from application.ports.verifier import KetQuaKiemDinh, OutputSpec
 from application.prompting.context import ContextEnvelope
 from domain.common.errors import BotError
 from domain.common.result import Err, Ok, Result
@@ -90,6 +96,9 @@ class DaSinhTho:
     # gọi phụ sau khi bài đã qua cổng, và lượt đó hỏng thì bài vẫn nguyên vẹn.
     # Xem `poetry/tieu_de.py`.
     tieu_de: str = ""
+    # Hướng dẫn cho giọng đọc máy, chốt 22/09/2026. Rỗng cũng là giá trị HỢP LỆ,
+    # cùng lý do với `tieu_de`. Xem `poetry/tts_style.py`.
+    huong_dan_doc: str = ""
 
 
 KetQuaSinhTho: TypeAlias = CanLamRo | DaSinhTho
@@ -158,7 +167,7 @@ async def sinh_bai_tho(
     #     vi_du = chon_vi_du(corpus.tat_ca(), yeu_cau, che_do=che_do) if corpus else ()
     #     if not vi_du: che_do = "zero_shot"
     che_do = "zero_shot"
-    vi_du = ()
+    vi_du: tuple[ViDuDuocChon, ...] = ()
 
     vet.chuyen("PLANNING", "lập kế hoạch tất định từ yêu cầu")
     ke_hoach = lap_ke_hoach_hop_le(yeu_cau)
@@ -202,6 +211,10 @@ async def sinh_bai_tho(
             khoi_vi_du=dung_khoi_vi_du(vi_du),
             so_ung_vien=so_ung_vien_moi_kho,
             default_model=default_model,
+            # Tool tự soi cho bước cứu khổ bằng ReAct. Trước 22/09/2026 đường này
+            # chạy với `tools=()`, nên mô hình viết mù rồi để cổng chặn — thấy rõ
+            # nhất ở bài 8 chữ lọt ra ngoài mà không ai đếm tiếng giùm nó.
+            tools=tools,
         )
         if isinstance(theo_kho, Ok) and theo_kho.value.du_kho:
             da_dung = theo_kho.value.so_ung_vien_da_dung
@@ -231,15 +244,61 @@ async def sinh_bai_tho(
                             ctx=ctx,
                             default_model=default_model,
                         ),
+                        huong_dan_doc=await huong_dan_doc(
+                            bien_ban_kho.van_ban_tho,
+                            llm=llm,
+                            ctx=ctx,
+                            default_model=default_model,
+                        ),
                     )
                 )
         elif isinstance(theo_kho, Err):
             return Err(theo_kho.error)
 
     # ════ ĐƯỜNG LÙI: sinh cả bài rồi sửa ════
+
+    async def _xin_diem_sang(ban_nhap: str) -> dict[str, object]:
+        """Hỏi Reviewer bài này được ở chỗ nào, để lượt sửa biết phải giữ gì.
+
+        ⛔ BẤT BIẾN: CHỈ câu nhận xét đi qua. Hai điểm `mach_lac`/`hinh_anh` bị bỏ
+        lại ở đây, cố ý — xem `reviewer.py`. Điểm của một LLM không được chạm tới
+        phán quyết, kể cả gián tiếp qua biên bản.
+
+        Hỏng thì trả dict rỗng: Reviewer là TƯ VẤN, một lượt gọi phụ hỏng không
+        được phép làm hỏng vòng sửa.
+        """
+        nx = await xin_nhan_xet(ban_nhap, llm=llm, ctx=ctx, default_model=default_model)
+        return {"nhan_xet_reviewer": nx.nhan_xet} if nx.co_y_kien and nx.nhan_xet else {}
+
+    def _ke_hoach_khac(ket_qua: KetQuaKiemDinh) -> str:
+        """Nấc cuối của thang: đổi luôn BẢN THIẾT KẾ, không chỉ phạm vi viết lại.
+
+        Leo tới `sinh_lai_ca_bai` nghĩa là vá từng dòng và viết lại từng khổ đều
+        không ăn. Bảo mô hình dựng lại theo đúng kế hoạch vừa dẫn nó tới đó là xin
+        lại y hệt một lần nữa.
+
+        TẤT ĐỊNH và KHÔNG thêm lượt gọi: `lap_lai_ke_hoach` chỉ đảo pha khuôn hoặc
+        đổi nhịp, và chỉ khi biên bản có đúng loại lỗi đòi đổi. Nội dung của người
+        dùng không bị đụng tới.
+        """
+        if ke_hoach is None:
+            return ""
+        moi = lap_lai_ke_hoach(ke_hoach, [x.ma for x in ket_qua.loi])
+        if moi == ke_hoach:
+            # Không có bằng chứng đòi đổi -> đừng đổi. Đổi bừa một kế hoạch vốn
+            # không sai là làm hỏng thứ đang đúng.
+            return ""
+        return (
+            "Kế hoạch cũ không ăn. Lần này theo kế hoạch đã đổi dưới đây:\n"
+            + mo_ta_ke_hoach_cho_mo_hinh(moi)
+        )
+
     kq = await generate_with_verification(
         envelope=envelope,
         spec=spec,
+        khi_leo_het_thang=_ke_hoach_khac,
+        # Chỉ chạy khi bản nháp ĐẦU TIÊN trượt — bài đạt ngay không tốn lượt nào.
+        lam_giau_spec=_xin_diem_sang,
         verifier=bo_kiem,
         llm=llm,
         tools=tools,
@@ -277,6 +336,9 @@ async def sinh_bai_tho(
             bo_sinh=bo_sinh,
             so_ung_vien_da_dung=da_dung,
             tieu_de=await dat_tieu_de(
+                bien_ban.van_ban_tho, llm=llm, ctx=ctx, default_model=default_model
+            ),
+            huong_dan_doc=await huong_dan_doc(
                 bien_ban.van_ban_tho, llm=llm, ctx=ctx, default_model=default_model
             ),
         )

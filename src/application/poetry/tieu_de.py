@@ -30,7 +30,7 @@ from __future__ import annotations
 
 from application.ports.llm import CallContext, LlmPort, UserMessage
 from application.prompting.builder import wrap_xml_tag
-from application.prompting.instructions import CHI_DAN_DAT_TIEU_DE
+from application.prompting.system import CHI_DAN_DAT_TIEU_DE
 from domain.common.result import Ok
 
 # Trần độ dài, đo bằng TIẾNG chứ không bằng ký tự — cùng đơn vị với chỉ dẫn ("hai

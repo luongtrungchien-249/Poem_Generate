@@ -23,39 +23,30 @@ from __future__ import annotations
 from application.poetry.plan import KHUON_HOP_LE
 from application.poetry.requirement import PoetryRequirement
 from application.prompting.builder import wrap_xml_tag
-from application.prompting.instructions import CACH_LAM_VIEC, CHI_DAN_CHAT_LUONG
+from application.prompting.luat_tho import BANG_LUAT_THO
+from application.prompting.system import CACH_LAM_VIEC, CHI_DAN_CHAT_LUONG
 
 # `rule.py` ĐÓNG BĂNG: chỉ đọc bảng luật.
-from application.rule import LUAT, NHIP_TAI_LIEU
 
+# ⛔ BẢNG LUẬT KHÔNG CÒN ĐỊNH NGHĨA Ở ĐÂY — hợp nhất 23/09/2026.
+#
+# 🩸 Đã có lúc file này VÀ `prompting/luat_tho.py` mỗi bên giữ một `BANG_LUAT_THO`
+# riêng, và chúng LỆCH NHAU THẬT (1.436 vs 1.938 ký tự): bản ở `prompting/` được
+# bổ sung bảng hiệu quả của bảy nhịp theo tài liệu §6, bản ở đây thì không. Tức là
+# hai đường sinh thơ đang được dạy hai phần nhịp khác nhau.
+#
+# Đó đúng là kiểu hỏng cả kiến trúc này dựng lên để tránh, và nó xảy ra vì tôi
+# tách bảng ra hai lần mà quên gộp. Nay một nguồn: `prompting/luat_tho.py`.
+#
+# Chiều import `poetry -> prompting` là chiều VỐN CÓ (dòng dưới đã import
+# `CACH_LAM_VIEC`), nên không có vòng lặp. Chiều ngược lại thì có — xem docstring
+# của `luat_tho.py`.
 
-def _bang_luat_cung() -> str:
-    return "\n".join(
-        f"  {d.ma}  {d.noi_dung}." for d in LUAT if d.loai == "cung"
-    )
 
 
 CHI_DAN_SINH_THO: str = f"""Bạn là người làm thơ thất ngôn tự do tiếng Việt.
 
-RÀNG BUỘC CỨNG — vi phạm thì bài KHÔNG thuộc thể, không có ngoại lệ nào:
-{_bang_luat_cung()}
-
-Cách đếm tiếng: dấu câu KHÔNG tính là tiếng; gạch nối thì tách tiếp
-("ra-đi-ô" = 3 tiếng); chữ số phải quy về cách đọc rồi mới đếm
-("năm 1975" = năm + một nghìn chín trăm bảy mươi lăm = 8 tiếng).
-
-THANH LUẬT — ĐÂY LÀ CHỖ HỎNG NHIỀU NHẤT, đọc kỹ phần này.
-
-Chỉ xét tiếng thứ 2, 4, 6 của mỗi dòng. Mỗi dòng phải khớp ĐÚNG một trong hai:
-  khuôn bằng   tiếng 2 = B, tiếng 4 = T, tiếng 6 = B
-  khuôn trắc   tiếng 2 = T, tiếng 4 = B, tiếng 6 = T
-
-Phân lớp thanh theo DẤU trên tiếng — tra bảng này, đừng nghe theo cảm giác:
-  B (bằng)  không dấu  hoặc  dấu huyền        ma · mà
-  T (trắc)  dấu sắc · dấu hỏi · dấu ngã · dấu nặng   má · mả · mã · mạ
-
-Tiếng 1, 3, 5, 7 muốn thanh gì cũng được — luật không đụng tới chúng.
-
+{BANG_LUAT_THO}
 CÁCH VIẾT ĐỂ KHÔNG PHÁ KHUÔN (làm theo đúng thứ tự này):
   1. Chọn khuôn cho dòng: bằng (B T B) hay trắc (T B T).
   2. Chọn TRƯỚC ba tiếng ở vị trí 2, 4, 6 sao cho dấu của chúng khớp khuôn.
@@ -68,14 +59,38 @@ thanh thường làm gãy nghĩa, rồi sửa nghĩa lại làm lệch thanh.
 
 Hai dòng khác nhau được dùng hai khuôn khác nhau — không bắt buộc cả bài một khuôn.
 
-VẦN: trong mỗi cụm bốn dòng liên tiếp phải có ít nhất một cặp tiếng cuối hiệp vần.
-Sơ đồ nào cũng được — aabb, abab, abba, aaxa, aaaa… — miễn là có vần chân.
+CÁCH VIẾT ĐỂ KHÔNG HỤT VẦN (cùng lối với khuôn thanh ở trên):
+  1. Trong mỗi cụm bốn dòng, chọn hai dòng sẽ gánh vần.
+  2. Chọn TRƯỚC tiếng cuối của hai dòng đó, sao cho chúng hiệp vần với nhau.
+  3. Sau đó mới viết phần còn lại của dòng để dẫn tới tiếng ấy.
+  4. Đọc lại hai tiếng cuối, đối chiếu xem còn hiệp vần không.
 
-NHỊP: mỗi dòng ngắt theo một trong bảy kiểu {", ".join(sorted(NHIP_TAI_LIEU))},
-và cả bài nên cùng một nhịp chủ đạo.
+Chọn vần trước KHÔNG bao giờ làm lệch khuôn thanh: tiếng gánh vần là tiếng thứ 7,
+mà khuôn chỉ ràng buộc tiếng 2, 4, 6. Hai việc không tranh chỗ của nhau.
 
 {CHI_DAN_CHAT_LUONG}
 {CACH_LAM_VIEC}"""
+
+# ── KHỐI NEO VẦN, thêm 22/09/2026 ────────────────────────────────────────────
+#
+# VÌ SAO. Khối thanh luật ở trên dạy hẳn một quy trình bốn bước "chọn ràng buộc
+# trước, lấp nghĩa sau", kèm lý do: *"Viết câu trước rồi mới sửa thanh là cách
+# chắc chắn hỏng"*. Lập luận ấy đúng y nguyên với VẦN — nhưng trước hôm nay khối
+# vần chỉ TUYÊN BỐ yêu cầu rồi để mô hình tự xoay. Cùng một loại ràng buộc, một
+# cái được dạy cách làm, cái kia không.
+#
+# Ý tưởng lấy từ `compare_prompt.py` (mục "Neo vần dự kiến" trong planner của bản
+# cũ). Nhưng CHỈ NHẬP KỸ THUẬT, không nhập cơ chế: bản cũ để một lượt gọi LLM đề
+# xuất tiếng vần, ở đây không thêm lượt gọi nào và planner vẫn tất định.
+#
+# Câu cuối của khối là câu đáng giá nhất, và nó là một SỰ THẬT kiểm lại được:
+# khuôn chỉ ràng buộc tiếng 2, 4, 6 (xem `rule.khuon_cua_dong`), còn tiếng gánh
+# vần là tiếng 7. Không nói ra thì mô hình phải tự đoán hai ràng buộc có tranh
+# chỗ nhau không, và khi không chắc nó sẽ ưu tiên khuôn rồi bỏ vần.
+#
+# ⚠️ ĐÂY LÀ THAY ĐỔI ĐÚNG LOẠI ĐÃ HỎNG MỘT LẦN — cộng chữ vào một khối prompt.
+# Xem `instructions.py` §VIỆC 4. Phải đo bằng `datalake/scripts/do_ab_prompt.py`
+# trước khi giữ, và hoàn nguyên kèm ghi số nếu chỉ số chính giảm có ý nghĩa.
 
 
 # 🔴 SỬA 21/09/2026 — BẢN TRƯỚC LÀ MỘT LỜI HỨA SUÔNG.

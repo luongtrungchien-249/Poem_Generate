@@ -273,6 +273,7 @@ async def sinh_tho_endpoint(
     return PoemResponse(
         poem=ra.text,
         tieu_de=ra.tieu_de,
+        huong_dan_doc=ra.huong_dan_doc,
         dat=bb.dat,
         thuoc_the=v.thuoc_the,
         dat_luat=bb.dat_luat,
