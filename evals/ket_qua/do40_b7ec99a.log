@@ -1,0 +1,82 @@
+==========================================================================
+ĐO THẬT — provider=openai model=gpt-4o-mini
+40 yêu cầu · tối đa 3 lượt sửa mỗi bài · KHÔNG mock gì cả
+==========================================================================
+[ 1/40] Sự hoài niệm về thời thanh xuân (4 dòng) ... KHÔNG ĐẠT (21.3s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[ 2/40] Hành trình tìm lại bản ngã qua ký ức quê hương (8 dòng) ... ĐẠT sau 0 lượt sửa (11.2s)
+[ 3/40] mùa gặt (12 dòng) ... ĐẠT sau 0 lượt sửa (118.5s)
+[ 4/40] dòng Mekong (16 dòng) ... KHÔNG ĐẠT (30.1s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[ 5/40] đứa con đầu lòng (20 dòng) ... KHÔNG ĐẠT (28.0s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[ 6/40] người thợ may (4 dòng) ... KHÔNG ĐẠT (23.5s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[ 7/40] hạn mặn đồng bằng (8 dòng) ... ĐẠT sau 0 lượt sửa (37.6s)
+[ 8/40] Nỗi nhớ quê hương gắn liền với mưa (12 dòng) ... ĐẠT sau 0 lượt sửa (19.7s)
+[ 9/40] sương sớm trên đồi (16 dòng) ... KHÔNG ĐẠT (124.9s) — Sau 3 lượt sửa vẫn còn 11 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[10/40] người công nhân tan ca đêm (20 dòng) ... KHÔNG ĐẠT (65.5s) — Sau 3 lượt sửa vẫn còn 16 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[11/40] Tình yêu mới chớm (Sự trong trẻo, ngập ngừng) (4 dòng) ... ĐẠT sau 0 lượt sửa (54.2s)
+[12/40] chợ phiên vùng cao (8 dòng) ... KHÔNG ĐẠT (23.0s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[13/40] cây đa đầu làng (12 dòng) ... KHÔNG ĐẠT (24.6s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[14/40] ly biệt sân ga (16 dòng) ... ĐẠT sau 0 lượt sửa (41.0s)
+[15/40] Con đường lá vàng biểu tượng (20 dòng) ... KHÔNG ĐẠT (31.4s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[16/40] căn bếp mẹ (4 dòng) ... ĐẠT sau 0 lượt sửa (29.2s)
+[17/40] Sự cô độc và tĩnh lặng (8 dòng) ... ĐẠT sau 0 lượt sửa (33.4s)
+[18/40] đứa trẻ bán báo (12 dòng) ... KHÔNG ĐẠT (25.0s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[19/40] ánh đèn đô thị (16 dòng) ... KHÔNG ĐẠT (45.6s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[20/40] Tìm lại ký ức qua những lá thư/tờ giấy cũ (20 dòng) ... KHÔNG ĐẠT (25.0s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[21/40] ngôi sao xa (4 dòng) ... ĐẠT sau 0 lượt sửa (7.4s)
+[22/40] Vẻ đẹp hùng vĩ của vùng cao (8 dòng) ... KHÔNG ĐẠT (21.2s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[23/40] bến Nhà Rồng (12 dòng) ... ĐẠT sau 0 lượt sửa (50.2s)
+[24/40] Điện Biên năm ấy (16 dòng) ... ĐẠT sau 0 lượt sửa (24.5s)
+[25/40] con đường phía trước (20 dòng) ... ĐẠT sau 0 lượt sửa (79.6s)
+[26/40] Ký ức về những mùa hè rực rỡ (4 dòng) ... ĐẠT sau 0 lượt sửa (6.8s)
+[27/40] bình yên trong tâm (8 dòng) ... ĐẠT sau 0 lượt sửa (21.7s)
+[28/40] Sự hoài niệm, cô đơn (12 dòng) ... KHÔNG ĐẠT (26.3s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[29/40] Sự cô đơn của người viễn xứ khi gặp mưa (16 dòng) ... KHÔNG ĐẠT (54.8s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[30/40] Sự chiêm nghiệm về cuộc đời khi về già (20 dòng) ... KHÔNG ĐẠT (26.8s) — Sau 3 lượt sửa vẫn còn 15 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[31/40] hoa đào Nhật Tân (4 dòng) ... KHÔNG ĐẠT (18.6s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[32/40] Nỗi nhớ về những kỷ niệm cũ trên phố thị (8 dòng) ... KHÔNG ĐẠT (21.9s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[33/40] cánh cửa khép hờ (12 dòng) ... KHÔNG ĐẠT (56.5s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[34/40] Nỗi nhớ người yêu ở nơi xa xôi (16 dòng) ... KHÔNG ĐẠT (35.6s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[35/40] Sự chuyển mình từ hạ sang thu (20 dòng) ... KHÔNG ĐẠT (35.0s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[36/40] tiếng búa lò rèn (4 dòng) ... KHÔNG ĐẠT (42.1s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[37/40] Những cơn mưa phùn lãng mạn (8 dòng) ... ĐẠT sau 0 lượt sửa (12.9s)
+[38/40] người mẹ (12 dòng) ... ĐẠT sau 0 lượt sửa (18.9s)
+[39/40] Sự đối lập giữa mùa thu quê hương và mùa thu phố thị (16 dòng) ... ĐẠT sau 0 lượt sửa (34.4s)
+[40/40] sân trường ngày chia tay (20 dòng) ... KHÔNG ĐẠT (74.1s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+
+==========================================================================
+BA CHỈ SỐ VẬN HÀNH — trả lời rủi ro R2
+==========================================================================
+  tỉ lệ đạt lượt đầu   : 17/40 = 42.5%
+  tỉ lệ đạt (mọi lượt) : 17/40 = 42.5%
+  tỉ lệ KIỆT LƯỢT      : 23/40 = 57.5%
+  số lượt sửa TB (bài đạt): 0.00
+  thời gian TB mỗi bài : 37.1s
+  ghi từng bài -> evals\ket_qua\do40_b7ec99a.jsonl
+  lượt gọi TB mỗi bài  : reply 23.2 · cheap 0.0
+  chi phí              : 0.7332 USD tổng · 18.33 USD / 1.000 bài (chưa tính lượt `cheap`)
+  theo độ dài          :
+     4 dòng: đạt 4/8 · reply TB 14.0 · 25s
+     8 dòng: đạt 5/8 · reply TB 19.2 · 23s
+    12 dòng: đạt 4/8 · reply TB 26.0 · 42s
+    16 dòng: đạt 3/8 · reply TB 26.8 · 49s
+    20 dòng: đạt 1/8 · reply TB 30.0 · 46s
+
+VÌ SAO KHÔNG ĐẠT — đếm theo mã lỗi trong chẩn đoán
+      CL: 2 bài
+      H3: 1 bài
+      H4: 1 bài
+
+§33.3 — LUẬT THƠ trên bài mô hình sinh ra
+  17 bài đạt: đúng số tiếng 100% · đúng khuôn 100% · có vần 100%
+
+MỘT BÀI LÀM VÍ DỤ
+  [Hành trình tìm lại bản ngã qua ký ức quê hương, 8 dòng, 0 lượt sửa]
+    Trăng rằm sáng tỏ, xua đêm dài,
+    Thuyền ai lặng lẽ, trôi ngang bãi.
+    Ký ức quê hương, tình chớm nở,
+    Như cánh hoa vàng, nhẹ ghé vai.
+    Dòng sông chảy mãi, sóng xô bờ,
+    Nhà xưa lặng lẽ, bóng cây khờ.
+    Ký ức dâng trào, mùi đất mới,
+    Hương nhài thoảng nhẹ, gọi hồn xưa.
+  kiểm lại: dat=True · 8 dòng · sơ đồ vần ['aababbax']

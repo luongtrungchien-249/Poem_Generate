@@ -275,6 +275,18 @@ Chủ dự án chốt theo khuyến nghị: **QĐ-P2** chặn dòng chép nguyê
    thường không đổi. Test: `test_react_giu_ban_nhap.py`. Hiệu quả thật cần lượt đo kế tiếp.
 4. ✅ `Makefile`: `arch` chạy `PYTHONPATH=src lint-imports`. README cập nhật số đo thật.
 
+5. ✅ **Đo lại 40 đề đầu của tập đề** (commit `b7ec99a`: one-shot + chặn chép + giữ bản nháp):
+
+   | Độ dài | 4 | 8 | 12 | 16 | 20 | **Tổng** |
+   |---|---:|---:|---:|---:|---:|---:|
+   | trước (`775b225`, cùng 40 đề) | | | | | | 10/40 (25 %) |
+   | **sau** | 4/8 | 5/8 | 4/8 | 3/8 | 1/8 | **17/40 (42,5 %)** |
+
+   - Bản nháp cuối < 4 dòng: 35/160 → **1/23** bài trượt. Lỗi còn lại chủ yếu là S2 (thanh).
+   - Chi phí 0,73 USD (18,3 USD / 1.000 bài, +24 % do lời nhắc dài thêm một bài mẫu).
+   - 17/17 bài đạt vẫn đến từ `tung_kho`; đường lùi chưa cứu được bài nào.
+   - Mẫu 40 đề: sai số vài điểm, nhưng mức tăng đủ lớn để giữ thay đổi.
+
 **Còn lại, đều cần A/B trả tiền trước khi bật (R6):** khung cấp dòng (GĐ2.2, QĐ-P5), thi liệu (GĐ2.3),
 bảng soi toàn khổ khi sửa (GĐ3.1), tính lại `k` từ `p` mới (≈ 0,47).
 
