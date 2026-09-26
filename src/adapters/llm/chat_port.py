@@ -140,7 +140,13 @@ def _la_loi_tam_thoi(e: BaseException) -> bool:
 
 
 def _thoi_gian_cho(e: BaseException, lan: int) -> float:
-    """Ưu tiên `Retry-After` của nhà cung cấp; không có thì backoff mũ + jitter."""
+    """Ưu tiên thời gian chờ do nhà cung cấp nói; không có thì backoff mũ + jitter.
+
+    OpenAI gửi header `Retry-After`. Google KHÔNG gửi header đó — nó đặt thời gian
+    chờ trong thân lỗi: `error.details[].retryDelay = "23s"` (RetryInfo). Đo
+    26/09/2026 với Gemini: thiếu nhánh này thì phải đoán 2, 4, 8, 16 s… và một bài
+    8 dòng mất 49–86 s thay vì ~15 s.
+    """
     if isinstance(e, httpx.HTTPStatusError):
         tieu_de = e.response.headers.get("retry-after")
         try:
@@ -148,7 +154,26 @@ def _thoi_gian_cho(e: BaseException, lan: int) -> float:
                 return min(CHO_TOI_DA_GIAY, max(0.0, float(tieu_de)))
         except ValueError:
             pass
+        cho = _retry_delay_google(e.response)
+        if cho is not None:
+            return min(CHO_TOI_DA_GIAY, cho + random.uniform(0, 1))
     return min(CHO_TOI_DA_GIAY, 2.0 * 2**lan) + random.uniform(0, 1)
+
+
+def _retry_delay_google(resp: httpx.Response) -> float | None:
+    """`"retryDelay": "23s"` trong thân lỗi của Gemini API; None nếu không có."""
+    try:
+        chi_tiet = resp.json().get("error", {}).get("details", [])
+    except (ValueError, AttributeError):
+        return None
+    for ct in chi_tiet if isinstance(chi_tiet, list) else []:
+        tre = ct.get("retryDelay") if isinstance(ct, dict) else None
+        if isinstance(tre, str) and tre.endswith("s"):
+            try:
+                return max(0.0, float(tre[:-1]))
+            except ValueError:
+                return None
+    return None
 
 
 class ChatLlmAdapter:

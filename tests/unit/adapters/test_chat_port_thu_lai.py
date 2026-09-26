@@ -79,3 +79,13 @@ async def test_loi_mang_duoc_thu_lai():
     c, cho = _ClientGia([httpx.ConnectTimeout("hết giờ")]), []
     kq = await _adapter(c, cho).reply(MSG, (), CTX)
     assert isinstance(kq, Ok) and c.so_lan_goi == 2
+
+
+async def test_doc_retryDelay_trong_than_loi_cua_google():
+    req = httpx.Request("POST", "https://generativelanguage.googleapis.com/v1beta/models/x:generateContent")
+    than = {"error": {"code": 429, "details": [
+        {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "23s"}]}}
+    loi = httpx.HTTPStatusError("429", request=req, response=httpx.Response(429, json=than, request=req))
+    c, cho = _ClientGia([loi]), []
+    await _adapter(c, cho).reply(MSG, (), CTX)
+    assert len(cho) == 1 and 23.0 <= cho[0] < 24.0

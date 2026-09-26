@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Literal, TypeVar, cast
 
 import yaml
+from dotenv import dotenv_values
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -207,9 +208,28 @@ def _danh_sach(tu_env: str | None, mac_dinh: list[Any] | None) -> list[str]:
     return ds
 
 
+def _nap_dotenv(tep: Path) -> None:
+    """Đưa `.env` vào môi trường tiến trình — KHÔNG ghi đè biến đã có.
+
+    🩸 LỖI ĐÃ SỬA 26/09/2026. Trước đây chỉ `Secrets` đọc `.env`, còn
+    `DEFAULT_PROVIDER`, `DEFAULT_MODEL`, … được đọc bằng `os.getenv`. Ghi
+    `DEFAULT_PROVIDER=google` vào `.env` vì thế KHÔNG có tác dụng gì: app vẫn lấy
+    `openai` từ `configs/dev.yaml`, và thiếu khoá OpenAI thì lùi về mock im lặng.
+
+    Không ghi đè là có chủ ý: biến môi trường thật (CI, docker, conftest ép `mock`)
+    vẫn thắng `.env`, đúng thứ tự ưu tiên ghi ở docstring của `load_settings`.
+    """
+    if not tep.is_file():
+        return
+    for khoa, gia_tri in dotenv_values(tep).items():
+        if gia_tri is not None and khoa not in os.environ:
+            os.environ[khoa] = gia_tri
+
+
 def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Settings:
-    """Nạp cấu hình theo thứ tự ưu tiên: base.yaml < <env>.yaml < biến môi trường."""
+    """Nạp cấu hình theo thứ tự ưu tiên: base.yaml < <env>.yaml < .env < biến môi trường."""
     cfg_dir = configs_dir or CONFIGS_DIR
+    _nap_dotenv(cfg_dir.parent / ".env")
     resolved_env = env or os.getenv("ENV", "dev")
 
     raw = _deep_merge(_read_yaml(cfg_dir / "base.yaml"), _read_yaml(cfg_dir / f"{resolved_env}.yaml"))
