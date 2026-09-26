@@ -59,5 +59,5 @@ def test_danh_muc_co_gemini_va_tier_rieng_cho_google():
     gg = ModelRouter(config_path=str(CATALOG), provider="google")
     assert chung.models["gemini-2.5-flash"]["provider"] == "google"
     assert chung.select_model(tier="cheap") == "gpt-4o-mini"  # hành vi cũ giữ nguyên
-    assert gg.select_model(tier="cheap").startswith("gemini")
+    assert gg.select_model(tier="cheap") == "gemini-3.5-flash-lite"
     assert all(m.startswith("gemini") for m in (gg.select_model(tier=t) for t in ("standard", "reasoning")))
