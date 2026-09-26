@@ -143,6 +143,14 @@ nới luật mà là **cắt `n`**: sinh từng khổ 4 dòng, chọn trong 16 �
 Mô hình viết từng chữ; hệ thống chỉ **chọn**. Chi tiết ở
 [`docs/Do_That_21-09_R2.md`](docs/Do_That_21-09_R2.md).
 
+## Nguồn dữ liệu ngoài
+
+- **Vietnamese Poetry Corpus**: [`phamson02/vietnamese-poetry-corpus`](https://huggingface.co/datasets/phamson02/vietnamese-poetry-corpus)
+  trên HuggingFace, giấy phép **CC-BY-4.0**. Dùng làm kho đối chiếu và kho ví dụ
+  ứng viên (Plan_PoeTone GĐ0.2). Dữ liệu thô **không** commit; nhập lại bằng
+  `python datalake/scripts/nhap_kho_hf.py`, số liệu ở `datalake/hf/tong_hop.json`.
+  Mọi báo cáo dùng dữ liệu này phải ghi nguồn như trên.
+
 ## Trạng thái và việc còn lại
 
 | Bước | Nội dung | Trạng thái |

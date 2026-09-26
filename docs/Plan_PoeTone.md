@@ -3,7 +3,7 @@
 **Ngày lập:** 26/09/2026 · **Viết lại** từ bản nháp cùng ngày để khớp với hệ thống đang chạy
 **Tệp mục tiêu:** `src/application/poetry/` · `src/application/prompting/system.py` · `evals/` · `datalake/scripts/`
 **Tệp KHÔNG được đụng:** `src/application/rule.py` (ĐÓNG BĂNG, băm `0a0b2488…`)
-**Trạng thái:** ✅ GĐ−1 xong · 🟡 chờ chủ dự án chốt **QĐ-P1 → QĐ-P7** (§4). Chỉ được thi công Giai đoạn 0 trước khi chốt.
+**Trạng thái:** ✅ GĐ−1, GĐ0 xong (26/09) · 🟡 chờ chốt **QĐ-P1 → P5, P7, P8, P9** trước GĐ1.
 
 ---
 
@@ -140,7 +140,83 @@ nếu `src` không nằm trên `PYTHONPATH`. Chạy `PYTHONPATH=src lint-imports
 
 ---
 
-## Giai đoạn 0 — Dữ liệu và công cụ đo (3 ngày)
+## Giai đoạn 0 — KẾT QUẢ · ✅ XONG 26/09/2026 (QĐ-P6 đã chốt: nhập kho HF)
+
+Commit đo: `775b225` · `openai` / `gpt-4o-mini` · k = 32 · 4 phương án mỗi lượt.
+
+| Bàn giao | Tệp |
+|---|---|
+| Tập 200 đề, ghim bằng test | `evals/datasets/de_danh_gia.jsonl` · `evals/dung_tap_de.py` · `tests/unit/application/test_tap_de.py` |
+| Kho HF đã lọc qua `rule.py` | `datalake/scripts/nhap_kho_hf.py` → `datalake/hf/tong_hop.json` (dữ liệu thô gitignore) |
+| Script chấm chung | `evals/cham_diem.py` |
+| Baseline có chi phí | `evals/do_that.py --de …` → `evals/ket_qua/baseline_775b225.{jsonl,log}` |
+| Đo `p` | `datalake/scripts/do_p.py` |
+
+### 0.A. Baseline 200 đề
+
+| Độ dài | Đạt | Lượt gọi TB | Thời gian TB |
+|---:|---:|---:|---:|
+| 4 | 12/40 (30 %) | 17,1 | 18 s |
+| 8 | 10/40 (25 %) | 19,7 | 22 s |
+| 12 | 9/40 (22,5 %) | 22,0 | 26 s |
+| 16 | 6/40 (15 %) | 24,2 | 29 s |
+| 20 | 3/40 (7,5 %) | 25,9 | 36 s |
+| **Tổng** | **40/200 (20 %)** | 21,8 | 26 s |
+
+- Chi phí **2,96 USD / 200 bài = 14,81 USD / 1.000 bài** (chưa tính lượt `cheap`).
+- 39/40 bài đạt đến từ `tung_kho`. **Đường lùi sinh–sửa cứu được 1/161 bài.**
+- Trong 160 bài trượt, chẩn đoán đầu tiên: S2 (thanh) ≈ 93, H3 (không đủ 4 dòng / không phân dòng) 35,
+  H1 (số tiếng) ≈ 16, H4 9. H3 ở đường lùi gợi ý mô hình trả văn bản không phải bài thơ — soi ở GĐ3.4.
+- **248 lần gặp 429** trong lô, đã được bộ đo tự thử lại. Xem 0.C.
+
+### 0.B. `p` hôm nay thấp hơn một nửa con số 21/09
+
+12 chủ đề × 16 ứng viên khổ đầu mỗi nhánh (`do_p.py`, chạy ngày 26/09):
+
+| Phương án / lượt | Dòng đủ 7 tiếng | **`p`** (đủ 7 tiếng **và** khớp khuôn) | Khổ đạt luật | Lượt gọi |
+|---:|---:|---:|---:|---:|
+| 1 | 71,2 % | **32,3 %** | 1/192 | 192 |
+| 4 (mặc định hiện tại) | 67,7 % | **27,0 %** | 3/192 | 48 |
+
+- `sinh_theo_kho.py` tính `k` từ **p = 0,56**. Với p ≈ 0,3 thì một khổ đạt ≈ p⁴ ≈ 1 %, và k = 32
+  cho mỗi khổ ≈ 30–50 %. Đây là lý do tỉ lệ đạt tụt theo độ dài ở bảng trên.
+- Lượt đo lặp trước đó (6 chủ đề) cho 82,8 % → 72,9 % dòng đủ tiếng. **Xin 4 phương án một lượt làm
+  giảm độ đủ tiếng 3–10 điểm** (mô hình hay viết dòng 6 tiếng khi viết nhiều phương án). Đổi lại số
+  lượt gọi giảm 4 lần. Chênh ở "khổ đạt" (1 vs 3) nằm trong nhiễu. → **QĐ-P8** dưới đây.
+- Chưa rõ vì sao `p` giảm so với 21/09. Hai nghi phạm: prompt đã đổi nhiều trên nhánh này (`system.py`
+  +880 dòng, few-shot tắt), hoặc phép đo 21/09 định nghĩa `p` khác. **Việc đầu tiên của GĐ2:**
+  chạy `do_p.py` ở commit `d09b8cb` (trước các thay đổi prompt) để tách hai khả năng.
+
+### 0.C. Lỗ hổng sản phẩm phát hiện được: không thử lại khi gặp 429
+
+`ChatLlmAdapter.reply` bọc mọi lỗi provider thành `UpstreamError` và **không thử lại**. Tài khoản
+hiện có trần 200.000 token/phút; một bài 20 dòng gửi tới 8 lượt song song. Lượt chạy thử đầu tiên
+**không** có retry: 8/20 đề trượt oan vì 429. Người dùng `/v1/poem` sẽ gặp đúng lỗi đó.
+
+Bộ đo đã có retry riêng (`evals/do_that.py::_DemLuotGoi`, ghi `lan_thu_lai_429`). Sản phẩm thì chưa:
+đề xuất nối `adapters/llm/resilience.py` vào đường `/v1/poem` — xem QĐ-P9.
+
+### 0.D. Kho HF
+
+| Kho | Đạt `rule.py` | Trượt | Trùng `final_data_7_chu` |
+|---|---:|---:|---:|
+| `bay_chu` (43.565 bài không trùng) | **20.445** (46,9 %) | 23.120 | 22.887 (52,5 %) |
+| `duong_luat` (2.549 bài) | 2.051 | 498 | 69 |
+
+- Khoảng một nửa kho HF trùng với `final_data_7_chu.jsonl`, nên việc khử trùng là cần thiết (đã gắn cờ).
+- 80 % thơ Đường luật qua được `rule.py`, đúng thiết kế: tầng 3 chỉ ghi nhận, không chặn. Probe đoán
+  thể ở GĐ4.3 vì vậy **không** được dùng `rule.py` làm đáp án; phải dùng nhãn `specific_genre`.
+
+### Hai quyết định mới phát sinh
+
+| Mã | Câu hỏi | Khuyến nghị |
+|---|---|---|
+| **QĐ-P8** | Giữ `SO_UNG_VIEN_MOI_LUOT = 4` hay về 1? | Đo lại bằng `do_p.py` với 24+ chủ đề trước khi đổi. Nếu "khổ đạt" không khác biệt có ý nghĩa thì giữ 4 (rẻ hơn 4 lần lượt gọi) |
+| **QĐ-P9** | Thêm retry có backoff cho 429 vào đường sản phẩm? | Có. Không đổi luật, không đổi prompt; chỉ ngừng biến giới hạn tần suất thành bài "không đạt" |
+
+---
+
+## Giai đoạn 0 — Dữ liệu và công cụ đo (kế hoạch gốc)
 
 ### 0.1. Tập đề cố định — `evals/datasets/de_danh_gia.jsonl`
 

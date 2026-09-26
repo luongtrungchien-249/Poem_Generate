@@ -1,0 +1,35 @@
+{
+  "nguon": "phamson02/vietnamese-poetry-corpus (HuggingFace), CC-BY-4.0 — https://huggingface.co/datasets/phamson02/vietnamese-poetry-corpus",
+  "so_ban_ghi_nguon": 198598,
+  "so_bai_final_data_de_khu_trung": 40566,
+  "kho": {
+    "bay_chu": {
+      "dat": 20445,
+      "truot": 23120,
+      "rong": 0,
+      "trung_noi_bo_hf_da_bo": 416,
+      "dat_trung_final_data": 10418,
+      "truot_trung_final_data": 12469,
+      "tang_chet": {
+        "1": 3107,
+        "2": 743,
+        "4": 19022,
+        "5": 248
+      }
+    },
+    "duong_luat": {
+      "dat": 2051,
+      "truot": 498,
+      "rong": 0,
+      "trung_noi_bo_hf_da_bo": 4,
+      "dat_trung_final_data": 57,
+      "truot_trung_final_data": 12,
+      "tang_chet": {
+        "1": 153,
+        "2": 89,
+        "4": 222,
+        "5": 34
+      }
+    }
+  }
+}
