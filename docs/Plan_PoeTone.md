@@ -3,7 +3,7 @@
 **Ngày lập:** 26/09/2026 · **Viết lại** từ bản nháp cùng ngày để khớp với hệ thống đang chạy
 **Tệp mục tiêu:** `src/application/poetry/` · `src/application/prompting/system.py` · `evals/` · `datalake/scripts/`
 **Tệp KHÔNG được đụng:** `src/application/rule.py` (ĐÓNG BĂNG, băm `0a0b2488…`)
-**Trạng thái:** ✅ GĐ−1, GĐ0 xong (26/09) · 🟡 chờ chốt **QĐ-P1 → P5, P7, P8, P9** trước GĐ1.
+**Trạng thái:** ✅ GĐ−1, GĐ0, GĐ1.1, GĐ3.2, QĐ-P9 xong (26/09) · 🟡 tiếp theo: A/B one-shot (QĐ-P4), rồi GĐ1.3–1.6.
 
 ---
 
@@ -213,6 +213,34 @@ Bộ đo đã có retry riêng (`evals/do_that.py::_DemLuotGoi`, ghi `lan_thu_la
 |---|---|---|
 | **QĐ-P8** | Giữ `SO_UNG_VIEN_MOI_LUOT = 4` hay về 1? | Đo lại bằng `do_p.py` với 24+ chủ đề trước khi đổi. Nếu "khổ đạt" không khác biệt có ý nghĩa thì giữ 4 (rẻ hơn 4 lần lượt gọi) |
 | **QĐ-P9** | Thêm retry có backoff cho 429 vào đường sản phẩm? | Có. Không đổi luật, không đổi prompt; chỉ ngừng biến giới hạn tần suất thành bài "không đạt" |
+
+### 0.E. Sau GĐ0 — đã làm ngày 26/09/2026
+
+Chủ dự án chốt theo khuyến nghị: **QĐ-P1** ba số rời · **QĐ-P8** giữ 4 phương án/lượt ·
+**QĐ-P9** thêm retry cho sản phẩm.
+
+1. ✅ **QĐ-P9 — retry trong `ChatLlmAdapter.reply`.** Chỉ thử lại 429, 5xx và lỗi mạng (tối đa 6
+   lần, tôn trọng `Retry-After`, chờ tối đa 60 s). 400/401/404/422 không thử lại. `UpstreamError`
+   nay mang `status_code`. Bộ đo bỏ retry riêng của nó. Test: `tests/unit/adapters/test_chat_port_thu_lai.py`.
+2. ✅ **`p` KHÔNG giảm vì prompt.** Đo `p` bằng hàm dựng lời nhắc của từng commit (zero-shot, 1 phương
+   án/lượt, 12 chủ đề):
+
+   | Commit | Lời nhắc | `p` |
+   |---|---:|---:|
+   | `168c0e6` (sáng 21/09) | 1.661 ký tự | 0,22 |
+   | `9572aeb` (tối 21/09) | 3.972 | 0,33 |
+   | `9594e41` (22/09) | 4.484 | 0,28 |
+   | HEAD | 8.369 | 0,35 |
+
+   Con số `p = 0,56` ngày 21/09 **không tái lập được** theo định nghĩa này ở commit nào. Khác biệt duy
+   nhất còn lại giữa lượt đo 21/09 (83,3 %) và baseline hôm nay (20 %) là **few-shot** (bật ngày 21/09,
+   tắt ngày 22/09). QĐ-P4 vì vậy là việc có giá trị cao nhất tiếp theo, và phải A/B trước khi bật.
+3. ✅ **GĐ1.1 — `application/poetry/diem_tuan_thu.py`.** Ba số rời `cau_truc`, `thanh`, `van` cộng
+   `hinh_thuc` và `so_dong_can_sua`. Đối chiếu với `rule.py`: 3.000/3.000 bài đạt đều trọn vẹn;
+   0/23.120 bài trượt của kho HF được trọn vẹn. `van` là 0/1 (tầng 5 đạt khi có MỘT cụm có vần), không
+   phải tỉ lệ.
+4. ✅ **GĐ3.2 — `_chon_mot_kho` chọn ứng viên cứu theo `khoa_xep_hang()`** (hình thức → số dòng phải
+   viết lại → vần), không còn theo `len(v.vi_pham)`.
 
 ---
 

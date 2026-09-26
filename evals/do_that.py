@@ -30,7 +30,6 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-import random
 import statistics
 import subprocess
 import sys
@@ -103,16 +102,6 @@ class KetQuaMotBai:
     token_ra: int = 0
     token_cache: int = 0
     chi_phi_usd: float = 0.0
-    lan_thu_lai_429: int = 0
-
-
-_SO_LAN_THU_LAI = 6
-
-
-def _la_loi_tan_suat(e: object) -> bool:
-    """429 / rate limit của nhà cung cấp — lỗi hạ tầng, không phải lỗi thơ."""
-    thong_diep = str(getattr(e, "message", "")).lower()
-    return getattr(e, "status_code", None) == 429 or "429" in thong_diep or "rate limit" in thong_diep
 
 
 class _DemLuotGoi:
@@ -132,20 +121,11 @@ class _DemLuotGoi:
     def dat_lai(self) -> None:
         self.luot_reply = self.luot_cheap = 0
         self.token_vao = self.token_ra = self.token_cache = 0
-        self.lan_thu_lai = 0
 
     async def reply(self, messages, tools, ctx, model=None):  # type: ignore[no-untyped-def]
         self.luot_reply += 1
-        # ⚠️ THỬ LẠI KHI CHẠM TRẦN TẦN SUẤT — chỉ ở bộ đo, KHÔNG ở sản phẩm.
-        # Đường sinh thơ chưa có retry cho 429 (ghi ở Plan_PoeTone GĐ0.4). Không thử
-        # lại thì một đề bị tính TRƯỢT vì hạ tầng, và số đo lẫn chất lượng thơ với
-        # hạn mức tài khoản. Số lần thử lại được ghi ra để không giấu chuyện đó.
-        for lan in range(_SO_LAN_THU_LAI + 1):
-            kq = await self._goc.reply(messages=messages, tools=tools, ctx=ctx, model=model)  # type: ignore[attr-defined]
-            if not (isinstance(kq, Err) and _la_loi_tan_suat(kq.error)) or lan == _SO_LAN_THU_LAI:
-                break
-            self.lan_thu_lai += 1
-            await asyncio.sleep(min(60.0, 2.0 * 2**lan) + random.uniform(0, 1))
+        # Thử lại lỗi 429/5xx nay nằm trong `ChatLlmAdapter` (QĐ-P9), không ở đây.
+        kq = await self._goc.reply(messages=messages, tools=tools, ctx=ctx, model=model)  # type: ignore[attr-defined]
         if not isinstance(kq, Err):
             u = kq.value.usage
             self.token_vao += u.input_tokens
@@ -184,7 +164,6 @@ async def _chay_mot(i: int, chu_de: str, so_dong: int, deps: dict) -> KetQuaMotB
     dem.dat_lai()
     r = await _chay_mot_tho(i, chu_de, so_dong, deps)
     r.luot_reply, r.luot_cheap = dem.luot_reply, dem.luot_cheap
-    r.lan_thu_lai_429 = dem.lan_thu_lai
     r.token_vao, r.token_ra, r.token_cache = dem.token_vao, dem.token_ra, dem.token_cache
     r.chi_phi_usd = cost_calculator.calculate_cost(
         deps["model"], dem.token_vao, dem.token_ra, dem.token_cache
@@ -348,8 +327,7 @@ async def main() -> int:
         print(f"  ghi từng bài -> {tep_ra}")
     tong_usd = sum(r.chi_phi_usd for r in kq)
     print(f"  lượt gọi TB mỗi bài  : reply {statistics.mean(r.luot_reply for r in kq):.1f}"
-          f" · cheap {statistics.mean(r.luot_cheap for r in kq):.1f}"
-          f" · thử lại vì 429: {sum(r.lan_thu_lai_429 for r in kq)} lần")
+          f" · cheap {statistics.mean(r.luot_cheap for r in kq):.1f}")
     print(f"  chi phí              : {tong_usd:.4f} USD tổng · "
           f"{tong_usd / n * 1000:.2f} USD / 1.000 bài (chưa tính lượt `cheap`)")
     theo_do_dai: dict[int, list[KetQuaMotBai]] = {}

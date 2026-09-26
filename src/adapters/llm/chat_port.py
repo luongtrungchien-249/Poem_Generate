@@ -31,7 +31,12 @@ gọi tool thật, bản cũ sẽ nổ `ValidationError` chứ không âm thầm
 
 from __future__ import annotations
 
+import asyncio
+import random
+from collections.abc import Awaitable, Callable
 from typing import Any
+
+import httpx
 
 from application.ports.llm import (
     AssistantMessage,
@@ -105,12 +110,63 @@ def _sang_luoc_do_tool(t: object) -> ToolSchema | None:
     return None
 
 
+# ════ THỬ LẠI LỖI TẠM THỜI — QĐ-P9, Plan_PoeTone, 26/09/2026 ════
+#
+# Đo thật: tài khoản có trần 200.000 token/phút, một bài 20 dòng gửi tới 8 lượt
+# song song. Không thử lại thì 8/20 đề của lượt đo đầu trượt OAN — không phải vì
+# thơ sai luật, mà vì nhà cung cấp bảo "chờ chút". Trả 422 cho người dùng trong ca
+# đó là nói dối về lý do thất bại.
+#
+# CHỈ thử lại lỗi TẠM THỜI: 429 và 5xx, cộng lỗi mạng. 400/401/404 là lỗi của
+# chính yêu cầu — gửi lại y hệt chỉ nhận lại y hệt, và tốn thêm thời gian của người
+# dùng. `FallbackManager` ở `resilience.py` thử lại MỌI ngoại lệ nên không dùng ở đây.
+#
+# Không phải ngưỡng dò chất lượng: mấy hằng số dưới đây chỉ quyết định chờ bao lâu
+# trước khi bỏ cuộc, không đụng tới luật hay tới việc bài nào được trả ra.
+SO_LAN_THU_LAI = 6
+CHO_TOI_DA_GIAY = 60.0
+_MA_TAM_THOI = frozenset({429, 500, 502, 503, 504})
+
+
+def _ma_trang_thai(e: BaseException) -> int | None:
+    return e.response.status_code if isinstance(e, httpx.HTTPStatusError) else None
+
+
+def _la_loi_tam_thoi(e: BaseException) -> bool:
+    ma = _ma_trang_thai(e)
+    if ma is not None:
+        return ma in _MA_TAM_THOI
+    return isinstance(e, (httpx.TimeoutException, httpx.TransportError))
+
+
+def _thoi_gian_cho(e: BaseException, lan: int) -> float:
+    """Ưu tiên `Retry-After` của nhà cung cấp; không có thì backoff mũ + jitter."""
+    if isinstance(e, httpx.HTTPStatusError):
+        tieu_de = e.response.headers.get("retry-after")
+        try:
+            if tieu_de is not None:
+                return min(CHO_TOI_DA_GIAY, max(0.0, float(tieu_de)))
+        except ValueError:
+            pass
+    return min(CHO_TOI_DA_GIAY, 2.0 * 2**lan) + random.uniform(0, 1)
+
+
 class ChatLlmAdapter:
     """Hiện thực `LlmPort` bằng một `LLMClient` bất kỳ."""
 
-    def __init__(self, client: LLMClient, *, default_model: str = "gpt-4o-mini") -> None:
+    def __init__(
+        self,
+        client: LLMClient,
+        *,
+        default_model: str = "gpt-4o-mini",
+        so_lan_thu_lai: int = SO_LAN_THU_LAI,
+        ngu: Callable[[float], Awaitable[None]] = asyncio.sleep,
+    ) -> None:
         self._client = client
         self._default_model = default_model
+        self._so_lan_thu_lai = so_lan_thu_lai
+        # Tiêm được để test không phải chờ thật.
+        self._ngu = ngu
 
     async def reply(
         self,
@@ -120,16 +176,27 @@ class ChatLlmAdapter:
         model: str | None = None,
     ) -> Result[LlmReply, BotError]:
         luoc_do = [x for x in (_sang_luoc_do_tool(t) for t in tools) if x is not None]
-        try:
-            resp = await self._client.generate(
-                messages=[_sang_message(m) for m in messages],
-                model=model or self._default_model,
-                tools=luoc_do or None,
-            )
-        except Exception as e:  # noqa: BLE001 — biên với thế giới ngoài
-            # Mọi lỗi provider quy về một lỗi nghiệp vụ CÓ PHÂN LOẠI. Để ngoại lệ
-            # thô đi lên sẽ phá hợp đồng `Result` của cả đường ống.
-            return Err(UpstreamError(upstream=type(self._client).__name__, message=str(e)))
+        lan = 0
+        while True:
+            try:
+                resp = await self._client.generate(
+                    messages=[_sang_message(m) for m in messages],
+                    model=model or self._default_model,
+                    tools=luoc_do or None,
+                )
+                break
+            except Exception as e:  # noqa: BLE001 — biên với thế giới ngoài
+                if _la_loi_tam_thoi(e) and lan < self._so_lan_thu_lai:
+                    await self._ngu(_thoi_gian_cho(e, lan))
+                    lan += 1
+                    continue
+                # Mọi lỗi provider quy về một lỗi nghiệp vụ CÓ PHÂN LOẠI. Để ngoại
+                # lệ thô đi lên sẽ phá hợp đồng `Result` của cả đường ống.
+                return Err(UpstreamError(
+                    upstream=type(self._client).__name__,
+                    status_code=_ma_trang_thai(e),
+                    message=str(e),
+                ))
 
         usage = resp.usage or {}
         return Ok(

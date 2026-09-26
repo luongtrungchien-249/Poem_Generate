@@ -74,7 +74,7 @@ async def _mot_nhanh(llm: _DemLuotGoi, model: str, moi_luot: int, so_uv: int) ->
         "moi_luot": moi_luot, "ung_vien": n, "dong": dong,
         "du_7_tieng": round(du7 / max(dong, 1), 4), "p": round(khop / max(dong, 1), 4),
         "kho_dat": kho_dat, "luot_goi": llm.luot_reply, "token_vao": llm.token_vao,
-        "token_ra": llm.token_ra, "thu_lai_429": llm.lan_thu_lai,
+        "token_ra": llm.token_ra,
     }
 
 

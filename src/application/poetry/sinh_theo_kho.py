@@ -54,6 +54,7 @@ from dataclasses import dataclass
 
 from application.pipeline.stages.generate import generate_react_loop
 from application.poem_verifier import dung_bien_ban
+from application.poetry.diem_tuan_thu import do_diem_tuan_thu
 from application.poetry.prompt import dung_luot_yeu_cau
 from application.poetry.requirement import PoetryRequirement
 from application.ports.llm import CallContext, LlmPort, UserMessage
@@ -214,8 +215,8 @@ async def _chon_mot_kho(
     `_cuu_kho_bang_react`.
     """
     da_dung = 0
-    # Ứng viên hụt ít nhất từ trước tới giờ, kèm số vi phạm. Dùng cho bước cứu.
-    gan_nhat: tuple[list[str], int] | None = None
+    # Ứng viên hụt ít nhất từ trước tới giờ, kèm khoá xếp hạng. Dùng cho bước cứu.
+    gan_nhat: tuple[list[str], tuple[int, int, int]] | None = None
     moi_luot = max(1, SO_UNG_VIEN_MOI_LUOT)
     # Mỗi lượt gọi nay xin `moi_luot` phương án, nên cần ít lượt hơn cho cùng một
     # số ứng viên. Làm tròn LÊN: thiếu còn hơn thừa thì ngược lại — hụt ứng viên
@@ -249,11 +250,16 @@ async def _chon_mot_kho(
                 v = kiem_tra_bai_tho("\n".join(da_co + dong))
                 if v.dat:
                     return dong, da_dung
-                # Giữ lại ứng viên HỤT ÍT NHẤT để cứu ở dưới. Đếm theo số vi phạm
-                # chứ không theo thứ tự: ứng viên sai 1 dòng gần đích hơn hẳn cái
-                # sai 4 dòng, và vòng ReAct chỉ đáng chạy trên cái gần đích.
-                if gan_nhat is None or len(v.vi_pham) < gan_nhat[1]:
-                    gan_nhat = (dong, len(v.vi_pham))
+                # Giữ lại ứng viên HỤT ÍT NHẤT để cứu ở dưới: ứng viên sai 1 dòng
+                # gần đích hơn hẳn cái sai 4 dòng, và vòng ReAct chỉ đáng chạy trên
+                # cái gần đích.
+                #
+                # Xếp theo `diem_tuan_thu`, KHÔNG theo `len(v.vi_pham)` (Plan_PoeTone
+                # GĐ3.2): bộ kiểm dừng ở tầng chặn đầu tiên nên `vi_pham` chỉ đếm lỗi
+                # của MỘT tầng — ứng viên chết ở tầng 2 chưa hề được kiểm thanh.
+                khoa = do_diem_tuan_thu("\n".join(da_co + dong)).khoa_xep_hang()
+                if gan_nhat is None or khoa < gan_nhat[1]:
+                    gan_nhat = (dong, khoa)
 
     # ════ CHƯA ĐẠT THÌ SUY NGHĨ, ĐỪNG BỎ CUỘC NGAY ════
     if gan_nhat is not None and tools is not None:
