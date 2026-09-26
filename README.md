@@ -127,21 +127,26 @@ Thứ tự ưu tiên: `configs/base.yaml` → `configs/<ENV>.yaml` → biến m�
 Bí mật (khoá API, DSN) **chỉ** ở biến môi trường hoặc `.env`, không bao giờ trong YAML.
 Mọi truy cập `os.environ` nằm trong `bootstrap/settings.py` — không nơi nào khác.
 
-## ⚠️ Năng suất thật — đo với `gpt-4o-mini`, 21/09/2026
+## ⚠️ Năng suất thật — cập nhật 26/09/2026
 
-Đo với `gpt-4o-mini`, 12 đề bài (4 · 8 · 12 dòng), **hai lần chạy độc lập cho cùng kết quả**:
+**Baseline 200 đề** (`evals/datasets/de_danh_gia.jsonl`, `gpt-4o-mini`, commit `775b225`,
+zero-shot, 32 ứng viên mỗi khổ):
 
-| | Sinh cả bài một lần | **Sinh từng khổ, chọn ứng viên** |
-|---|---:|---:|
-| đạt luật | 8,3% | **83,3%** |
-| thời gian mỗi bài | 6,6s | 7,4–10,3s |
+| Độ dài | 4 | 8 | 12 | 16 | 20 | **Tổng** |
+|---|---:|---:|---:|---:|---:|---:|
+| đạt luật | 30 % | 25 % | 22,5 % | 15 % | 7,5 % | **20 %** |
 
-Nút thắt là **tầng 4 (thanh luật)**: mô hình không điều khiển được lớp thanh tiếng
-Việt ở một vị trí cho trước — lỗi nhân lên theo số dòng (`pⁿ`). Cách sửa không phải
-nới luật mà là **cắt `n`**: sinh từng khổ 4 dòng, chọn trong 16 ứng viên.
+Chi phí ≈ 14,8 USD / 1.000 bài, trung bình 26 s mỗi bài.
 
-Mô hình viết từng chữ; hệ thống chỉ **chọn**. Chi tiết ở
-[`docs/Do_That_21-09_R2.md`](docs/Do_That_21-09_R2.md).
+Con số 83,3 % đo ngày 21/09 (12 đề, 4–12 dòng, few-shot đang bật) **không tái lập được**
+trên tập đề này. Nút thắt vẫn là **tầng 4 (thanh luật)**: `p` — tỉ lệ một dòng vừa đủ 7
+tiếng vừa khớp khuôn — chỉ ≈ 0,22–0,35 khi zero-shot.
+
+**One-shot đã bật lại (commit `090c03c`)**: một bài mẫu đưa `p` từ 22,5 % lên 46,6 % và dòng
+đủ 7 tiếng từ 58,7 % lên 98,7 % (A/B khổ đầu, 192 ứng viên mỗi nhánh). **Chưa đo lại tỉ lệ đạt
+cả bài sau thay đổi này.**
+
+Chi tiết và cách đo lại: [`docs/Plan_PoeTone.md`](docs/Plan_PoeTone.md) §0.A–0.F.
 
 ## Nguồn dữ liệu ngoài
 

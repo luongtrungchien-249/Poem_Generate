@@ -96,6 +96,8 @@ class KetQuaMotBai:
     chien_luoc_cuoi: str | None = None
     duong_di: tuple[str, ...] = ()
     tieu_de: str = ""
+    # Bản nháp cuối của bài TRƯỢT — để soi vì sao đường lùi hỏng (Plan GĐ3.4).
+    ban_nhap_cuoi: str = ""
     luot_reply: int = 0
     luot_cheap: int = 0
     token_vao: int = 0
@@ -192,6 +194,7 @@ async def _chay_mot_tho(i: int, chu_de: str, so_dong: int, deps: dict) -> KetQua
             return KetQuaMotBai(
                 chu_de, so_dong, False, e.so_luot_da_sua,
                 ly_do_that_bai=e.chan_doan[:200], giay=giay,
+                ban_nhap_cuoi=e.ban_nhap_cuoi,
             )
         return KetQuaMotBai(
             chu_de, so_dong, False, 0, ly_do_that_bai=type(e).__name__, giay=giay

@@ -37,6 +37,7 @@ from typing import Any
 from application.agent.tools.registry import tool_registry
 from application.poetry.requirement import PoetryRequirement, Truong
 from application.poetry.sinh_tho import CanLamRo, sinh_bai_tho
+from application.poetry.verifier import PoemVerifierDayDu
 from application.ports.llm import CallContext, LlmPort
 from application.ports.poem_corpus import PoemCorpusPort
 from application.ports.rate_limit import RateLimitPort
@@ -75,6 +76,7 @@ def register_poem_generate_tool(
     rate_limiter: RateLimitPort | None = None,
     default_model: str = "gpt-4o-mini",
     corpus: PoemCorpusPort | None = None,
+    verifier: PoemVerifierDayDu | None = None,
 ) -> None:
     """Đăng ký tool sinh thơ. Phụ thuộc vào closure, không đọc trạng thái toàn cục.
 
@@ -154,6 +156,8 @@ def register_poem_generate_tool(
             # Kho mẫu cho one-shot (QĐ-P4). Thiếu thì chat chạy zero-shot và `p`
             # tụt một nửa — xem chú thích ONE-SHOT trong `sinh_tho.py`.
             corpus=corpus,
+            # Cùng cổng với /v1/poem — kể cả chỉ mục chép (QĐ-P2).
+            verifier=verifier,
         )
 
         if not isinstance(kq, Ok):

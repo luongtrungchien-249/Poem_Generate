@@ -381,3 +381,16 @@ async def test_duong_ong_KHONG_biet_gi_ve_tho_hay_reviewer():
     nguon = inspect.getsource(mod)
     for cam in ("xin_nhan_xet", "NhanXetReviewer", "PoemVerifierDayDu"):
         assert f"import {cam}" not in nguon and f"{cam}(" not in nguon, cam
+
+
+def test_ban_nhap_cuoi_KHONG_lot_ra_qua_repr():
+    """Tool chat trả `str(lỗi)` cho mô hình — bài sai không được đi theo đường đó."""
+    from domain.common.errors import OutputKhongDat
+
+    loi = OutputKhongDat(
+        ma_the="that_ngon_tu_do", so_luot_da_sua=3, chan_doan="hết lượt",
+        ban_nhap_cuoi="MỘT BÀI SAI LUẬT KHÔNG ĐƯỢC LỌT RA",
+    )
+    assert "KHÔNG ĐƯỢC LỌT RA" not in str(loi)
+    assert "KHÔNG ĐƯỢC LỌT RA" not in repr(loi)
+    assert loi.ban_nhap_cuoi  # vẫn đọc được cho chẩn đoán nội bộ

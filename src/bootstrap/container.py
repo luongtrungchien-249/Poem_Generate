@@ -19,6 +19,11 @@ from adapters.llm.resilience import FallbackManager
 from adapters.llm.router import ModelRouter
 from adapters.llm.vllm import VLLMClient
 from adapters.persistence.corpus import JsonlPoemCorpus, duong_dan_mac_dinh
+from adapters.persistence.corpus.chi_muc_dong import (
+    ChiMucDongTho,
+    nguon_jsonl_mac_dinh,
+    tep_dung_san_mac_dinh,
+)
 from adapters.persistence.memory.blob import LocalBlobRepository
 from adapters.persistence.memory.cache import InMemoryCacheRepository
 from adapters.persistence.memory.relational import InMemoryRelationalRepository
@@ -213,6 +218,14 @@ def build_container(settings: Settings | None = None) -> AppContainer:
     # lượt chat đốt hết hạn mức ngày — một bài 20 dòng tốn tới ~36 lượt gọi.
     # Một kho mẫu dùng chung cho /v1/poem và tool `sinh_tho` của chat (one-shot, QĐ-P4).
     poem_corpus = JsonlPoemCorpus(duong_dan_mac_dinh(settings.project_root))
+    # QĐ-P2 — chỉ mục dòng thơ có sẵn. Tệp dựng sẵn nếu có (datalake/scripts/
+    # dung_chi_muc_dong.py); không thì lùi về tho_mau.jsonl để vẫn bắt chép BÀI MẪU.
+    poem_verifier = PoemVerifierDayDu(
+        chi_muc_chep=ChiMucDongTho.tu_tep_hoac_lui(
+            tep_dung_san_mac_dinh(settings.project_root),
+            nguon_jsonl_mac_dinh(settings.project_root)[:1],
+        )
+    )
     register_default_tools(
         retriever=retriever,
         llm=chat_llm,
@@ -220,6 +233,7 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         rate_limiter=rate_limiter,
         default_model=settings.llm.default_model,
         corpus=poem_corpus,
+        verifier=poem_verifier,
     )
 
     return AppContainer(
@@ -246,7 +260,7 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         chat_llm=chat_llm,
         tools=tool_executor,
         rate_limiter=rate_limiter,
-        poem_verifier=PoemVerifierDayDu(),
+        poem_verifier=poem_verifier,
         poem_corpus=poem_corpus,
     )
 

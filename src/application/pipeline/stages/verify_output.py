@@ -271,11 +271,13 @@ async def generate_with_verification(
     # CHẶN G7: fail closed. Hết lượt thì KHÔNG trả bài sai — kể cả khi đã có văn
     # bản trông ổn. Trả lỗi có chẩn đoán để tầng trên nói thật với người dùng.
     assert ket_qua_cuoi is not None  # vòng chạy ít nhất một lượt
-    _ = ban_nhap_cuoi  # giữ lại cho chẩn đoán; KHÔNG đưa vào đường trả về
+    # `ban_nhap_cuoi` đi kèm lỗi CHỈ để chẩn đoán (bộ đo, Plan_PoeTone GĐ3.4). Nó
+    # không nằm trong `repr` của lỗi và API không đọc nó — bài sai vẫn không rời hệ thống.
     return Err(
         OutputKhongDat(
             ma_the=spec.ma_the,
             so_luot_da_sua=max_repair_rounds,
             chan_doan=_chan_doan(ket_qua_cuoi, max_repair_rounds),
+            ban_nhap_cuoi=ban_nhap_cuoi,
         )
     )

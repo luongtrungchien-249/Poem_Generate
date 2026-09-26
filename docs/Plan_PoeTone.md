@@ -3,7 +3,7 @@
 **Ngày lập:** 26/09/2026 · **Viết lại** từ bản nháp cùng ngày để khớp với hệ thống đang chạy
 **Tệp mục tiêu:** `src/application/poetry/` · `src/application/prompting/system.py` · `evals/` · `datalake/scripts/`
 **Tệp KHÔNG được đụng:** `src/application/rule.py` (ĐÓNG BĂNG, băm `0a0b2488…`)
-**Trạng thái:** ✅ GĐ−1, GĐ0, GĐ1.1, GĐ3.2, QĐ-P9 xong (26/09) · 🟡 tiếp theo: A/B one-shot (QĐ-P4), rồi GĐ1.3–1.6.
+**Trạng thái:** ✅ GĐ−1, GĐ0, GĐ1.1, GĐ1.3, GĐ3.2, GĐ3.4 (một phần), QĐ-P2/P4/P9 xong (26/09) · 🟡 tiếp theo: đo lại 40 đề sau one-shot, rồi các A/B GĐ2.
 
 ---
 
@@ -241,6 +241,37 @@ Chủ dự án chốt theo khuyến nghị: **QĐ-P1** ba số rời · **QĐ-P8
    phải tỉ lệ.
 4. ✅ **GĐ3.2 — `_chon_mot_kho` chọn ứng viên cứu theo `khoa_xep_hang()`** (hình thức → số dòng phải
    viết lại → vần), không còn theo `len(v.vi_pham)`.
+
+### 0.F. Đã làm tiếp, 26/09/2026 — không tốn lượt gọi API
+
+Chủ dự án chốt theo khuyến nghị: **QĐ-P2** chặn dòng chép nguyên văn · **QĐ-P3** tắt mặc định ·
+**QĐ-P4** bật one-shot · **QĐ-P5** chỉ khuôn + nhóm vần · **QĐ-P7** để sau GĐ5.
+
+1. ✅ **QĐ-P4 — one-shot cho mọi yêu cầu** (commit `090c03c`). A/B khổ đầu, 192 ứng viên mỗi nhánh:
+   `p` 22,5 % → **46,6 %**, dòng đủ 7 tiếng 58,7 % → **98,7 %**, 0 ứng viên chép bài mẫu, token vào
+   +10 %. Ba ví dụ không tốt hơn một. Trước đây tool `sinh_tho` của chat **không truyền kho mẫu**
+   nên luôn chạy zero-shot; nay container dùng một kho chung cho cả hai đường.
+   ⚠️ **Chưa đo tỉ lệ đạt cả bài sau thay đổi này** (lượt 200 đề dừng ở đề 7/200 theo yêu cầu chủ
+   dự án: 3/7 đạt, 0,12 USD). Lệnh đo lại: `python evals/do_that.py --de evals/datasets/de_danh_gia.jsonl --gioi-han 40`.
+2. ✅ **QĐ-P2 / GĐ1.3 — phát hiện và chặn chép.**
+   - Cổng `ChiMucDongThoPort` · chuẩn hoá `application/poetry/doi_chieu_chep.py` · adapter
+     `adapters/persistence/corpus/chi_muc_dong.py` · dựng sẵn bằng `datalake/scripts/dung_chi_muc_dong.py`.
+   - 547.181 dòng 7 tiếng (tho_mau + bai_dat + kho HF). Dựng từ JSONL mất 190 s, nên chỉ mục được
+     **dựng sẵn** (34 s, offline) và nạp trong 0,26 s. Thiếu tệp dựng sẵn thì lùi về `tho_mau.jsonl`.
+   - `PoemVerifierDayDu` thêm lỗi mã `CHEP` có địa chỉ dòng. Bài chép vẫn `dat_luat = True`, chỉ
+     `dat = False`. `_chon_mot_kho` loại khổ có dòng chép ngay ở bước chọn.
+   - Hiện trạng: 1/40 bài đạt của baseline có một dòng trùng nguyên văn («Những chiếc lá vàng
+     rơi lả tả», từ kho `bai_dat`).
+3. ✅ **GĐ3.4 — mổ xẻ đường lùi** (160 bài trượt của baseline):
+   S2 97 bài · H4 44 · **H3 35** · CL1 31 · CL4 22 · H1 18. **35 bài có bản nháp cuối chỉ 1 dòng**: bản
+   nháp là đoạn văn cuối của vòng ReAct, nên hoặc mô hình trả một câu dẫn, hoặc vòng lặp trả chuỗi
+   cứng `"Đã hoàn thành các bước suy luận."` (`generate.py`). Chưa phân biệt được vì bản nháp
+   trượt chưa từng được lưu. **Đã thêm** `OutputKhongDat.ban_nhap_cuoi` (ẩn khỏi `repr`, API không
+   đọc, có test ghim) và `do_that.py` ghi nó ra — lượt đo kế tiếp sẽ trả lời.
+4. ✅ `Makefile`: `arch` chạy `PYTHONPATH=src lint-imports`. README cập nhật số đo thật.
+
+**Còn lại, đều cần A/B trả tiền trước khi bật (R6):** khung cấp dòng (GĐ2.2, QĐ-P5), thi liệu (GĐ2.3),
+bảng soi toàn khổ khi sửa (GĐ3.1), tính lại `k` từ `p` mới (≈ 0,47).
 
 ---
 

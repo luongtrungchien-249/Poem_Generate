@@ -210,6 +210,7 @@ async def sinh_bai_tho(
             # chạy với `tools=()`, nên mô hình viết mù rồi để cổng chặn — thấy rõ
             # nhất ở bài 8 chữ lọt ra ngoài mà không ai đếm tiếng giùm nó.
             tools=tools,
+            chi_muc_chep=bo_kiem.chi_muc_chep,
         )
         if isinstance(theo_kho, Ok) and theo_kho.value.du_kho:
             da_dung = theo_kho.value.so_ung_vien_da_dung

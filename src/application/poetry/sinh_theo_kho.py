@@ -55,8 +55,10 @@ from dataclasses import dataclass
 from application.pipeline.stages.generate import generate_react_loop
 from application.poem_verifier import dung_bien_ban
 from application.poetry.diem_tuan_thu import do_diem_tuan_thu
+from application.poetry.doi_chieu_chep import tim_dong_chep
 from application.poetry.prompt import dung_luot_yeu_cau
 from application.poetry.requirement import PoetryRequirement
+from application.ports.chi_muc_tho import ChiMucDongThoPort
 from application.ports.llm import CallContext, LlmPort, UserMessage
 from application.ports.rate_limit import Pass, RateLimitOutcome, RateLimitPort
 from application.ports.tools import ToolPort
@@ -156,6 +158,7 @@ async def sinh_tung_kho(
     so_ung_vien: int = SO_UNG_VIEN_MAC_DINH,
     default_model: str = "gpt-4o-mini",
     tools: ToolPort | None = None,
+    chi_muc_chep: ChiMucDongThoPort | None = None,
 ) -> Result[KetQuaSinhKho, BotError]:
     """Sinh bài theo từng khổ 4 dòng, mỗi khổ chọn trong `so_ung_vien` ứng viên.
 
@@ -177,7 +180,7 @@ async def sinh_tung_kho(
         nhan = await _chon_mot_kho(
             loi_nhac, da_co, llm=llm, ctx=ctx,
             so_ung_vien=so_ung_vien, default_model=default_model,
-            tools=tools, rate_limiter=rate_limiter,
+            tools=tools, rate_limiter=rate_limiter, chi_muc_chep=chi_muc_chep,
         )
         da_dung += nhan[1]
         if nhan[0] is None:
@@ -204,6 +207,7 @@ async def _chon_mot_kho(
     default_model: str,
     tools: ToolPort | None = None,
     rate_limiter: RateLimitPort | None = None,
+    chi_muc_chep: ChiMucDongThoPort | None = None,
 ) -> tuple[list[str] | None, int]:
     """Sinh ứng viên theo đợt, nhận ứng viên ĐẦU TIÊN giữ được cả bài hợp luật.
 
@@ -245,6 +249,11 @@ async def _chon_mot_kho(
             if isinstance(r, Err):
                 continue
             for dong in _lay_cac_phuong_an(r.value.text):
+                # QĐ-P2: khổ có dòng chép nguyên văn thơ đã có thì bỏ luôn, kể cả
+                # khi nó đạt luật — cổng cuối cũng sẽ chặn, nhận nó ở đây chỉ là
+                # tốn tiền mang một bài chắc chắn trượt đi tới tận cổng.
+                if tim_dong_chep("\n".join(dong), chi_muc_chep):
+                    continue
                 # ⛔ Kiểm trên TOÀN BỘ phần đã tích luỹ, không kiểm riêng khổ này.
                 # Kiểm rời thì lỗi vắt qua ranh giới khổ sẽ chỉ lộ ra khi đã ghép xong.
                 v = kiem_tra_bai_tho("\n".join(da_co + dong))
