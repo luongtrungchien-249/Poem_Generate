@@ -211,12 +211,15 @@ def build_container(settings: Settings | None = None) -> AppContainer:
     # `rate_limiter` đi xuống tận đây là CHỐT CHẶN CHI PHÍ DUY NHẤT của tool sinh
     # thơ: `sinh_bai_tho` hỏi lại ngân sách ở MỖI khổ. Quên nó là mở đường cho một
     # lượt chat đốt hết hạn mức ngày — một bài 20 dòng tốn tới ~36 lượt gọi.
+    # Một kho mẫu dùng chung cho /v1/poem và tool `sinh_tho` của chat (one-shot, QĐ-P4).
+    poem_corpus = JsonlPoemCorpus(duong_dan_mac_dinh(settings.project_root))
     register_default_tools(
         retriever=retriever,
         llm=chat_llm,
         tools=tool_executor,
         rate_limiter=rate_limiter,
         default_model=settings.llm.default_model,
+        corpus=poem_corpus,
     )
 
     return AppContainer(
@@ -244,7 +247,7 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         tools=tool_executor,
         rate_limiter=rate_limiter,
         poem_verifier=PoemVerifierDayDu(),
-        poem_corpus=JsonlPoemCorpus(duong_dan_mac_dinh(settings.project_root)),
+        poem_corpus=poem_corpus,
     )
 
 

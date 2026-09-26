@@ -1,0 +1,58 @@
+{
+  "model": "gpt-4o-mini",
+  "chu_de": [
+    "người thợ may",
+    "mùa gặt",
+    "căn bếp mẹ",
+    "chợ phiên vùng cao",
+    "ga tàu cuối năm",
+    "đêm trăng",
+    "quê hương",
+    "người mẹ",
+    "dòng sông tuổi thơ",
+    "cơn mưa đầu hạ",
+    "tiễn bạn lên đường",
+    "hoa cải ven sông"
+  ],
+  "ket_qua": [
+    {
+      "moi_luot": 4,
+      "so_vi_du": 0,
+      "ung_vien": 192,
+      "chep": 0,
+      "dong": 768,
+      "du_7_tieng": 0.5872,
+      "p": 0.2253,
+      "kho_dat": 2,
+      "luot_goi": 48,
+      "token_vao": 154624,
+      "token_ra": 11724
+    },
+    {
+      "moi_luot": 4,
+      "so_vi_du": 1,
+      "ung_vien": 192,
+      "chep": 0,
+      "dong": 768,
+      "du_7_tieng": 0.987,
+      "p": 0.4661,
+      "kho_dat": 4,
+      "luot_goi": 48,
+      "token_vao": 169328,
+      "token_ra": 12072
+    },
+    {
+      "moi_luot": 4,
+      "so_vi_du": 3,
+      "ung_vien": 192,
+      "chep": 0,
+      "dong": 768,
+      "du_7_tieng": 0.9362,
+      "p": 0.4297,
+      "kho_dat": 6,
+      "luot_goi": 48,
+      "token_vao": 186136,
+      "token_ra": 12166
+    }
+  ]
+}
