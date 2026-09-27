@@ -1,0 +1,12 @@
+==========================================================================
+ĐO THẬT — provider=openai model=gpt-4o-mini
+200 yêu cầu · tối đa 3 lượt sửa mỗi bài · KHÔNG mock gì cả
+==========================================================================
+[ 1/200] Sự hoài niệm về thời thanh xuân (4 dòng) ... ĐẠT sau 0 lượt sửa (9.2s)
+[ 2/200] Hành trình tìm lại bản ngã qua ký ức quê hương (8 dòng) ... ĐẠT sau 0 lượt sửa (16.0s)
+[ 3/200] mùa gặt (12 dòng) ... ĐẠT sau 0 lượt sửa (25.1s)
+[ 4/200] dòng Mekong (16 dòng) ... KHÔNG ĐẠT (49.0s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[ 5/200] đứa con đầu lòng (20 dòng) ... KHÔNG ĐẠT (54.8s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[ 6/200] người thợ may (4 dòng) ... KHÔNG ĐẠT (47.7s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[ 7/200] hạn mặn đồng bằng (8 dòng) ... KHÔNG ĐẠT (26.3s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[ 8/200] Nỗi nhớ quê hương gắn liền với mưa (12 dòng) ... 

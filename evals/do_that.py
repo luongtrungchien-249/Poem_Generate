@@ -185,6 +185,7 @@ async def _chay_mot_tho(i: int, chu_de: str, so_dong: int, deps: dict) -> KetQua
         max_repair_rounds=3,
         timeout_sec=180.0,
         default_model=deps["model"],
+        so_song_song=deps["so_song_song"],
     )
     giay = time.monotonic() - t0
 
@@ -274,6 +275,7 @@ async def main() -> int:
         ),
         "corpus": JsonlPoemCorpus(duong_dan_mac_dinh(GOC)),
         "model": s.llm.default_model,
+        "so_song_song": s.llm.so_song_song,
     }
 
     print("=" * 74)

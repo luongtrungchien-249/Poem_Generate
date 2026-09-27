@@ -107,6 +107,8 @@ SO_UNG_VIEN_MAC_DINH = 32
 #
 # Hạn mức miễn phí của Google AI thường chỉ vài chục lượt/phút, mà một bài 20 dòng
 # nay có thể tốn tới 5 khổ × 32 ứng viên. Đo hạn mức thật trước khi chạy lô lớn.
+# Nay đọc được từ cấu hình: `SO_SONG_SONG` trong `.env` (bootstrap/settings.py), và
+# tham số `so_song_song` của `sinh_tung_kho` / `sinh_bai_tho`. Hằng số này là mặc định.
 SO_SONG_SONG = 8
 
 # Số phương án xin trong MỘT lượt gọi (22/09/2026, nhập từ `compare_prompt.py`).
@@ -160,6 +162,7 @@ async def sinh_tung_kho(
     default_model: str = "gpt-4o-mini",
     tools: ToolPort | None = None,
     chi_muc_chep: ChiMucDongThoPort | None = None,
+    so_song_song: int = SO_SONG_SONG,
 ) -> Result[KetQuaSinhKho, BotError]:
     """Sinh bài theo từng khổ 4 dòng, mỗi khổ chọn trong `so_ung_vien` ứng viên.
 
@@ -182,6 +185,7 @@ async def sinh_tung_kho(
             loi_nhac, da_co, llm=llm, ctx=ctx,
             so_ung_vien=so_ung_vien, default_model=default_model,
             tools=tools, rate_limiter=rate_limiter, chi_muc_chep=chi_muc_chep,
+            so_song_song=so_song_song,
         )
         da_dung += nhan[1]
         if nhan[0] is None:
@@ -209,6 +213,7 @@ async def _chon_mot_kho(
     tools: ToolPort | None = None,
     rate_limiter: RateLimitPort | None = None,
     chi_muc_chep: ChiMucDongThoPort | None = None,
+    so_song_song: int = SO_SONG_SONG,
 ) -> tuple[list[str] | None, int]:
     """Sinh ứng viên theo đợt, nhận ứng viên ĐẦU TIÊN giữ được cả bài hợp luật.
 
@@ -229,8 +234,9 @@ async def _chon_mot_kho(
     so_luot_can = -(-so_ung_vien // moi_luot)
     nhac = loi_nhac if moi_luot == 1 else f"{loi_nhac}\n{CHI_DAN_NHIEU_UNG_VIEN.format(so=moi_luot)}"
 
-    for dau in range(0, so_luot_can, SO_SONG_SONG):
-        con = min(SO_SONG_SONG, so_luot_can - dau)
+    buoc = max(1, so_song_song)
+    for dau in range(0, so_luot_can, buoc):
+        con = min(buoc, so_luot_can - dau)
         tra_loi = await asyncio.gather(
             *[
                 llm.reply(

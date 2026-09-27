@@ -47,7 +47,7 @@ from application.poetry.requirement import (
     danh_gia_du_thong_tin,
 )
 from application.poetry.reviewer import xin_nhan_xet
-from application.poetry.sinh_theo_kho import SO_UNG_VIEN_MAC_DINH, sinh_tung_kho
+from application.poetry.sinh_theo_kho import SO_SONG_SONG, SO_UNG_VIEN_MAC_DINH, sinh_tung_kho
 from application.poetry.state import DauVetTrangThai
 from application.poetry.tieu_de import dat_tieu_de
 from application.poetry.tts_style import huong_dan_doc
@@ -118,6 +118,7 @@ async def sinh_bai_tho(
     timeout_sec: float = 60.0,
     should_stop_hook: Callable[[], bool] | None = None,
     default_model: str = "gpt-4o-mini",
+    so_song_song: int = SO_SONG_SONG,
 ) -> Result[KetQuaSinhTho, BotError]:
     """Sinh một bài thơ đã qua luật, chất lượng và sáu bước suy luận."""
     vet = DauVetTrangThai()
@@ -211,6 +212,7 @@ async def sinh_bai_tho(
             # nhất ở bài 8 chữ lọt ra ngoài mà không ai đếm tiếng giùm nó.
             tools=tools,
             chi_muc_chep=bo_kiem.chi_muc_chep,
+            so_song_song=so_song_song,
         )
         if isinstance(theo_kho, Ok) and theo_kho.value.du_kho:
             da_dung = theo_kho.value.so_ung_vien_da_dung

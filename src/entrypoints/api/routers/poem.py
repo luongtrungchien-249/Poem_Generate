@@ -194,6 +194,7 @@ async def sinh_tho_endpoint(
         corpus=app_container.poem_corpus,
         max_repair_rounds=req.max_repair_rounds,
         default_model=app_container.default_model,
+        so_song_song=app_container.settings.llm.so_song_song,
     )
 
     if isinstance(kq, Err):

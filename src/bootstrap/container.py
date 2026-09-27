@@ -269,6 +269,7 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         default_model=settings.llm.default_model,
         corpus=poem_corpus,
         verifier=poem_verifier,
+        so_song_song=settings.llm.so_song_song,
     )
 
     return AppContainer(

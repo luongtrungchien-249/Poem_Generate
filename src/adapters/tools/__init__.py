@@ -22,6 +22,7 @@ def register_default_tools(
     default_model: str = "gpt-4o-mini",
     corpus: object | None = None,
     verifier: object | None = None,
+    so_song_song: int = 8,
 ) -> None:
     """Nạp bộ tool mặc định vào sổ đăng ký. Gọi một lần khi dựng container.
 
@@ -34,7 +35,7 @@ def register_default_tools(
     register_http_call_tool()
     register_poem_check_tool()
     register_poem_quality_tool()
-    register_poem_generate_tool(llm, tools, rate_limiter, default_model, corpus, verifier)  # type: ignore[arg-type]
+    register_poem_generate_tool(llm, tools, rate_limiter, default_model, corpus, verifier, so_song_song)  # type: ignore[arg-type]
 
 
 __all__ = [

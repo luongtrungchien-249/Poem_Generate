@@ -77,6 +77,7 @@ def register_poem_generate_tool(
     default_model: str = "gpt-4o-mini",
     corpus: PoemCorpusPort | None = None,
     verifier: PoemVerifierDayDu | None = None,
+    so_song_song: int = 8,
 ) -> None:
     """Đăng ký tool sinh thơ. Phụ thuộc vào closure, không đọc trạng thái toàn cục.
 
@@ -158,6 +159,7 @@ def register_poem_generate_tool(
             corpus=corpus,
             # Cùng cổng với /v1/poem — kể cả chỉ mục chép (QĐ-P2).
             verifier=verifier,
+            so_song_song=so_song_song,
         )
 
         if not isinstance(kq, Ok):

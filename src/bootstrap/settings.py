@@ -56,6 +56,11 @@ class LLMConfig(BaseModel):
     google_base_url: str = "https://generativelanguage.googleapis.com/v1beta"
     vllm_base_url: str = "http://localhost:8000/v1"
     mock_fallback_on_missing_key: bool = True
+    # Số lượt gọi mô hình GỬI CÙNG LÚC khi sinh ứng viên cho một khổ (SO_SONG_SONG).
+    # Chỉ quyết định nhanh/chậm, KHÔNG quyết định tỉ lệ đạt — số ứng viên mới làm
+    # việc đó. Hạ khi hay gặp 429 (khoá Gemini miễn phí: đo 26/09/2026, 8 lượt song
+    # song gây 5 lần 429 cho một bài 8 dòng).
+    so_song_song: int = Field(default=8, ge=1, le=64)
 
 
 class AuthConfig(BaseModel):
@@ -273,6 +278,7 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             ),
             vllm_base_url=os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1"),
             mock_fallback_on_missing_key=llm_raw.get("mock_fallback_on_missing_key", True),
+            so_song_song=int(os.getenv("SO_SONG_SONG", llm_raw.get("so_song_song", 8))),
         ),
         storage=StorageConfig(
             kind=storage_raw.get("type", "in_memory"),
