@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+!.env.example
+**/node_modules
+**/__pycache__
+.venv
+.pytest_cache
+.mypy_cache
+.ruff_cache
+data
+datalake/dataraw
+datalake/analysis
+datalake/hf
+frontend/.next
+*.pem
+*.key

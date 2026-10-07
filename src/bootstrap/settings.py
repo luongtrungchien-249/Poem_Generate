@@ -12,10 +12,19 @@ from pathlib import Path
 from typing import Any, Literal, TypeVar, cast
 
 import yaml
+from dotenv import dotenv_values
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+# File này nằm ở `src/bootstrap/settings.py`, nên gốc dự án là parents[2]:
+#   parents[0] = bootstrap · parents[1] = src · parents[2] = gốc dự án
+#
+# 🔴 TRƯỚC 21/09/2026 chỗ này là `parents[3]` — trỏ ra THƯ MỤC CHA của dự án. Cả
+# `configs/` chưa bao giờ được nạp: `load_settings` không tìm thấy `base.yaml`
+# nên rơi về mặc định trong mã, và `ModelRouter` nhận danh mục model RỖNG.
+# Không test nào bắt được vì mọi test đều chạy với cùng mặc định đó, và đường
+# dẫn không tồn tại thì mã lặng lẽ bỏ qua thay vì báo lỗi — xem `_load_config`.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CONFIGS_DIR = PROJECT_ROOT / "configs"
 
 Env = Literal["dev", "staging", "production"]
@@ -25,15 +34,44 @@ class ServerConfig(BaseModel):
     host: str = "127.0.0.1"
     port: int = 8000
     workers: int = 1
+    # Origin được phép gọi API từ trình duyệt.
+    #
+    # 🔴 ĐÃ VÁ 21/09/2026. Bản trước đặt cứng `allow_origins=["*"]` KÈM
+    # `allow_credentials=True` trong `app.py`. Starlette xử lý cặp đó bằng cách
+    # ECHO LẠI mọi Origin nhận được, nên bất kỳ website nào cũng gọi được API này
+    # kèm credential. Đo được: gửi `Origin: https://ke-tan-cong.example` thì
+    # response trả về đúng origin đó cộng `allow-credentials: true`.
+    #
+    # Danh sách rỗng = KHÔNG cho phép trình duyệt nào gọi chéo. Đó là mặc định
+    # đúng, vì frontend đi qua BFF của Next.js (same-origin) nên không cần CORS.
+    cors_origins: list[str] = Field(default_factory=list)
 
 
 class LLMConfig(BaseModel):
-    default_provider: Literal["openai", "anthropic", "vllm", "mock"] = "mock"
+    default_provider: Literal["openai", "anthropic", "google", "vllm", "mock"] = "mock"
     default_model: str = "gpt-4o-mini"
     default_tier: Literal["cheap", "standard", "reasoning"] = "cheap"
     openai_base_url: str = "https://api.openai.com/v1"
+    # Gemini API phục vụ cả Gemini lẫn Gemma qua cùng một endpoint.
+    google_base_url: str = "https://generativelanguage.googleapis.com/v1beta"
     vllm_base_url: str = "http://localhost:8000/v1"
     mock_fallback_on_missing_key: bool = True
+    # Số lượt gọi mô hình GỬI CÙNG LÚC khi sinh ứng viên cho một khổ (SO_SONG_SONG).
+    # Chỉ quyết định nhanh/chậm, KHÔNG quyết định tỉ lệ đạt — số ứng viên mới làm
+    # việc đó. Hạ khi hay gặp 429 (khoá Gemini miễn phí: đo 26/09/2026, 8 lượt song
+    # song gây 5 lần 429 cho một bài 8 dòng).
+    so_song_song: int = Field(default=8, ge=1, le=64)
+    adaptive_candidates: bool = False
+    line_framing: bool = False
+
+
+class PoemJobsConfig(BaseModel):
+    embedded_worker: bool = True
+    deadline_seconds: float = Field(300.0, ge=10, le=1800)
+    active_limit: int = Field(2, ge=1, le=20)
+    lease_seconds: float = Field(30.0, ge=10, le=120)
+    ttl_seconds: float = Field(86400.0, ge=3600)
+    max_model_calls: int = Field(80, ge=1, le=500)
 
 
 class AuthConfig(BaseModel):
@@ -83,6 +121,7 @@ class Secrets(BaseSettings):
 
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    google_api_key: str | None = Field(default=None, alias="GOOGLE_API_KEY")
     database_url: str | None = Field(default=None, alias="DATABASE_URL")
     redis_url: str | None = Field(default=None, alias="REDIS_URL")
     qdrant_url: str | None = Field(default=None, alias="QDRANT_URL")
@@ -117,6 +156,7 @@ class Settings(BaseModel):
     guardrails: GuardrailsConfig = Field(default_factory=GuardrailsConfig)
     rate_limit: RateLimitConfig = Field(default_factory=RateLimitConfig)
     auth: AuthConfig = Field(default_factory=AuthConfig)
+    poem_jobs: PoemJobsConfig = Field(default_factory=lambda: PoemJobsConfig.model_validate({}))
     secrets: Secrets = Field(default_factory=Secrets)
 
     @property
@@ -140,11 +180,17 @@ def _kiem_lua_chon(gia_tri: object, hop_le: tuple[_T, ...], ten: str) -> _T:
 
 
 ENV_HOP_LE: tuple[Env, ...] = ("dev", "staging", "production")
-PROVIDER_HOP_LE: tuple[Literal["openai", "anthropic", "vllm", "mock"], ...] = (
-    "openai", "anthropic", "vllm", "mock",
+PROVIDER_HOP_LE: tuple[Literal["openai", "anthropic", "google", "vllm", "mock"], ...] = (
+    "openai",
+    "anthropic",
+    "google",
+    "vllm",
+    "mock",
 )
 TIER_HOP_LE: tuple[Literal["cheap", "standard", "reasoning"], ...] = (
-    "cheap", "standard", "reasoning",
+    "cheap",
+    "standard",
+    "reasoning",
 )
 
 
@@ -165,12 +211,54 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     return merged
 
 
+def _danh_sach(tu_env: str | None, mac_dinh: list[Any] | None) -> list[str]:
+    """Đọc danh sách từ biến môi trường (ngăn bằng dấu phẩy) hoặc từ YAML.
+
+    `"*"` bị TỪ CHỐI tường minh: với `allow_credentials=True` nó khiến middleware
+    echo lại mọi origin, tức là mở cho toàn bộ web. Ai thật sự cần điều đó phải
+    liệt kê từng origin ra, để quyết định ấy nhìn thấy được trong cấu hình.
+    """
+    ds = (
+        [m.strip() for m in tu_env.split(",") if m.strip()]
+        if tu_env
+        else [str(m).strip() for m in (mac_dinh or []) if str(m).strip()]
+    )
+    if "*" in ds:
+        raise ValueError(
+            "CORS_ORIGINS không nhận '*': kèm allow_credentials thì nó mở API cho "
+            "mọi website. Hãy liệt kê từng origin cụ thể."
+        )
+    return ds
+
+
+def _nap_dotenv(tep: Path) -> None:
+    """Đưa `.env` vào môi trường tiến trình — KHÔNG ghi đè biến đã có.
+
+    🩸 LỖI ĐÃ SỬA 26/09/2026. Trước đây chỉ `Secrets` đọc `.env`, còn
+    `DEFAULT_PROVIDER`, `DEFAULT_MODEL`, … được đọc bằng `os.getenv`. Ghi
+    `DEFAULT_PROVIDER=google` vào `.env` vì thế KHÔNG có tác dụng gì: app vẫn lấy
+    `openai` từ `configs/dev.yaml`, và thiếu khoá OpenAI thì lùi về mock im lặng.
+
+    Không ghi đè là có chủ ý: biến môi trường thật (CI, docker, conftest ép `mock`)
+    vẫn thắng `.env`, đúng thứ tự ưu tiên ghi ở docstring của `load_settings`.
+    """
+    if not tep.is_file():
+        return
+    for khoa, gia_tri in dotenv_values(tep).items():
+        if gia_tri is not None and khoa not in os.environ:
+            os.environ[khoa] = gia_tri
+
+
 def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Settings:
-    """Nạp cấu hình theo thứ tự ưu tiên: base.yaml < <env>.yaml < biến môi trường."""
+    """Nạp cấu hình theo thứ tự ưu tiên: base.yaml < <env>.yaml < .env < biến môi trường."""
     cfg_dir = configs_dir or CONFIGS_DIR
+    _nap_dotenv(cfg_dir.parent / ".env")
     resolved_env = env or os.getenv("ENV", "dev")
 
-    raw = _deep_merge(_read_yaml(cfg_dir / "base.yaml"), _read_yaml(cfg_dir / f"{resolved_env}.yaml"))
+    env_file = cfg_dir / f"{resolved_env}.yaml"
+    if resolved_env == "production" and not env_file.exists():
+        env_file = cfg_dir / "prod.yaml"
+    raw = _deep_merge(_read_yaml(cfg_dir / "base.yaml"), _read_yaml(env_file))
     secrets = Secrets()
 
     app_raw = raw.get("app", {})
@@ -183,7 +271,8 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
     return Settings(
         env=_kiem_lua_chon(
             app_raw.get("env", resolved_env) if app_raw.get("env") != "base" else resolved_env,
-            ENV_HOP_LE, "ENV"
+            ENV_HOP_LE,
+            "ENV",
         ),
         debug=app_raw.get("debug", resolved_env == "dev"),
         configs_dir=cfg_dir,
@@ -191,23 +280,39 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             host=os.getenv("HOST", server_raw.get("host", "127.0.0.1")),
             port=int(os.getenv("PORT", server_raw.get("port", 8000))),
             workers=int(os.getenv("WORKERS", server_raw.get("workers", 1))),
+            cors_origins=_danh_sach(os.getenv("CORS_ORIGINS"), server_raw.get("cors_origins", [])),
         ),
         llm=LLMConfig(
             default_provider=_kiem_lua_chon(
                 os.getenv("DEFAULT_PROVIDER", llm_raw.get("default_provider", "mock")),
-                PROVIDER_HOP_LE, "DEFAULT_PROVIDER"
+                PROVIDER_HOP_LE,
+                "DEFAULT_PROVIDER",
             ),
             default_model=os.getenv("DEFAULT_MODEL", llm_raw.get("default_model", "gpt-4o-mini")),
             default_tier=_kiem_lua_chon(
                 os.getenv("DEFAULT_TIER", llm_raw.get("router", {}).get("default_tier", "cheap")),
-                TIER_HOP_LE, "DEFAULT_TIER"
+                TIER_HOP_LE,
+                "DEFAULT_TIER",
             ),
             openai_base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+            google_base_url=os.getenv(
+                "GOOGLE_BASE_URL", "https://generativelanguage.googleapis.com/v1beta"
+            ),
             vllm_base_url=os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1"),
             mock_fallback_on_missing_key=llm_raw.get("mock_fallback_on_missing_key", True),
+            so_song_song=int(os.getenv("SO_SONG_SONG", llm_raw.get("so_song_song", 8))),
+            adaptive_candidates=_env_bool("POEM_ADAPTIVE_CANDIDATES", False),
+            line_framing=_env_bool("POEM_LINE_FRAMING", False),
         ),
         storage=StorageConfig(
-            kind=storage_raw.get("type", "in_memory"),
+            kind=_kiem_lua_chon(
+                os.getenv(
+                    "STORAGE_TYPE", storage_raw.get("type", storage_raw.get("kind", "in_memory"))
+                ),
+                ("in_memory", "sqlite", "sql", "postgres"),
+                "STORAGE_TYPE",
+            ),
+            sqlite_path=storage_raw.get("sqlite_path", "data/app.sqlite3"),
             vector_kind=storage_raw.get("vector_db", "in_memory"),
             database_url=secrets.database_url,
             redis_url=secrets.redis_url,
@@ -227,6 +332,14 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             refill_rate=float(os.getenv("RATE_LIMIT_REFILL_RATE", 5.0)),
         ),
         secrets=secrets,
+        poem_jobs=PoemJobsConfig(
+            embedded_worker=_env_bool("POEM_EMBEDDED_WORKER", resolved_env == "dev"),
+            deadline_seconds=float(os.getenv("POEM_JOB_DEADLINE", "300")),
+            active_limit=int(os.getenv("POEM_JOB_ACTIVE_LIMIT", "2")),
+            lease_seconds=float(os.getenv("POEM_JOB_LEASE", "30")),
+            ttl_seconds=float(os.getenv("POEM_JOB_TTL", "86400")),
+            max_model_calls=int(os.getenv("POEM_JOB_MAX_CALLS", "80")),
+        ),
     )
 
 

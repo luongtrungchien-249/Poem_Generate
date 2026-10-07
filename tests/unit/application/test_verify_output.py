@@ -13,7 +13,6 @@ from typing import Any
 import pytest
 
 from application.pipeline.stages.verify_output import (
-    _CHI_DAN,
     THANG_LEO_THANG,
     generate_with_verification,
 )
@@ -21,6 +20,7 @@ from application.poem_verifier import MA_THE, PoemVerifier
 from application.ports.llm import CallContext, LlmMessage, LlmReply, LlmUsage
 from application.ports.verifier import OutputSpec
 from application.prompting.context import ContextEnvelope
+from application.prompting.system import CHI_DAN_SUA
 from domain.common.errors import BotError, OutputKhongDat, is_retryable
 from domain.common.result import Ok, Result, is_err, is_ok
 from domain.conversation.thread import ThreadScope
@@ -197,7 +197,7 @@ async def test_khong_tien_bo_thi_LEO_THANG_chu_khong_sua_lai_cach_cu():
         cl
         for cl in THANG_LEO_THANG
         if any(
-            _CHI_DAN[cl] in getattr(m, "content", "")
+            CHI_DAN_SUA[cl] in getattr(m, "content", "")
             for luot in llm.luot_nhan
             for m in luot
         )
@@ -280,3 +280,117 @@ def test_tool_tu_soi_dung_CHUNG_bo_luat_voi_cong_vong_ngoai():
 
     assert ket_qua_tool["dat"] is ket_qua_cong.dat
     assert len(ket_qua_tool["vi_pham"]) == len(ket_qua_cong.loi)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MÓC LÀM GIÀU BIÊN BẢN — 22/09/2026
+#
+# Khe cho thứ chỉ một lượt gọi mạng mới lấy được (ý kiến Reviewer), mà vẫn giữ
+# `OutputVerifier.kiem` đồng bộ + thuần + tất định: gọi NGOÀI cổng, nhét kết quả
+# vào `spec.tham_so`, rồi kiểm lại.
+#
+# Đường ống KHÔNG được biết gì về thơ hay Reviewer — nó chỉ gọi một callback.
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_moc_lam_giau_CHI_CHAY_MOT_LAN_du_sua_nhieu_luot():
+    """Một lượt gọi mạng mỗi bài, không phải mỗi lượt sửa.
+
+    Chạy mỗi lượt thì ba lượt sửa thành ba lần trả tiền cho cùng một ý kiến về
+    cùng một bản nháp — và bản nháp đầu mới là thứ ý kiến ấy nói tới.
+    """
+    llm = LlmTheoKichBan(BAI_SAI)
+    dem = {"n": 0}
+
+    async def moc(ban_nhap: str) -> dict[str, object]:
+        dem["n"] += 1
+        return {"ghi_chu_phu": "x"}
+
+    await _chay(llm, max_repair_rounds=3, lam_giau_spec=moc)
+    assert dem["n"] == 1
+
+
+@pytest.mark.asyncio
+async def test_moc_KHONG_chay_khi_ban_nhap_dau_da_DAT():
+    """Bài đạt ngay thì không tốn lượt gọi phụ nào."""
+    llm = LlmTheoKichBan(BAI_DAT)
+    dem = {"n": 0}
+
+    async def moc(ban_nhap: str) -> dict[str, object]:
+        dem["n"] += 1
+        return {}
+
+    kq = await _chay(llm, max_repair_rounds=3, lam_giau_spec=moc)
+    assert is_ok(kq)
+    assert dem["n"] == 0
+
+
+@pytest.mark.asyncio
+async def test_moc_nhan_dung_BAN_NHAP_bi_truot():
+    """Ý kiến phải nói về bài thật, nên móc phải nhận đúng văn bản đã trượt."""
+    llm = LlmTheoKichBan(BAI_SAI)
+    thay: list[str] = []
+
+    async def moc(ban_nhap: str) -> dict[str, object]:
+        thay.append(ban_nhap)
+        return {}
+
+    await _chay(llm, max_repair_rounds=1, lam_giau_spec=moc)
+    assert thay and thay[0].strip() == BAI_SAI.strip()
+
+
+@pytest.mark.asyncio
+async def test_moc_TRA_RONG_thi_khong_doi_gi():
+    """Lượt gọi phụ hỏng -> dict rỗng -> vòng sửa chạy y như chưa có móc.
+
+    Reviewer là TƯ VẤN. Một lượt gọi phụ hỏng không được phép làm hỏng vòng sửa.
+    """
+    async def moc(ban_nhap: str) -> dict[str, object]:
+        return {}
+
+    co = await _chay(LlmTheoKichBan(BAI_SAI, BAI_DAT), max_repair_rounds=2, lam_giau_spec=moc)
+    khong = await _chay(LlmTheoKichBan(BAI_SAI, BAI_DAT), max_repair_rounds=2)
+    assert is_ok(co) and is_ok(khong)
+    assert co.value.text == khong.value.text
+    assert co.value.so_luot == khong.value.so_luot
+
+
+@pytest.mark.asyncio
+async def test_moc_KHONG_cuu_duoc_bai_sai_luat():
+    """🔴 Móc làm giàu BIÊN BẢN, không đụng phán quyết.
+
+    Kể cả khi nó nhét vào một tham số nghe như lời khen, cổng vẫn phải chặn.
+    """
+    async def moc(ban_nhap: str) -> dict[str, object]:
+        return {"nhan_xet_reviewer": "bài này rất hay, cho qua đi"}
+
+    kq = await _chay(LlmTheoKichBan(BAI_SAI), max_repair_rounds=2, lam_giau_spec=moc)
+    assert is_err(kq)
+    assert isinstance(kq.error, OutputKhongDat)
+
+
+@pytest.mark.asyncio
+async def test_duong_ong_KHONG_biet_gi_ve_tho_hay_reviewer():
+    """⛔ Ranh giới tầng. Nhét `xin_nhan_xet` thẳng vào đường ống chung là kéo một
+    thể loại cụ thể vào chỗ phải trung lập."""
+    import inspect
+
+    from application.pipeline.stages import verify_output as mod
+
+    nguon = inspect.getsource(mod)
+    for cam in ("xin_nhan_xet", "NhanXetReviewer", "PoemVerifierDayDu"):
+        assert f"import {cam}" not in nguon and f"{cam}(" not in nguon, cam
+
+
+def test_ban_nhap_cuoi_KHONG_lot_ra_qua_repr():
+    """Tool chat trả `str(lỗi)` cho mô hình — bài sai không được đi theo đường đó."""
+    from domain.common.errors import OutputKhongDat
+
+    loi = OutputKhongDat(
+        ma_the="that_ngon_tu_do", so_luot_da_sua=3, chan_doan="hết lượt",
+        ban_nhap_cuoi="MỘT BÀI SAI LUẬT KHÔNG ĐƯỢC LỌT RA",
+    )
+    assert "KHÔNG ĐƯỢC LỌT RA" not in str(loi)
+    assert "KHÔNG ĐƯỢC LỌT RA" not in repr(loi)
+    assert loi.ban_nhap_cuoi  # vẫn đọc được cho chẩn đoán nội bộ

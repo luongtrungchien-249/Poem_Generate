@@ -781,12 +781,7 @@ def van_cua(tieng: str) -> str:
     `phan_tich_am_tiet()` ở §5b — xem QĐ-3 trong docs/Plan_Rule_Phan_Tang.md.
     """
     goc = bo_dau_thanh(tieng).lower()
-    for dau in _PHU_AM_DAU:
-        if goc.startswith(dau):
-            con_lai = goc[len(dau):]
-            if con_lai:  # không cắt đến mức rỗng
-                return con_lai
-    return goc
+    return goc[len(_am_dau_kha_di(goc, _PHU_AM_DAU)):] or goc
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -831,6 +826,52 @@ _CHUAN_HOA_AM_CHINH = {
     "y": "i",
 }
 
+# 🩸 PHÉP LÙI ÂM ĐẦU — sửa ngày 21/09/2026, chủ dự án duyệt (T8).
+#
+# LỖI: cắt âm đầu theo khớp DÀI NHẤT là đúng cho hầu hết ca ("ngh" phải thử trước
+# "ng"), nhưng sai ở một chỗ có thật:
+#
+#     "gìn"  ->  "gi" + "n"     phần dư KHÔNG CÓ NGUYÊN ÂM  ->  van_cua = "n"
+#     đúng   ->  "g"  + "ìn"                                ->  van_cua = "in"
+#
+# Hậu quả đo được: `hiep_van("gìn", "nhìn")` trả về False. Một bài gieo `gìn` với
+# `nhìn` bị chấm là không hiệp vần — sai ở tầng 5, chạy hằng ngày.
+#
+# Chú thích §5 đã lường trước ca này ("'gì' không phải là 'gi' + rỗng, mà là 'g' +
+# 'ì'") nhưng phép lùi cũ chỉ chạy khi phần dư RỖNG. Nay lùi thêm một bước: khi
+# phần dư không còn nguyên âm nào.
+#
+# VÌ SAO TIÊU CHÍ LÀ "CÓ NGUYÊN ÂM" chứ không phải "tra được trong bảng âm chính":
+# tiêu chí hẹp hơn thì an toàn hơn. `gian`, `giết`, `giữ`, `giờ`, `giàu` có phần dư
+# mang nguyên âm nên KHÔNG bị đụng tới, và mọi phép so vần có "gi" giữ nguyên kết
+# quả cũ. Có test ghim đúng điều đó (`test_van_gin.py`), vì nới tay một chút ở đây
+# là đổi kết quả của MỌI phép so vần có "gi" cùng một lúc.
+#
+# PHẠM VI CỐ Ý HẸP: lượt sửa này KHÔNG kèm bảng âm chính, KHÔNG kèm phép kiểm âm
+# tiết hợp lệ, KHÔNG kèm H5 — QĐ-TTS-1 đã đóng phần đó. Một lượt sửa file đóng băng
+# mang đúng một lý do, để lần sau còn tra được thay đổi nào gây hệ quả nào.
+_CHU_NGUYEN_AM = frozenset("aăâeêioôơuưy")
+
+
+def _am_dau_kha_di(goc: str, bang: tuple[str, ...]) -> str:
+    """Âm đầu nên cắt khỏi `goc`. Rỗng nghĩa là không cắt gì.
+
+    Ưu tiên khớp dài nhất mà phần dư còn nguyên âm; không có thì lùi về quy tắc cũ
+    (khớp dài nhất, miễn phần dư không rỗng).
+    """
+    du_phong = ""
+    for dau in bang:
+        if not goc.startswith(dau):
+            continue
+        con_lai = goc[len(dau):]
+        if not con_lai:  # không cắt đến mức rỗng
+            continue
+        if any(c in _CHU_NGUYEN_AM for c in con_lai):
+            return dau
+        du_phong = du_phong or dau
+    return du_phong
+
+
 # Chữ "u" là ÂM ĐỆM khi đứng trước các nguyên âm này: huy, huê, huân, huơ.
 # KHÔNG có "a" trong danh sách: "ua" của `mua` là nguyên âm đôi /uo/, không phải
 # âm đệm + a. Trường hợp duy nhất "u" là âm đệm trước "a" là sau âm đầu "q"
@@ -870,12 +911,9 @@ def phan_tich_am_tiet(tieng: str) -> AmTiet:
     s = bo_dau_thanh(tieng).lower()
     goc = s
 
-    # ── 1. Âm đầu, khớp tham lam dài nhất ──
-    am_dau = ""
-    for pa in _AM_DAU:
-        if s.startswith(pa) and len(s) > len(pa):
-            am_dau, s = pa, s[len(pa):]
-            break
+    # ── 1. Âm đầu, khớp dài nhất mà phần dư còn nguyên âm (xem `_am_dau_kha_di`) ──
+    am_dau = _am_dau_kha_di(s, _AM_DAU)
+    s = s[len(am_dau):]
 
     # ── 2. Âm đệm ──
     # "qu": theo ngữ âm là /k/ + /w/, nên q là âm đầu còn u là âm đệm.

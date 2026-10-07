@@ -1,0 +1,22 @@
+{
+  "created_at": "2026-10-06T07:21:08.060993+00:00",
+  "commit": "3de9c8f9ed704022e37dd192912098ac8b65c9fe",
+  "source_sha256": "410b51ea3d6dc896ba9d763a0d8bb012e74a707e971091ad3c5c79b9b8d8124b",
+  "dataset_sha256": "2e6784176aaab33968442675b053dcb17cefa39efeda58b57f211401713d8309",
+  "models_sha256": "8c95b8dfab272230854597b74f6ed35f31cdcc2d765cf2d944d6dea882aad305",
+  "corpus_sha256": "63ac551ddf1b4271e2b7ec42a3730be4144731eca03769327d9cfbb5bcc2b3ce",
+  "anti_copy_sha256": "81362df63ccbd88c675b408a93e2a10698bef2e4db598bf04038157f2ceb918d",
+  "rule_sha256": "0a0b2488f2ab10562b8a42a78f7550189664d69c05031f83c4aa4702f1321975",
+  "runner_sha256": "95bb685abedc6b64788bf58df317dc55f89dccb991935e7b5b44f8e2798c0612",
+  "provider": "google",
+  "model": "gemini-3.5-flash-lite",
+  "expected_count": 200,
+  "profile": "fixed",
+  "candidate_ceiling": 32,
+  "concurrency": 2,
+  "repair_rounds": 3,
+  "max_calls_per_poem": 80,
+  "timeout_seconds": 300,
+  "seed": null,
+  "mode": "prepared"
+}

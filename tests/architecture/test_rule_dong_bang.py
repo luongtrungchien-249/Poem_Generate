@@ -29,7 +29,22 @@ RULE = SRC / "application" / "rule.py"
 #   1. chạy `python datalake/scripts/kiem_tra_toan_bo.py` để đo lại corpus
 #   2. chạy `python datalake/scripts/doi_soat_tai_lieu.py` cho tới khi xanh
 #   3. ghi lý do sửa vào docs/Plan_Rule_Phan_Tang.md
-BAM_DA_CHOT = "9f808d59f43d98012f0d3a01f3ea3c4734004fe82a269aee12cde6739b4f2571"
+#
+# ── LẦN ĐỔI 21/09/2026 (T8) — phép lùi âm đầu ─────────────────────────────────
+# băm cũ: 9f808d59f43d98012f0d3a01f3ea3c4734004fe82a269aee12cde6739b4f2571
+#
+# Lý do: `hiep_van("gìn", "nhìn")` trả về False. Cắt âm đầu theo khớp dài nhất đọc
+# `gìn` thành "gi" + "n" thay vì "g" + "ìn" — sai ở tầng 5, chạy hằng ngày.
+#
+# Ba việc đã làm đủ, ghi đầy đủ ở docs/Plan_Rule_Phan_Tang.md §12:
+#   1. đo lại 67.150 bản ghi — `bai_dat` KHÔNG ĐỔI (24.366), chỉ tăng nhận diện
+#      vần: `cum_co_van_chan` 189.415 -> 189.422. Không bài nào đổi phán quyết.
+#   2. `doi_soat_tai_lieu.py` xanh sau khi cập nhật số ở ba tài liệu và đăng ký
+#      mười một số lịch sử vào `SO_LICH_SU`.
+#   3. §12 của Plan_Rule_Phan_Tang ghi đủ lỗi, cách sửa, phạm vi và bảng đo.
+#
+# Duyệt: chủ dự án, 21/09/2026.
+BAM_DA_CHOT = "0a0b2488f2ab10562b8a42a78f7550189664d69c05031f83c4aa4702f1321975"
 
 # Tên phép đếm chỉ được định nghĩa MỘT lần, ở rule.py. Cài lại ở chỗ khác là tạo
 # nguồn luật thứ hai — vi phạm nguyên tắc P1 của plan thi công.

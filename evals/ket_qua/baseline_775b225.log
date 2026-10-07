@@ -1,0 +1,241 @@
+==========================================================================
+ĐO THẬT — provider=openai model=gpt-4o-mini
+200 yêu cầu · tối đa 3 lượt sửa mỗi bài · KHÔNG mock gì cả
+==========================================================================
+[ 1/200] Sự hoài niệm về thời thanh xuân (4 dòng) ... ĐẠT sau 0 lượt sửa (6.3s)
+[ 2/200] Hành trình tìm lại bản ngã qua ký ức quê hương (8 dòng) ... KHÔNG ĐẠT (20.2s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[ 3/200] mùa gặt (12 dòng) ... KHÔNG ĐẠT (30.1s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[ 4/200] dòng Mekong (16 dòng) ... KHÔNG ĐẠT (40.8s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — D10 H1: cần 7 tiếng, đang 6 tiếng;
+[ 5/200] đứa con đầu lòng (20 dòng) ... KHÔNG ĐẠT (27.6s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[ 6/200] người thợ may (4 dòng) ... KHÔNG ĐẠT (16.9s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[ 7/200] hạn mặn đồng bằng (8 dòng) ... ĐẠT sau 0 lượt sửa (11.0s)
+[ 8/200] Nỗi nhớ quê hương gắn liền với mưa (12 dòng) ... KHÔNG ĐẠT (24.3s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[ 9/200] sương sớm trên đồi (16 dòng) ... KHÔNG ĐẠT (29.8s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[10/200] người công nhân tan ca đêm (20 dòng) ... KHÔNG ĐẠT (22.5s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[11/200] Tình yêu mới chớm (Sự trong trẻo, ngập ngừng) (4 dòng) ... KHÔNG ĐẠT (24.2s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[12/200] chợ phiên vùng cao (8 dòng) ... ĐẠT sau 0 lượt sửa (12.9s)
+[13/200] cây đa đầu làng (12 dòng) ... KHÔNG ĐẠT (23.0s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[14/200] ly biệt sân ga (16 dòng) ... KHÔNG ĐẠT (24.6s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[15/200] Con đường lá vàng biểu tượng (20 dòng) ... KHÔNG ĐẠT (67.9s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[16/200] căn bếp mẹ (4 dòng) ... KHÔNG ĐẠT (22.1s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[17/200] Sự cô độc và tĩnh lặng (8 dòng) ... ĐẠT sau 0 lượt sửa (12.0s)
+[18/200] đứa trẻ bán báo (12 dòng) ... KHÔNG ĐẠT (24.8s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[19/200] ánh đèn đô thị (16 dòng) ... KHÔNG ĐẠT (26.1s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[20/200] Tìm lại ký ức qua những lá thư/tờ giấy cũ (20 dòng) ... KHÔNG ĐẠT (30.2s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[21/200] ngôi sao xa (4 dòng) ... KHÔNG ĐẠT (26.2s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[22/200] Vẻ đẹp hùng vĩ của vùng cao (8 dòng) ... KHÔNG ĐẠT (22.0s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 H1: cần 7 tiếng, đang 8 tiếng; 
+[23/200] bến Nhà Rồng (12 dòng) ... ĐẠT sau 0 lượt sửa (16.6s)
+[24/200] Điện Biên năm ấy (16 dòng) ... KHÔNG ĐẠT (26.0s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[25/200] con đường phía trước (20 dòng) ... KHÔNG ĐẠT (24.5s) — Sau 3 lượt sửa vẫn còn 15 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[26/200] Ký ức về những mùa hè rực rỡ (4 dòng) ... ĐẠT sau 0 lượt sửa (15.3s)
+[27/200] bình yên trong tâm (8 dòng) ... KHÔNG ĐẠT (22.0s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[28/200] Sự hoài niệm, cô đơn (12 dòng) ... KHÔNG ĐẠT (20.8s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[29/200] Sự cô đơn của người viễn xứ khi gặp mưa (16 dòng) ... ĐẠT sau 0 lượt sửa (41.0s)
+[30/200] Sự chiêm nghiệm về cuộc đời khi về già (20 dòng) ... KHÔNG ĐẠT (56.5s) — Sau 3 lượt sửa vẫn còn 11 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[31/200] hoa đào Nhật Tân (4 dòng) ... KHÔNG ĐẠT (24.2s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[32/200] Nỗi nhớ về những kỷ niệm cũ trên phố thị (8 dòng) ... KHÔNG ĐẠT (24.6s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[33/200] cánh cửa khép hờ (12 dòng) ... ĐẠT sau 0 lượt sửa (29.7s)
+[34/200] Nỗi nhớ người yêu ở nơi xa xôi (16 dòng) ... KHÔNG ĐẠT (43.9s) — Sau 3 lượt sửa vẫn còn 17 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng;
+[35/200] Sự chuyển mình từ hạ sang thu (20 dòng) ... KHÔNG ĐẠT (25.6s) — Sau 3 lượt sửa vẫn còn 17 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[36/200] tiếng búa lò rèn (4 dòng) ... KHÔNG ĐẠT (24.7s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[37/200] Những cơn mưa phùn lãng mạn (8 dòng) ... KHÔNG ĐẠT (20.0s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[38/200] người mẹ (12 dòng) ... ĐẠT sau 0 lượt sửa (25.7s)
+[39/200] Sự đối lập giữa mùa thu quê hương và mùa thu phố thị (16 dòng) ... KHÔNG ĐẠT (24.2s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[40/200] sân trường ngày chia tay (20 dòng) ... ĐẠT sau 0 lượt sửa (50.9s)
+[41/200] Vẻ đẹp tĩnh lặng của Hồ Gươm (4 dòng) ... ĐẠT sau 0 lượt sửa (8.2s)
+[42/200] Góc nhỏ tâm hồn (8 dòng) ... KHÔNG ĐẠT (20.5s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[43/200] tuổi mười tám (12 dòng) ... KHÔNG ĐẠT (21.3s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[44/200] thời gian trôi (16 dòng) ... KHÔNG ĐẠT (19.8s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[45/200] Sự ẩn dụ về bóng tối và nỗi cô đơn đang lớn dần (20 dòng) ... KHÔNG ĐẠT (28.7s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D2 H1: cần 7 tiếng, đang 8 tiếng; 
+[46/200] người bán vé số (4 dòng) ... KHÔNG ĐẠT (17.6s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[47/200] lẽ vô thường (8 dòng) ... KHÔNG ĐẠT (26.1s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[48/200] thành cổ Quảng Trị (12 dòng) ... ĐẠT sau 0 lượt sửa (31.9s)
+[49/200] Chiêm nghiệm và trưởng thành (Sự tĩnh lặng và cái nhìn lại) (16 dòng) ... KHÔNG ĐẠT (21.3s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[50/200] người đi xa không về (20 dòng) ... KHÔNG ĐẠT (29.7s) — Sau 3 lượt sửa vẫn còn 11 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[51/200] Giằng xé và hy vọng (4 dòng) ... KHÔNG ĐẠT (22.6s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[52/200] khu tập thể cũ (8 dòng) ... KHÔNG ĐẠT (20.3s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng; 
+[53/200] Sự yên tĩnh bên sách và trà (12 dòng) ... KHÔNG ĐẠT (24.5s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[54/200] con đường làng (16 dòng) ... KHÔNG ĐẠT (23.5s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[55/200] chiếc lá cuối cùng (20 dòng) ... KHÔNG ĐẠT (41.7s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[56/200] mùa thu Hà Nội (4 dòng) ... KHÔNG ĐẠT (23.6s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[57/200] đêm trăng (8 dòng) ... KHÔNG ĐẠT (23.8s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng; 
+[58/200] ga tàu cuối năm (12 dòng) ... KHÔNG ĐẠT (31.2s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[59/200] rừng thông Đà Lạt (16 dòng) ... ĐẠT sau 0 lượt sửa (33.1s)
+[60/200] Thiên nhiên là tấm gương (Cảm xúc con người qua cảnh vật) (20 dòng) ... KHÔNG ĐẠT (39.0s) — Sau 3 lượt sửa vẫn còn 11 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[61/200] căn phòng trọ sinh viên (4 dòng) ... KHÔNG ĐẠT (20.8s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[62/200] Sự gắn bó giữa con người và dòng sông (8 dòng) ... KHÔNG ĐẠT (24.9s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[63/200] ánh trăng quê (12 dòng) ... KHÔNG ĐẠT (25.6s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[64/200] Hoàng hôn gợi nhắc về một tình yêu đã mất (16 dòng) ... KHÔNG ĐẠT (23.5s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[65/200] Tiếc nuối và hoài niệm (20 dòng) ... KHÔNG ĐẠT (26.5s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[66/200] Màn sương mờ ảo buổi sáng (4 dòng) ... ĐẠT sau 0 lượt sửa (17.1s)
+[67/200] Ký ức về những buổi chiều thả diều (8 dòng) ... KHÔNG ĐẠT (19.9s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[68/200] cái thiện và cái ác (12 dòng) ... ĐẠT sau 0 lượt sửa (24.0s)
+[69/200] Tổng kết: Quê hương là một phần của tâm hồn (16 dòng) ... KHÔNG ĐẠT (43.8s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên th
+[70/200] lần đầu xa nhà (20 dòng) ... KHÔNG ĐẠT (44.0s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[71/200] cơn bão miền Trung (4 dòng) ... KHÔNG ĐẠT (23.9s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[72/200] hạt mưa và biển (8 dòng) ... KHÔNG ĐẠT (22.0s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[73/200] cánh diều tuổi thơ (12 dòng) ... KHÔNG ĐẠT (21.0s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[74/200] đêm giao thừa (16 dòng) ... KHÔNG ĐẠT (25.5s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng; 
+[75/200] tiếng chuông chùa (20 dòng) ... KHÔNG ĐẠT (28.4s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[76/200] Ký ức những đêm trăng sáng (4 dòng) ... ĐẠT sau 0 lượt sửa (7.8s)
+[77/200] ruộng bậc thang (8 dòng) ... KHÔNG ĐẠT (24.9s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[78/200] Khúc ca thanh xuân (12 dòng) ... KHÔNG ĐẠT (26.4s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[79/200] vịnh Hạ Long (16 dòng) ... KHÔNG ĐẠT (36.6s) — Sau 3 lượt sửa vẫn còn 16 lỗi cứng — D2 H1: cần 7 tiếng, đang 8 tiếng;
+[80/200] Cảm giác mùa thu bao trùm Hồ Tây (20 dòng) ... KHÔNG ĐẠT (34.1s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[81/200] Hoàng hôn nhìn qua cửa sổ, sự cô độc trong không gian hẹp (4 dòng) ... KHÔNG ĐẠT (21.1s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[82/200] tiễn bạn lên đường (8 dòng) ... ĐẠT sau 0 lượt sửa (11.2s)
+[83/200] cầu tre lắt lẻo (12 dòng) ... KHÔNG ĐẠT (27.9s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D5 S2: cần P2/P4/P6 luân phiên the
+[84/200] Sự man mác buồn của mùa thu và mưa (16 dòng) ... KHÔNG ĐẠT (26.3s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[85/200] Ký ức về những vườn cây ăn quả (20 dòng) ... KHÔNG ĐẠT (23.3s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[86/200] Hoài niệm và ký ức (4 dòng) ... KHÔNG ĐẠT (18.5s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[87/200] đàn cò trắng (8 dòng) ... KHÔNG ĐẠT (22.5s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[88/200] đỉnh Fansipan (12 dòng) ... KHÔNG ĐẠT (23.7s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng; 
+[89/200] Ánh nắng hanh vàng đặc trưng (16 dòng) ... ĐẠT sau 0 lượt sửa (31.1s)
+[90/200] Khởi đầu và khát vọng (Tuổi trẻ và những bước chân đầu tiên) (20 dòng) ... KHÔNG ĐẠT (29.7s) — Sau 3 lượt sửa vẫn còn 11 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[91/200] góc phố mùa đông (4 dòng) ... KHÔNG ĐẠT (19.1s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[92/200] con trâu và bờ tre (8 dòng) ... ĐẠT sau 0 lượt sửa (24.6s)
+[93/200] mối tình đầu (12 dòng) ... KHÔNG ĐẠT (30.1s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D3 S2: cần P2/P4/P6 luân phiên the
+[94/200] biển Nha Trang (16 dòng) ... KHÔNG ĐẠT (21.5s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[95/200] cô giáo vùng xa (20 dòng) ... KHÔNG ĐẠT (25.9s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[96/200] Ấm áp gia đình (4 dòng) ... KHÔNG ĐẠT (23.1s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[97/200] Sự hy sinh thầm lặng của những người làm ra hạt gạo (8 dòng) ... KHÔNG ĐẠT (31.8s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[98/200] Sự tiếc nuối về một lời hứa không thành (12 dòng) ... KHÔNG ĐẠT (27.7s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[99/200] Hoàng hôn tại ga tàu, sự chờ đợi vô vọng (16 dòng) ... KHÔNG ĐẠT (26.1s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[100/200] Sự tiếc nuối về những điều chưa kịp bày tỏ (20 dòng) ... ĐẠT sau 0 lượt sửa (66.2s)
+[101/200] Hương vị đặc sản mùa thu (4 dòng) ... ĐẠT sau 0 lượt sửa (8.4s)
+[102/200] Sự tần tảo, mạnh mẽ của người cha (8 dòng) ... KHÔNG ĐẠT (21.7s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[103/200] phố cổ Hội An (12 dòng) ... KHÔNG ĐẠT (24.9s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[104/200] đồng hồ quả lắc (16 dòng) ... KHÔNG ĐẠT (23.6s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D1 H1: cần 7 tiếng, đang 8 tiếng;
+[105/200] người lái đò trên sông vắng (20 dòng) ... KHÔNG ĐẠT (26.2s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[106/200] ý nghĩa của sự chờ đợi (4 dòng) ... KHÔNG ĐẠT (18.8s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[107/200] Kỷ niệm về bà và sự tĩnh lặng của tuổi già (8 dòng) ... ĐẠT sau 0 lượt sửa (14.1s)
+[108/200] Vẻ đẹp của mùa màng và sự trù phú (12 dòng) ... KHÔNG ĐẠT (27.8s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[109/200] Sự mạnh mẽ và bao la của biển (16 dòng) ... ĐẠT sau 0 lượt sửa (28.4s)
+[110/200] Tình làng nghĩa xóm (20 dòng) ... KHÔNG ĐẠT (64.9s) — Sau 3 lượt sửa vẫn còn 15 lỗi cứng — D2 H1: cần 7 tiếng, đang 8 tiếng;
+[111/200] tình bạn học trò (4 dòng) ... KHÔNG ĐẠT (16.9s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[112/200] sông Bạch Đằng (8 dòng) ... KHÔNG ĐẠT (27.3s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[113/200] Nhịp sống mưu sinh (12 dòng) ... ĐẠT sau 0 lượt sửa (36.5s)
+[114/200] ngày trở về (16 dòng) ... ĐẠT sau 0 lượt sửa (22.7s)
+[115/200] thác nước đầu nguồn (20 dòng) ... KHÔNG ĐẠT (44.4s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[116/200] Hoàng hôn trên cây cầu, sự lơ lửng của tâm trạng (4 dòng) ... KHÔNG ĐẠT (17.9s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[117/200] Tình yêu thử thách (Sự xa cách, chờ đợi, sóng gió) (8 dòng) ... KHÔNG ĐẠT (23.4s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[118/200] giếng làng (12 dòng) ... KHÔNG ĐẠT (24.7s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[119/200] Nỗi nhớ về ánh mắt người yêu lúc hoàng hôn (16 dòng) ... KHÔNG ĐẠT (23.4s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[120/200] Sự kết thúc của một mối tình hoặc một giai đoạn cuộc đời (20 dòng) ... KHÔNG ĐẠT (51.8s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[121/200] cánh đồng lúa chín (4 dòng) ... KHÔNG ĐẠT (17.0s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[122/200] mùa nước nổi (8 dòng) ... ĐẠT sau 0 lượt sửa (23.3s)
+[123/200] nghĩa trang liệt sĩ (12 dòng) ... KHÔNG ĐẠT (33.1s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[124/200] Nỗi nhớ bình dị, mộc mạc nơi đồng quê (16 dòng) ... KHÔNG ĐẠT (30.2s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[125/200] nỗi nhớ xa quê (20 dòng) ... KHÔNG ĐẠT (25.4s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[126/200] hoa sữa cuối thu (4 dòng) ... ĐẠT sau 0 lượt sửa (7.2s)
+[127/200] Trường Sơn đông nắng tây mưa (8 dòng) ... ĐẠT sau 0 lượt sửa (14.5s)
+[128/200] Thử thách và bão tố (Những khúc quanh nghiệt ngã) (12 dòng) ... KHÔNG ĐẠT (24.3s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[129/200] hoa cải ven sông (16 dòng) ... KHÔNG ĐẠT (28.3s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[130/200] Sự đối lập giữa sự đoàn tụ của thiên nhiên và sự cô độc của con người (20 dòng) ... KHÔNG ĐẠT (23.9s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[131/200] Sự cô độc giữa không gian trống trải, hoang vu (4 dòng) ... KHÔNG ĐẠT (22.1s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[132/200] ngày cưới (8 dòng) ... KHÔNG ĐẠT (31.9s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 H1: cần 7 tiếng, đang 8 tiếng; 
+[133/200] Sự lãng mạn của tình yêu mùa thu (12 dòng) ... ĐẠT sau 0 lượt sửa (25.1s)
+[134/200] Vẻ đẹp cổ kính của phố cổ (16 dòng) ... KHÔNG ĐẠT (26.5s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[135/200] Sự xung đột (Sự tàn phá và nỗi đau của thiên nhiên) (20 dòng) ... KHÔNG ĐẠT (31.8s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[136/200] ngọn nến trong đêm (4 dòng) ... KHÔNG ĐẠT (24.1s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[137/200] Trung thu phố cổ (8 dòng) ... KHÔNG ĐẠT (32.5s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[138/200] mùa đông không lạnh (12 dòng) ... KHÔNG ĐẠT (21.7s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[139/200] cơn mưa đầu hạ (16 dòng) ... KHÔNG ĐẠT (23.9s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[140/200] Ký ức về mái trường và cổng làng (20 dòng) ... KHÔNG ĐẠT (31.6s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[141/200] Tình mẫu tử gắn liền với quê hương (4 dòng) ... ĐẠT sau 0 lượt sửa (7.4s)
+[142/200] Hoàng hôn là sự kết thúc, sự chấp nhận cô đơn (8 dòng) ... ĐẠT sau 0 lượt sửa (15.0s)
+[143/200] bác nông dân ra đồng sớm (12 dòng) ... KHÔNG ĐẠT (25.5s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[144/200] Sự kết hợp giữa âm thanh mưa và nỗi nhớ âm nhạc (16 dòng) ... KHÔNG ĐẠT (25.0s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng;
+[145/200] đứa em nhỏ (20 dòng) ... KHÔNG ĐẠT (29.3s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[146/200] Nỗi nhớ về nguồn cội và tuổi thơ (4 dòng) ... ĐẠT sau 3 lượt sửa (20.5s)
+[147/200] Dòng chảy vô tình (8 dòng) ... KHÔNG ĐẠT (19.3s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[148/200] Mùi hương đặc trưng nhất của thu Hà Nội (12 dòng) ... KHÔNG ĐẠT (35.7s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D4 S2: cần P2/P4/P6 luân phiên the
+[149/200] Sự cô độc hiện đại bên tách cà phê (16 dòng) ... KHÔNG ĐẠT (34.9s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[150/200] hội làng mùa xuân (20 dòng) ... KHÔNG ĐẠT (50.2s) — Sau 3 lượt sửa vẫn còn 15 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[151/200] Hoàng hôn trên biển, sự mênh mông đối lập với sự nhỏ bé của con người (4 dòng) ... KHÔNG ĐẠT (24.8s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[152/200] Tổng kết vẻ đẹp tâm hồn mùa thu (8 dòng) ... KHÔNG ĐẠT (19.1s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[153/200] Cô độc và tri kỷ (Sự kết nối và sự đơn độc) (12 dòng) ... ĐẠT sau 0 lượt sửa (34.6s)
+[154/200] Một góc quán nhỏ mùa thu (16 dòng) ... KHÔNG ĐẠT (19.8s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[155/200] ông nội bên hiên (20 dòng) ... KHÔNG ĐẠT (35.7s) — Sau 3 lượt sửa vẫn còn 14 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[156/200] Cảnh chiều tà lãng mạn trên Hồ Tây (4 dòng) ... ĐẠT sau 0 lượt sửa (7.5s)
+[157/200] quê hương (8 dòng) ... KHÔNG ĐẠT (19.2s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[158/200] Sự hùng vĩ của thiên nhiên và sự nhỏ bé, cô quạnh của tâm hồn (12 dòng) ... ĐẠT sau 0 lượt sửa (17.8s)
+[159/200] người lính gác biển đảo (16 dòng) ... KHÔNG ĐẠT (26.1s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên th
+[160/200] Hương vị quê nhà (20 dòng) ... KHÔNG ĐẠT (24.2s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[161/200] mái tóc bà (4 dòng) ... KHÔNG ĐẠT (19.3s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[162/200] Hoàng hôn ở làng quê, sự cô đơn của người xa xứ (8 dòng) ... KHÔNG ĐẠT (19.3s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[163/200] Cảm giác se lạnh đặc trưng (12 dòng) ... KHÔNG ĐẠT (20.6s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng; 
+[164/200] Sự đau khổ, tan vỡ trong tình yêu (16 dòng) ... KHÔNG ĐẠT (26.9s) — Sau 3 lượt sửa vẫn còn 10 lỗi cứng — D5 S2: cần P2/P4/P6 luân phiên th
+[165/200] tiếng gà trưa (20 dòng) ... KHÔNG ĐẠT (26.6s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[166/200] bàn tay cha (4 dòng) ... KHÔNG ĐẠT (18.6s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[167/200] Sự vô thường và triết lý (Con người nhỏ bé trước vũ trụ) (8 dòng) ... KHÔNG ĐẠT (23.7s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 H1: cần 7 tiếng, đang 6 tiếng; 
+[168/200] dòng sông tuổi thơ (12 dòng) ... KHÔNG ĐẠT (20.5s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[169/200] Sự cô độc và suy tư bên tách cà phê (16 dòng) ... KHÔNG ĐẠT (24.5s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[170/200] Chiêm nghiệm nhân sinh (20 dòng) ... KHÔNG ĐẠT (31.1s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[171/200] Tình yêu nồng cháy (Sự say đắm, mãnh liệt) (4 dòng) ... ĐẠT sau 0 lượt sửa (13.0s)
+[172/200] Hình ảnh biểu tượng của làng quê Việt Nam (8 dòng) ... ĐẠT sau 0 lượt sửa (22.1s)
+[173/200] Sự hòa hợp (Con người và thiên nhiên là một) (12 dòng) ... KHÔNG ĐẠT (22.8s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[174/200] Sự ấm áp của gia đình trong mùa đông (16 dòng) ... KHÔNG ĐẠT (23.2s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D6 S2: cần P2/P4/P6 luân phiên the
+[175/200] cột cờ Lũng Cú (20 dòng) ... ĐẠT sau 0 lượt sửa (51.4s)
+[176/200] Sự tĩnh lặng, tâm linh trong mùa thu (4 dòng) ... ĐẠT sau 0 lượt sửa (7.3s)
+[177/200] Hoàng hôn như một sự chia lìa tất yếu (8 dòng) ... KHÔNG ĐẠT (20.6s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D5 S2: cần P2/P4/P6 luân phiên the
+[178/200] Hoàng hôn giữa lòng thành phố, sự cô độc trong đám đông (12 dòng) ... KHÔNG ĐẠT (23.0s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[179/200] thư tay ngày cũ (16 dòng) ... KHÔNG ĐẠT (59.9s) — Sau 3 lượt sửa vẫn còn 3 lỗi cứng — toàn bài H4: cần số dòng là bội củ
+[180/200] chiều biên giới (20 dòng) ... KHÔNG ĐẠT (24.6s) — Sau 3 lượt sửa vẫn còn 17 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[181/200] Tết Nguyên Đán (4 dòng) ... KHÔNG ĐẠT (22.4s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[182/200] mùa thi (8 dòng) ... KHÔNG ĐẠT (41.3s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[183/200] Sự buồn bã nhân đôi khi hoàng hôn gặp mưa (12 dòng) ... KHÔNG ĐẠT (33.1s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[184/200] rằm tháng bảy (16 dòng) ... KHÔNG ĐẠT (29.3s) — Sau 3 lượt sửa vẫn còn 6 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[185/200] bữa cơm gia đình (20 dòng) ... KHÔNG ĐẠT (33.7s) — Sau 3 lượt sửa vẫn còn 19 lỗi cứng — D2 H1: cần 7 tiếng, đang 8 tiếng;
+[186/200] tuổi già cô đơn (4 dòng) ... KHÔNG ĐẠT (12.6s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[187/200] Nỗi lòng của người sống ở thành phố/nước ngoài (8 dòng) ... KHÔNG ĐẠT (21.4s) — Sau 3 lượt sửa vẫn còn 8 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[188/200] bệnh viện đêm khuya (12 dòng) ... KHÔNG ĐẠT (31.4s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[189/200] Nỗi nhớ dịu dàng, man mác trong mưa xuân (16 dòng) ... KHÔNG ĐẠT (24.1s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — D4 H1: cần 7 tiếng, đang 8 tiếng; 
+[190/200] lời hẹn không thành (20 dòng) ... KHÔNG ĐẠT (29.2s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[191/200] Hoàng hôn và sự trở về (Sự kết thúc và sự vĩnh cửu) (4 dòng) ... KHÔNG ĐẠT (20.8s) — Sau 3 lượt sửa vẫn còn 4 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[192/200] gánh hàng rong (8 dòng) ... KHÔNG ĐẠT (23.0s) — Sau 3 lượt sửa vẫn còn 5 lỗi cứng — D2 S2: cần P2/P4/P6 luân phiên the
+[193/200] Ánh sáng đốm nắng qua tán cây (12 dòng) ... KHÔNG ĐẠT (21.4s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[194/200] Sự cô độc trong sự tĩnh lặng tuyệt đối (16 dòng) ... KHÔNG ĐẠT (23.2s) — Sau 3 lượt sửa vẫn còn 12 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+[195/200] Tình yêu vĩnh cửu (Sự gắn kết, thấu hiểu, già đi bên nhau) (20 dòng) ... KHÔNG ĐẠT (32.9s) — Sau 3 lượt sửa vẫn còn 20 lỗi cứng — D1 H1: cần 7 tiếng, đang 25 tiếng
+[196/200] chuyến xe khách đêm (4 dòng) ... KHÔNG ĐẠT (17.4s) — Sau 3 lượt sửa vẫn còn 2 lỗi cứng — toàn bài S11: cần ít nhất 4 dòng l
+[197/200] Chiêm nghiệm và trưởng thành (8 dòng) ... KHÔNG ĐẠT (24.5s) — Sau 3 lượt sửa vẫn còn 7 lỗi cứng — toàn bài H3: cần văn bản có phân d
+[198/200] Hình ảnh những người bán hoa dạo (12 dòng) ... KHÔNG ĐẠT (21.6s) — Sau 3 lượt sửa vẫn còn 9 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên the
+[199/200] Sự buông bỏ nhưng vẫn còn vương vấn (16 dòng) ... ĐẠT sau 0 lượt sửa (42.3s)
+[200/200] hoa phượng tháng năm (20 dòng) ... KHÔNG ĐẠT (29.3s) — Sau 3 lượt sửa vẫn còn 13 lỗi cứng — D1 S2: cần P2/P4/P6 luân phiên th
+
+==========================================================================
+BA CHỈ SỐ VẬN HÀNH — trả lời rủi ro R2
+==========================================================================
+  tỉ lệ đạt lượt đầu   : 39/200 = 19.5%
+  tỉ lệ đạt (mọi lượt) : 40/200 = 20.0%
+  tỉ lệ KIỆT LƯỢT      : 160/200 = 80.0%
+  số lượt sửa TB (bài đạt): 0.07
+  thời gian TB mỗi bài : 26.0s
+  ghi từng bài -> evals\ket_qua\baseline_775b225.jsonl
+  lượt gọi TB mỗi bài  : reply 21.8 · cheap 0.0 · thử lại vì 429: 248 lần
+  chi phí              : 2.9620 USD tổng · 14.81 USD / 1.000 bài (chưa tính lượt `cheap`)
+  theo độ dài          :
+     4 dòng: đạt 12/40 · reply TB 17.1 · 18s
+     8 dòng: đạt 10/40 · reply TB 19.7 · 22s
+    12 dòng: đạt 9/40 · reply TB 22.0 · 26s
+    16 dòng: đạt 6/40 · reply TB 24.2 · 29s
+    20 dòng: đạt 3/40 · reply TB 25.9 · 36s
+
+VÌ SAO KHÔNG ĐẠT — đếm theo mã lỗi trong chẩn đoán
+      CL: 57 bài
+      H4: 44 bài
+      H3: 35 bài
+      H1: 18 bài
+      B3: 1 bài
+     S11: 1 bài
+
+§33.3 — LUẬT THƠ trên bài mô hình sinh ra
+  40 bài đạt: đúng số tiếng 100% · đúng khuôn 100% · có vần 100%
+
+MỘT BÀI LÀM VÍ DỤ
+  [Sự hoài niệm về thời thanh xuân, 4 dòng, 0 lượt sửa]
+    Trên con đường cũ, bước chân qua
+    Mùa hè rực rỡ, nắng vàng nhòa
+    Tuổi trẻ say mê, dệt mộng mơ
+    Thời gian như gió, thổi hồn ta
+  kiểm lại: dat=True · 4 dòng · sơ đồ vần ['axaa']

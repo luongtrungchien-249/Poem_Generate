@@ -41,3 +41,9 @@ datalake/analysis/reports/
 # Giữ lại phần tóm tắt đọc được và số liệu máy đọc
 !datalake/analysis/TONG_HOP.md
 !datalake/analysis/tong_hop.json
+!datalake/analysis/tong_hop_rule2.json
+!datalake/analysis/tong_hop_rule3.json
+
+# Kho HF (Plan_PoeTone GĐ0.2) — CC-BY-4.0, không phát hành lại dữ liệu thô
+datalake/hf/*
+!datalake/hf/tong_hop.json

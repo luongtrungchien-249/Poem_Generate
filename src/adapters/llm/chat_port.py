@@ -31,7 +31,12 @@ gọi tool thật, bản cũ sẽ nổ `ValidationError` chứ không âm thầm
 
 from __future__ import annotations
 
+import asyncio
+import random
+from collections.abc import Awaitable, Callable
 from typing import Any
+
+import httpx
 
 from application.ports.llm import (
     AssistantMessage,
@@ -105,12 +110,89 @@ def _sang_luoc_do_tool(t: object) -> ToolSchema | None:
     return None
 
 
+# ════ THỬ LẠI LỖI TẠM THỜI — QĐ-P9, Plan_PoeTone, 26/09/2026 ════
+#
+# Đo thật: tài khoản có trần 200.000 token/phút, một bài 20 dòng gửi tới 8 lượt
+# song song. Không thử lại thì 8/20 đề của lượt đo đầu trượt OAN — không phải vì
+# thơ sai luật, mà vì nhà cung cấp bảo "chờ chút". Trả 422 cho người dùng trong ca
+# đó là nói dối về lý do thất bại.
+#
+# CHỈ thử lại lỗi TẠM THỜI: 429 và 5xx, cộng lỗi mạng. 400/401/404 là lỗi của
+# chính yêu cầu — gửi lại y hệt chỉ nhận lại y hệt, và tốn thêm thời gian của người
+# dùng. `FallbackManager` ở `resilience.py` thử lại MỌI ngoại lệ nên không dùng ở đây.
+#
+# Không phải ngưỡng dò chất lượng: mấy hằng số dưới đây chỉ quyết định chờ bao lâu
+# trước khi bỏ cuộc, không đụng tới luật hay tới việc bài nào được trả ra.
+SO_LAN_THU_LAI = 6
+CHO_TOI_DA_GIAY = 60.0
+_MA_TAM_THOI = frozenset({429, 500, 502, 503, 504})
+
+
+def _ma_trang_thai(e: BaseException) -> int | None:
+    return e.response.status_code if isinstance(e, httpx.HTTPStatusError) else None
+
+
+def _la_loi_tam_thoi(e: BaseException) -> bool:
+    ma = _ma_trang_thai(e)
+    if ma is not None:
+        return ma in _MA_TAM_THOI
+    return isinstance(e, (httpx.TimeoutException, httpx.TransportError))
+
+
+def _thoi_gian_cho(e: BaseException, lan: int) -> float:
+    """Ưu tiên thời gian chờ do nhà cung cấp nói; không có thì backoff mũ + jitter.
+
+    OpenAI gửi header `Retry-After`. Google KHÔNG gửi header đó — nó đặt thời gian
+    chờ trong thân lỗi: `error.details[].retryDelay = "23s"` (RetryInfo). Đo
+    26/09/2026 với Gemini: thiếu nhánh này thì phải đoán 2, 4, 8, 16 s… và một bài
+    8 dòng mất 49–86 s thay vì ~15 s.
+    """
+    if isinstance(e, httpx.HTTPStatusError):
+        tieu_de = e.response.headers.get("retry-after")
+        try:
+            if tieu_de is not None:
+                return min(CHO_TOI_DA_GIAY, max(0.0, float(tieu_de)))
+        except ValueError:
+            pass
+        cho = _retry_delay_google(e.response)
+        if cho is not None:
+            return min(CHO_TOI_DA_GIAY, cho + random.uniform(0, 1))
+    return min(CHO_TOI_DA_GIAY, 2.0 * 2**lan) + random.uniform(0, 1)
+
+
+def _retry_delay_google(resp: httpx.Response) -> float | None:
+    """`"retryDelay": "23s"` trong thân lỗi của Gemini API; None nếu không có."""
+    try:
+        chi_tiet = resp.json().get("error", {}).get("details", [])
+    except (ValueError, AttributeError):
+        return None
+    for ct in chi_tiet if isinstance(chi_tiet, list) else []:
+        tre = ct.get("retryDelay") if isinstance(ct, dict) else None
+        if isinstance(tre, str) and tre.endswith("s"):
+            try:
+                return max(0.0, float(tre[:-1]))
+            except ValueError:
+                return None
+    return None
+
+
 class ChatLlmAdapter:
     """Hiện thực `LlmPort` bằng một `LLMClient` bất kỳ."""
 
-    def __init__(self, client: LLMClient, *, default_model: str = "gpt-4o-mini") -> None:
+    def __init__(
+        self,
+        client: LLMClient,
+        *,
+        default_model: str = "gpt-4o-mini",
+        so_lan_thu_lai: int = SO_LAN_THU_LAI,
+        ngu: Callable[[float], Awaitable[None]] = asyncio.sleep,
+    ) -> None:
         self._client = client
         self._default_model = default_model
+        self._so_lan_thu_lai = so_lan_thu_lai
+        # Tiêm được để test không phải chờ thật.
+        self._ngu = ngu
+        self.retry_counts: dict[str, int] = {}
 
     async def reply(
         self,
@@ -120,18 +202,38 @@ class ChatLlmAdapter:
         model: str | None = None,
     ) -> Result[LlmReply, BotError]:
         luoc_do = [x for x in (_sang_luoc_do_tool(t) for t in tools) if x is not None]
-        try:
-            resp = await self._client.generate(
-                messages=[_sang_message(m) for m in messages],
-                model=model or self._default_model,
-                tools=luoc_do or None,
-            )
-        except Exception as e:  # noqa: BLE001 — biên với thế giới ngoài
-            # Mọi lỗi provider quy về một lỗi nghiệp vụ CÓ PHÂN LOẠI. Để ngoại lệ
-            # thô đi lên sẽ phá hợp đồng `Result` của cả đường ống.
-            return Err(UpstreamError(upstream=type(self._client).__name__, message=str(e)))
+        lan = 0
+        while True:
+            try:
+                resp = await self._client.generate(
+                    messages=[_sang_message(m) for m in messages],
+                    model=model or self._default_model,
+                    tools=luoc_do or None,
+                )
+                break
+            except Exception as e:  # noqa: BLE001 — biên với thế giới ngoài
+                if _la_loi_tam_thoi(e) and lan < self._so_lan_thu_lai:
+                    status = str(_ma_trang_thai(e) or "network")
+                    self.retry_counts[status] = self.retry_counts.get(status, 0) + 1
+                    await self._ngu(_thoi_gian_cho(e, lan))
+                    lan += 1
+                    continue
+                # Mọi lỗi provider quy về một lỗi nghiệp vụ CÓ PHÂN LOẠI. Để ngoại
+                # lệ thô đi lên sẽ phá hợp đồng `Result` của cả đường ống.
+                return Err(
+                    UpstreamError(
+                        upstream=type(self._client).__name__,
+                        status_code=_ma_trang_thai(e),
+                        message=str(e),
+                    )
+                )
 
         usage = resp.usage or {}
+        cached = int(
+            usage.get(
+                "cached_tokens", usage.get("prompt_tokens_details", {}).get("cached_tokens", 0)
+            )
+        )
         return Ok(
             LlmReply(
                 text=resp.content,
@@ -140,8 +242,9 @@ class ChatLlmAdapter:
                     for tc in resp.tool_calls
                 ),
                 usage=LlmUsage(
-                    input_tokens=int(usage.get("prompt_tokens", 0)),
+                    input_tokens=max(0, int(usage.get("prompt_tokens", 0)) - cached),
                     output_tokens=int(usage.get("completion_tokens", 0)),
+                    cached_tokens=cached,
                 ),
             )
         )

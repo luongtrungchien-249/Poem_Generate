@@ -1,20 +1,28 @@
+import asyncio
+import contextlib
 import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from bootstrap.container import build_container
+from adapters.persistence.sql.engine import tao_bang
+from adapters.persistence.sql.poem_jobs import SqlPoemJobStore
+from bootstrap.container import build_container, close_container
+from bootstrap.model_validation import validate_remote_model
 from bootstrap.settings import get_settings
 from entrypoints.api.middleware.auth import AuthMiddleware
 from entrypoints.api.middleware.error_handler import ErrorHandlerMiddleware
 from entrypoints.api.middleware.rate_limit import RateLimitMiddleware
 from entrypoints.api.middleware.request_context import RequestContextMiddleware
 from entrypoints.api.routers.chat import router as chat_router
+from entrypoints.api.routers.conversations import router as conversations_router
 from entrypoints.api.routers.documents import router as documents_router
 from entrypoints.api.routers.feedback import router as feedback_router
 from entrypoints.api.routers.health import router as health_router
 from entrypoints.api.routers.poem import router as poem_router
+from entrypoints.api.routers.poem_jobs import router as poem_jobs_router
+from entrypoints.worker.poem_jobs import worker_loop
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("api")
@@ -27,8 +35,17 @@ async def lifespan(app: FastAPI):
 
     # Composition root: mỗi tiến trình dựng bộ phụ thuộc của riêng mình.
     settings = get_settings()
+    await validate_remote_model(settings)
     app.state.settings = settings
     app.state.container = build_container(settings)
+    jobs = app.state.container.poem_jobs
+    assert isinstance(jobs, SqlPoemJobStore)
+    await tao_bang(jobs.engine)
+    worker = (
+        asyncio.create_task(worker_loop(app.state.container))
+        if settings.poem_jobs.embedded_worker
+        else None
+    )
 
     # Warm up prompt registry
     try:
@@ -38,7 +55,14 @@ async def lifespan(app: FastAPI):
         logger.warning(f"Prompt warmup notice: {e}")
 
     logger.info("AI Platform API ready to accept connections.")
-    yield
+    try:
+        yield
+    finally:
+        if worker:
+            worker.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await worker
+        await close_container(app.state.container)
     # Shutdown phase
     logger.info("Shutting down AI Platform services cleanly...")
 
@@ -52,22 +76,32 @@ def create_app() -> FastAPI:
     )
 
     # Middlewares (order: Outer -> Inner)
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    # CORS chỉ bật khi có origin được khai TƯỜNG MINH.
+    #
+    # Frontend đi qua BFF của Next.js nên mọi lệnh gọi đều same-origin — không cần
+    # CORS chút nào. Danh sách rỗng thì KHÔNG gắn middleware, và trình duyệt tự
+    # chặn mọi lệnh gọi chéo. Đó là mặc định đúng.
+    #
+    # Bản trước: `allow_origins=["*"]` kèm `allow_credentials=True`. Starlette xử
+    # lý cặp đó bằng cách echo lại mọi Origin, nên mọi website đều gọi được API
+    # này kèm credential — xem chú thích ở `ServerConfig.cors_origins`.
+    cors_origins = get_settings().server.cors_origins
+    if cors_origins:
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_credentials=True,
+            allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+            allow_headers=["content-type", "x-api-key", "idempotency-key"],
+            expose_headers=["x-next-cursor"],
+        )
     app.add_middleware(ErrorHandlerMiddleware)
     app.add_middleware(RateLimitMiddleware, capacity=100, refill_rate=5.0)
     # AuthMiddleware add SAU RequestContextMiddleware nên chạy TRƯỚC nó: Starlette
     # bọc ngược thứ tự add. Xác thực phải là lớp ngoài cùng của phần nghiệp vụ —
     # request không có khoá thì không đáng tốn một trace_id.
     app.add_middleware(RequestContextMiddleware)
-    app.add_middleware(
-        AuthMiddleware, khoa_tenant=get_settings().secrets.bang_khoa_tenant()
-    )
+    app.add_middleware(AuthMiddleware, khoa_tenant=get_settings().secrets.bang_khoa_tenant())
 
     # Routers
     app.include_router(health_router)
@@ -75,6 +109,8 @@ def create_app() -> FastAPI:
     app.include_router(documents_router)
     app.include_router(feedback_router)
     app.include_router(poem_router)
+    app.include_router(poem_jobs_router)
+    app.include_router(conversations_router)
 
     return app
 
@@ -83,4 +119,5 @@ app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("entrypoints.api.app:app", host="0.0.0.0", port=8000, reload=True)

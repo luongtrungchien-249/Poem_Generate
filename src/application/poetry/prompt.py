@@ -23,57 +23,120 @@ from __future__ import annotations
 from application.poetry.plan import KHUON_HOP_LE
 from application.poetry.requirement import PoetryRequirement
 from application.prompting.builder import wrap_xml_tag
+from application.prompting.luat_tho import BANG_LUAT_THO
+from application.prompting.system import CACH_LAM_VIEC, CHI_DAN_CHAT_LUONG
 
 # `rule.py` ĐÓNG BĂNG: chỉ đọc bảng luật.
-from application.rule import LUAT, NHIP_TAI_LIEU, SO_TIENG_MOI_DONG
 
-
-def _bang_luat_cung() -> str:
-    return "\n".join(
-        f"  {d.ma}  {d.noi_dung}." for d in LUAT if d.loai == "cung"
-    )
+# ⛔ BẢNG LUẬT KHÔNG CÒN ĐỊNH NGHĨA Ở ĐÂY — hợp nhất 23/09/2026.
+#
+# 🩸 Đã có lúc file này VÀ `prompting/luat_tho.py` mỗi bên giữ một `BANG_LUAT_THO`
+# riêng, và chúng LỆCH NHAU THẬT (1.436 vs 1.938 ký tự): bản ở `prompting/` được
+# bổ sung bảng hiệu quả của bảy nhịp theo tài liệu §6, bản ở đây thì không. Tức là
+# hai đường sinh thơ đang được dạy hai phần nhịp khác nhau.
+#
+# Đó đúng là kiểu hỏng cả kiến trúc này dựng lên để tránh, và nó xảy ra vì tôi
+# tách bảng ra hai lần mà quên gộp. Nay một nguồn: `prompting/luat_tho.py`.
+#
+# Chiều import `poetry -> prompting` là chiều VỐN CÓ (dòng dưới đã import
+# `CACH_LAM_VIEC`), nên không có vòng lặp. Chiều ngược lại thì có — xem docstring
+# của `luat_tho.py`.
 
 
 CHI_DAN_SINH_THO: str = f"""Bạn là người làm thơ thất ngôn tự do tiếng Việt.
 
-RÀNG BUỘC CỨNG — vi phạm thì bài KHÔNG thuộc thể, không có ngoại lệ nào:
-{_bang_luat_cung()}
+{BANG_LUAT_THO}
+CÁCH VIẾT ĐỂ KHÔNG PHÁ KHUÔN (làm theo đúng thứ tự này):
+  1. Chọn khuôn cho dòng: bằng (B T B) hay trắc (T B T).
+  2. Chọn TRƯỚC ba tiếng ở vị trí 2, 4, 6 sao cho dấu của chúng khớp khuôn.
+  3. Sau đó mới lấp bốn tiếng còn lại (1, 3, 5, 7) cho thành câu có nghĩa.
+  4. Đọc lại dòng vừa viết, đếm tới tiếng 2, 4, 6, tra bảng dấu ở trên, đối
+     chiếu với khuôn đã chọn. Lệch một chỗ thì viết lại dòng đó.
 
-Cách đếm tiếng: dấu câu KHÔNG tính là tiếng; gạch nối thì tách tiếp
-("ra-đi-ô" = 3 tiếng); chữ số phải quy về cách đọc rồi mới đếm
-("năm 1975" = năm + một nghìn chín trăm bảy mươi lăm = 8 tiếng).
+Viết câu trước rồi mới sửa thanh là cách chắc chắn hỏng: đổi một tiếng cho đúng
+thanh thường làm gãy nghĩa, rồi sửa nghĩa lại làm lệch thanh.
 
-THANH LUẬT — mọi dòng phải khớp một trong hai khuôn, xét ở tiếng thứ 2, 4, 6:
-  khuôn bằng   B T B
-  khuôn trắc   T B T
-B = thanh bằng (ngang, huyền). T = thanh trắc (sắc, hỏi, ngã, nặng).
-Không được phá khuôn ở bất kỳ dòng nào.
+Hai dòng khác nhau được dùng hai khuôn khác nhau — không bắt buộc cả bài một khuôn.
 
-VẦN: trong mỗi cụm bốn dòng liên tiếp phải có ít nhất một cặp tiếng cuối hiệp vần.
-Sơ đồ nào cũng được — aabb, abab, abba, aaxa, aaaa… — miễn là có vần chân.
+CÁCH VIẾT ĐỂ KHÔNG HỤT VẦN (cùng lối với khuôn thanh ở trên):
+  1. Trong mỗi cụm bốn dòng, chọn hai dòng sẽ gánh vần.
+  2. Chọn TRƯỚC tiếng cuối của hai dòng đó, sao cho chúng hiệp vần với nhau.
+  3. Sau đó mới viết phần còn lại của dòng để dẫn tới tiếng ấy.
+  4. Đọc lại hai tiếng cuối, đối chiếu xem còn hiệp vần không.
 
-NHỊP: mỗi dòng ngắt theo một trong bảy kiểu {", ".join(sorted(NHIP_TAI_LIEU))},
-và cả bài nên cùng một nhịp chủ đạo.
+Chọn vần trước KHÔNG bao giờ làm lệch khuôn thanh: tiếng gánh vần là tiếng thứ 7,
+mà khuôn chỉ ràng buộc tiếng 2, 4, 6. Hai việc không tranh chỗ của nhau.
 
-CÁCH LÀM VIỆC:
-1. Viết đúng số dòng được yêu cầu, mỗi dòng đúng {SO_TIENG_MOI_DONG} tiếng.
-2. Đếm lại từng dòng TRƯỚC khi trả lời. Đếm sai là hỏng cả bài.
-3. Chỉ trả về bài thơ. Không lời dẫn, không giải thích, không đánh số dòng.
-4. TUYỆT ĐỐI KHÔNG tuyên bố bài của bạn "đúng luật". Hệ thống có bộ kiểm riêng;
-   khẳng định suông sẽ bị chặn.
-5. Khi nhận biên bản kiểm định, chỉ sửa đúng dòng bị nêu. Giữ nguyên từng chữ ở
-   các dòng đã đạt.
-6. Khi nhận khung suy luận, điền đủ bốn ô rồi mới viết lại bài.
-"""
+{CHI_DAN_CHAT_LUONG}
+{CACH_LAM_VIEC}"""
 
-# Khuôn hợp lệ được nhắc lại ở đây để test đối chiếu prompt với `plan.KHUON_HOP_LE`
-# — nếu một ngày ai đó thêm khuôn thứ ba mà quên sửa prompt thì test đỏ.
-KHUON_TRONG_CHI_DAN: frozenset[str] = KHUON_HOP_LE
+# ── KHỐI NEO VẦN, thêm 22/09/2026 ────────────────────────────────────────────
+#
+# VÌ SAO. Khối thanh luật ở trên dạy hẳn một quy trình bốn bước "chọn ràng buộc
+# trước, lấp nghĩa sau", kèm lý do: *"Viết câu trước rồi mới sửa thanh là cách
+# chắc chắn hỏng"*. Lập luận ấy đúng y nguyên với VẦN — nhưng trước hôm nay khối
+# vần chỉ TUYÊN BỐ yêu cầu rồi để mô hình tự xoay. Cùng một loại ràng buộc, một
+# cái được dạy cách làm, cái kia không.
+#
+# Ý tưởng lấy từ `compare_prompt.py` (mục "Neo vần dự kiến" trong planner của bản
+# cũ). Nhưng CHỈ NHẬP KỸ THUẬT, không nhập cơ chế: bản cũ để một lượt gọi LLM đề
+# xuất tiếng vần, ở đây không thêm lượt gọi nào và planner vẫn tất định.
+#
+# Câu cuối của khối là câu đáng giá nhất, và nó là một SỰ THẬT kiểm lại được:
+# khuôn chỉ ràng buộc tiếng 2, 4, 6 (xem `rule.khuon_cua_dong`), còn tiếng gánh
+# vần là tiếng 7. Không nói ra thì mô hình phải tự đoán hai ràng buộc có tranh
+# chỗ nhau không, và khi không chắc nó sẽ ưu tiên khuôn rồi bỏ vần.
+#
+# ⚠️ ĐÂY LÀ THAY ĐỔI ĐÚNG LOẠI ĐÃ HỎNG MỘT LẦN — cộng chữ vào một khối prompt.
+# Xem `instructions.py` §VIỆC 4. Phải đo bằng `datalake/scripts/do_ab_prompt.py`
+# trước khi giữ, và hoàn nguyên kèm ghi số nếu chỉ số chính giảm có ý nghĩa.
 
 
-def dung_luot_yeu_cau(
-    req: PoetryRequirement, khoi_vi_du: str = "", khoi_ke_hoach: str = ""
-) -> str:
+# 🔴 SỬA 21/09/2026 — BẢN TRƯỚC LÀ MỘT LỜI HỨA SUÔNG.
+#
+# Bản trước viết `KHUON_TRONG_CHI_DAN = KHUON_HOP_LE` kèm chú thích "để test đối
+# chiếu prompt với plan.KHUON_HOP_LE". Hai chuyện sai cùng lúc:
+#
+#   1. Test đó KHÔNG TỒN TẠI. `grep` toàn cây chỉ ra đúng một chỗ nhắc tên hằng
+#      số này: chính dòng khai báo nó. Đúng ca `instructions.py` đặt luật để cấm —
+#      hằng số không ai đọc chỉ làm bản kiểm kê trông đầy đủ.
+#   2. Kể cả có test, nó vẫn vô dụng: gán bí danh rồi so bí danh với bản gốc là so
+#      một giá trị với CHÍNH NÓ. Luôn xanh, không bao giờ bắt được sự lệch giữa
+#      bảng khuôn và chữ trong prompt — đúng thứ nó tự nhận là để bắt.
+#
+# Nay nó ĐỌC THẬT chuỗi prompt. Thêm một khuôn thứ ba vào `KHUON_HOP_LE` mà quên
+# sửa prompt thì tập rút ra thiếu phần tử, và test đối chiếu đỏ.
+# Mã khuôn viết KHÔNG DẤU (`bang`, `trac`) vì nó là khoá dữ liệu; chỉ dẫn gửi cho
+# mô hình viết CÓ DẤU ("khuôn bằng") vì nó là tiếng Việt cho người và cho mô hình
+# đọc. Nhịp cầu giữa hai cách viết phải khai báo ra ở đây — phép ghim đầu tiên viết
+# ngày 21/09/2026 quên mất chuyện này và đỏ ngay lần chạy đầu, đúng như mong muốn:
+# một phép ghim thật thì phải bắt được cả sự lệch của chính nó.
+#
+# Thêm khuôn thứ ba vào `KHUON_HOP_LE` mà quên khai ở đây, hoặc khai rồi mà quên
+# viết vào prompt — cả hai đều làm tập rút ra thiếu phần tử và test đối chiếu đỏ.
+_CHU_CUA_KHUON: dict[str, str] = {"bang": "bằng", "trac": "trắc"}
+
+
+def _khuon_duoc_nhac_trong_chi_dan() -> frozenset[str]:
+    """Rút những khuôn THẬT SỰ có mặt trong chỉ dẫn gửi cho mô hình."""
+    return frozenset(
+        ma
+        for ma in KHUON_HOP_LE
+        if (chu := _CHU_CUA_KHUON.get(ma)) and f"khuôn {chu}" in CHI_DAN_SINH_THO
+    )
+
+
+KHUON_TRONG_CHI_DAN: frozenset[str] = _khuon_duoc_nhac_trong_chi_dan()
+
+
+def khung_thanh_cap_dong(so_dong: int) -> str:
+    """Experimental guidance shared by stanza generation and all repair turns."""
+    return "Khung P2/P4/P6 (mỗi dòng đúng 7 tiếng): " + "; ".join(
+        f"D{i + 1} {'B-T-B' if i % 2 == 0 else 'T-B-T'}" for i in range(so_dong)
+    )
+
+
+def dung_luot_yeu_cau(req: PoetryRequirement, khoi_vi_du: str = "", khoi_ke_hoach: str = "") -> str:
     """Tầng 3 — dữ liệu của riêng lượt này, bọc thẻ để mô hình phân biệt nguồn.
 
     Chỉ đưa vào những trường CÓ giá trị. Nhồi "chưa rõ" vào prompt là dạy mô hình

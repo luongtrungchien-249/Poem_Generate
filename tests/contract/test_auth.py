@@ -113,8 +113,11 @@ def test_danh_sach_duong_cong_khai_la_DONG():
     assert "/v1/chat" not in DUONG_CONG_KHAI
     assert "/v1/poem" not in DUONG_CONG_KHAI
     assert "/v1/documents" not in DUONG_CONG_KHAI
+    # "/" chỉ trả về một dòng chỉ đường tới giao diện web — không mang dữ liệu
+    # nào của tenant. Thêm nó vào đây là một quyết định có chủ ý, và test này là
+    # nơi quyết định ấy phải được ghi lại.
     assert {
-        "/healthz", "/readyz", "/metrics", "/docs", "/redoc", "/openapi.json"
+        "/", "/healthz", "/readyz", "/metrics", "/docs", "/redoc", "/openapi.json"
     } >= DUONG_CONG_KHAI
 
 
@@ -159,3 +162,19 @@ def test_bang_khoa_bo_qua_muc_hong_nhung_KHONG_tao_khoa_rong():
     bang = s.bang_khoa_tenant()
     assert bang == {"k1": "t1", "k4": "t4"}
     assert "" not in bang, "mục hỏng không được thành một khoá rỗng cho mọi người vào"
+
+
+def test_duong_goc_khong_lo_du_lieu_nao():
+    """`/` công khai nên nó KHÔNG được mang gì ngoài chỉ đường.
+
+    Một đường công khai là đường ai cũng đọc được. Nếu sau này có người thêm số
+    liệu, tên tenant hay cấu hình vào đó cho tiện, test này phải đỏ.
+    """
+    from fastapi.testclient import TestClient
+
+    from entrypoints.api.app import app
+
+    body = TestClient(app).get("/").json()
+    assert set(body) == {
+        "service", "thong_bao", "giao_dien_web", "tai_lieu_api", "kiem_tra_song",
+    }

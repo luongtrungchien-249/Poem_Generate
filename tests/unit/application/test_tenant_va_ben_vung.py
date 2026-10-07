@@ -28,12 +28,22 @@ from contracts.feedback import FeedbackRecord
 from domain.conversation.tenant import TenantScope
 
 pytestmark = pytest.mark.unit
+_owned_engines = []
+
+
+@pytest.fixture(autouse=True)
+async def dispose_test_engines():
+    yield
+    for engine in _owned_engines:
+        await engine.dispose()
+    _owned_engines.clear()
 
 
 async def _engine(duong_dan):
     """Engine đã tạo bảng. Mỗi lần gọi là một kết nối MỚI tới cùng tệp — đó chính
     là cách mô phỏng một tiến trình khác, hoặc cùng tiến trình sau khi restart."""
     e = tao_engine(dung_dsn_sqlite(duong_dan))
+    _owned_engines.append(e)
     await tao_bang(e)
     return e
 
@@ -44,8 +54,13 @@ B = TenantScope(tenant_id="cong_ty_b")
 
 def _chunk(cid: str, noi_dung: str, tenant: str) -> EnrichedChunk:
     return EnrichedChunk(
-        id=cid, doc_id="d1", tenant_id=tenant, index=0,
-        content=noi_dung, token_count=5, embedding=[1.0, 0.0, 0.0],
+        id=cid,
+        doc_id="d1",
+        tenant_id=tenant,
+        index=0,
+        content=noi_dung,
+        token_count=5,
+        embedding=[1.0, 0.0, 0.0],
     )
 
 

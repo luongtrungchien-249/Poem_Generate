@@ -29,6 +29,8 @@ from dataclasses import dataclass
 
 from application.poem_verifier import MA_THE, dung_bien_ban
 from application.poetry.cot import can_bat_cot, dung_khung_suy_luan, tach_tho_khoi_khung
+from application.poetry.doi_chieu_chep import MA_LOI as MA_CHEP
+from application.poetry.doi_chieu_chep import tim_dong_chep
 from application.poetry.plan import PoetryPlan
 from application.poetry.quality import (
     KetQuaChatLuong,
@@ -37,7 +39,9 @@ from application.poetry.quality import (
 )
 from application.poetry.reasoning import KetQuaSuyLuan, kiem_tra_chuoi_suy_luan
 from application.poetry.requirement import PoetryRequirement
+from application.ports.chi_muc_tho import ChiMucDongThoPort, NguonDong
 from application.ports.verifier import KetQuaKiemDinh, LoiKiemDinh, OutputSpec
+from application.prompting.builder import wrap_xml_tag
 from application.rule import PoemVerdict, kiem_tra_bai_tho
 
 
@@ -52,6 +56,16 @@ class BienBanDayDu:
     chat_luong: KetQuaChatLuong
     suy_luan: KetQuaSuyLuan
     van_ban_tho: str
+    # Ý kiến TƯ VẤN của Reviewer về mạch lạc / hình ảnh. Rỗng là bình thường —
+    # nó rỗng bất cứ khi nào Reviewer không chạy hoặc lượt gọi hỏng.
+    #
+    # ⛔ KHÔNG có trường điểm ở đây, và đó là cố ý. Chỉ CÂU NHẬN XÉT đi qua. Đưa
+    # `mach_lac`/`hinh_anh` vào biên bản là mở đường cho một con số của LLM chạm
+    # tới phán quyết — thứ `test_reviewer_khong_noi_vao_cong_chan` ghim để cấm.
+    nhan_xet_reviewer: str = ""
+    # QĐ-P2: dòng trùng NGUYÊN VĂN thơ có sẵn — (số dòng, dòng, nguồn). Không rỗng
+    # thì bài bị chặn. Đây là chuẩn của dự án, KHÔNG phải luật thơ: bài vẫn thuộc thể.
+    dong_chep: tuple[tuple[int, str, NguonDong], ...] = ()
 
 
 class PoemVerifierDayDu:
@@ -64,15 +78,21 @@ class PoemVerifierDayDu:
         `chu_de`     str          — để chấm CL3
         `yeu_cau`    PoetryRequirement
         `ke_hoach`   PoetryPlan
+        `nhan_xet_reviewer`  str  — ý kiến tư vấn, CHỈ để nối vào biên bản
     Tham số lạ bị bỏ qua, đúng hợp đồng của `OutputSpec`.
     """
 
     ma_the = MA_THE
 
-    def __init__(self, *, bat_cot: bool = True) -> None:
+    def __init__(
+        self, *, bat_cot: bool = True, chi_muc_chep: ChiMucDongThoPort | None = None
+    ) -> None:
         # `bat_cot=False` dùng cho ca đối chiếu: đo xem CoT có thực sự giúp hội tụ
         # nhanh hơn không. Không phải cờ tắt chất lượng.
         self.bat_cot = bat_cot
+        # QĐ-P2. None = không kiểm chép (test, ca không có kho). Tra trong bộ nhớ,
+        # đồng bộ — giữ đúng hợp đồng "cổng chặn không trượt vì I/O".
+        self.chi_muc_chep = chi_muc_chep
 
     # ---- phần dùng chung cho cả cổng chặn lẫn báo cáo -----------------------
 
@@ -88,6 +108,10 @@ class PoemVerifierDayDu:
         chu_de = tham.get("chu_de")
         yeu_cau = tham.get("yeu_cau")
         ke_hoach = tham.get("ke_hoach")
+        # Reviewer chạy NGOÀI cổng (nó gọi mạng) rồi gửi kết quả vào qua đây. Đọc
+        # một chuỗi có sẵn thì `kiem` vẫn đồng bộ, thuần và tất định — đúng hợp
+        # đồng của `OutputVerifier`. Xem chú thích ở `_dung_bien_ban`.
+        nhan_xet = tham.get("nhan_xet_reviewer")
 
         cl = danh_gia_chat_luong(v, chu_de=chu_de if isinstance(chu_de, str) else None)
         sl = kiem_tra_chuoi_suy_luan(
@@ -97,14 +121,17 @@ class PoemVerifierDayDu:
             yeu_cau=yeu_cau if isinstance(yeu_cau, PoetryRequirement) else None,
             ke_hoach=ke_hoach if isinstance(ke_hoach, PoetryPlan) else None,
         )
+        chep = tim_dong_chep(tho, self.chi_muc_chep)
         return BienBanDayDu(
-            dat=sl.dat,
+            dat=sl.dat and not chep,
             dat_luat=v.dat,
             dat_chat_luong=cl.dat,
             verdict=v,
             chat_luong=cl,
             suy_luan=sl,
             van_ban_tho=tho,
+            nhan_xet_reviewer=nhan_xet.strip() if isinstance(nhan_xet, str) else "",
+            dong_chep=chep,
         )
 
     # ---- hợp đồng OutputVerifier -------------------------------------------
@@ -150,8 +177,19 @@ class PoemVerifierDayDu:
                         )
                     )
 
+        # Lỗi CHÉP (QĐ-P2) — có địa chỉ dòng, như lỗi luật.
+        for so, dong, nguon in bb.dong_chep:
+            loi.append(
+                LoiKiemDinh(
+                    ma=MA_CHEP, dia_chi=f"D{so}",
+                    ky_vong="dòng tự viết, không trùng nguyên văn thơ đã có",
+                    thuc_te=f'"{dong}" đã có trong {_ten_nguon(nguon)}',
+                    goi_y="Viết lại dòng này bằng lời của chính bạn, giữ khuôn thanh.",
+                )
+            )
+
         return KetQuaKiemDinh(
-            dat=sl.dat,
+            dat=bb.dat,
             loi=tuple(loi),
             bien_ban=self._dung_bien_ban(bb),
             mo_ta_mem=self._mo_ta_mem(bb),
@@ -177,6 +215,14 @@ class PoemVerifierDayDu:
         # 2. Luật trượt -> biên bản có địa chỉ dòng. KHÔNG kèm CoT.
         if not bb.dat_luat:
             khuc.append(dung_bien_ban(bb.verdict))
+
+        # 2b. Dòng chép nguyên văn (QĐ-P2) — có địa chỉ, rẻ để sửa như lỗi luật.
+        if bb.dong_chep:
+            khuc.append("")
+            khuc.append("Dòng trùng NGUYÊN VĂN thơ đã có — phải tự viết:")
+            for so, dong, nguon in bb.dong_chep:
+                khuc.append(f'D{so} | "{dong}" — đã có trong {_ten_nguon(nguon)}')
+            khuc.append("   | Viết lại đúng các dòng này, giữ khuôn thanh; không sửa dòng khác.")
 
         # 3. Bản nháp lệch kế hoạch.
         if bb.suy_luan.buoc_dung_lai == "B3":
@@ -210,6 +256,25 @@ class PoemVerifierDayDu:
                 + "; ".join(f"{c.ten} = {c.so_do} (cần {c.nguong})" for c in bb.chat_luong.chieu_hong)
             )
 
+        # 6. ĐIỂM SÁNG CẦN GIỮ — ý kiến tư vấn của Reviewer, nếu có.
+        #
+        # VÌ SAO Ở CUỐI: các khúc trên nói CÁI GÌ HỎNG, khúc này nói CÁI GÌ ĐÁNG
+        # GIỮ. Đặt cạnh câu "Các dòng ... đã đạt — GIỮ NGUYÊN" của `dung_bien_ban`
+        # vì hai câu cùng trả lời một câu hỏi: viết lại thì giữ lại những gì.
+        #
+        # 🩸 KHOẢNG TRỐNG NÀY ĐÃ TỪNG CÓ THẬT. `CHI_DAN_SUA["sua_dong"]` bảo mô
+        # hình *"giữ hình ảnh của chính dòng đó"*, nhưng không kênh nào chở thông
+        # tin hình ảnh nào đáng giữ. Mô hình được lệnh giữ mà không được cho biết
+        # giữ cái gì. Đây là kênh đó.
+        #
+        # ⛔ BỌC THẺ. `nhan_xet` do một mô hình viết ra, nên nó là DỮ LIỆU, không
+        # phải mệnh lệnh — đúng cách `dung_luot_yeu_cau` bọc ví dụ và kế hoạch.
+        # Không bọc thì một câu nhận xét trông giống chỉ dẫn sẽ được thi hành.
+        if bb.nhan_xet_reviewer:
+            khuc.append("")
+            khuc.append(wrap_xml_tag("diem_sang_can_giu", bb.nhan_xet_reviewer))
+            khuc.append("Đây là nhận xét THAM KHẢO, không phải lỗi phải sửa.")
+
         return "\n".join(k for k in khuc if k is not None).strip()
 
     def _mo_ta_mem(self, bb: BienBanDayDu) -> tuple[str, ...]:
@@ -225,3 +290,13 @@ class PoemVerifierDayDu:
         ra.extend(mo_ta_chat_luong(bb.chat_luong))
         ra.extend(v.ghi_chu)
         return tuple(ra)
+
+
+def _ten_nguon(n: NguonDong) -> str:
+    """Tên nguồn để ghi vào biên bản. Kho HF là CC-BY-4.0 nên ghi tác giả khi có."""
+    phan = [n.kho]
+    if n.tieu_de:
+        phan.append(f"«{n.tieu_de}»")
+    if n.tac_gia:
+        phan.append(n.tac_gia)
+    return " · ".join(phan)

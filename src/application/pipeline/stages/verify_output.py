@@ -25,9 +25,8 @@ from __future__ import annotations
 
 import hashlib
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
-from typing import Literal, TypeAlias
 
 from application.pipeline.stages.generate import generate_react_loop
 from application.ports.llm import (
@@ -42,6 +41,11 @@ from application.ports.tools import ToolPort
 from application.ports.verifier import KetQuaKiemDinh, OutputSpec, OutputVerifier
 from application.prompting.builder import wrap_xml_tag
 from application.prompting.context import ContextEnvelope
+from application.prompting.system import (
+    CHI_DAN_SUA,
+    THANG_LEO_THANG,
+    ChienLuoc,
+)
 from domain.common.errors import BotError, BudgetExceeded, OutputKhongDat, UpstreamTimeout
 from domain.common.result import Err, Ok, Result
 
@@ -67,21 +71,11 @@ from domain.common.result import Err, Ok, Result
 # Nay thang CHỈ nhích khi có BẰNG CHỨNG là cách nhẹ không ăn — số lỗi không giảm
 # hai lượt liên tiếp, hoặc mô hình trả lại đúng bài đã thấy. Số lượt không còn tự
 # nó đẩy thang.
-ChienLuoc: TypeAlias = Literal["sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai"]
-
-THANG_LEO_THANG: tuple[ChienLuoc, ...] = ("sua_dong", "sinh_lai_kho", "sinh_lai_ca_bai")
-
-_CHI_DAN: dict[ChienLuoc, str] = {
-    "sua_dong": "Chỉ viết lại đúng những dòng bị nêu. Giữ nguyên từng chữ ở các dòng đã đạt.",
-    "sinh_lai_kho": (
-        "Viết lại cả khổ chứa dòng hỏng, giữ sơ đồ vần của khổ đó. "
-        "Các khổ khác giữ nguyên."
-    ),
-    "sinh_lai_ca_bai": (
-        "Viết lại toàn bài từ đầu. Bài ở trên là PHẢN VÍ DỤ — đừng lặp lại cách "
-        "triển khai đó, nó dẫn tới lỗi không sửa được bằng cách vá từng dòng."
-    ),
-}
+# `ChienLuoc`, `THANG_LEO_THANG` và chỉ dẫn từng bước nay ở `prompting/system.py`.
+#
+# Chúng từng nằm ngay đây, và `_CHI_DAN` còn là biến PRIVATE — nghĩa là chỉ dẫn
+# quan trọng nhất của vòng sửa không nằm trong bất kỳ bản kiểm kê prompt nào, và
+# không test nào về nội dung prompt chạm tới được.
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,12 +94,20 @@ def _bam(van_ban: str) -> str:
     return hashlib.sha256(chuan.encode("utf-8")).hexdigest()
 
 
+DONG_TOI_THIEU = 4  # H3: văn bản dưới 4 dòng không thể là một bài của thể này.
+
+
+def co_dang_bai_tho(van_ban: str) -> bool:
+    """Văn bản CÓ HÌNH DẠNG một bản nháp thơ (≥ 4 dòng không rỗng)? Không phán luật."""
+    return sum(1 for d in van_ban.splitlines() if d.strip()) >= DONG_TOI_THIEU
+
+
 def _chien_luoc_cho_luot(luot: int) -> ChienLuoc:
     return THANG_LEO_THANG[min(luot, len(THANG_LEO_THANG) - 1)]
 
 
 def _dung_luot_sua(
-    ban_nhap: str, ket_qua: KetQuaKiemDinh, chien_luoc: ChienLuoc
+    ban_nhap: str, ket_qua: KetQuaKiemDinh, chien_luoc: ChienLuoc, them: str = ""
 ) -> tuple[LlmMessage, LlmMessage]:
     """Dựng cặp lượt hội thoại cho vòng sửa.
 
@@ -116,7 +118,12 @@ def _dung_luot_sua(
       - Biên bản bọc thẻ XML để mô hình phân biệt được đâu là dữ liệu kiểm định,
         đâu là nội dung nó tự viết.
     """
-    noi_dung = f"{ket_qua.bien_ban}\n\n{_CHI_DAN[chien_luoc]}"
+    noi_dung = f"{ket_qua.bien_ban}\n\n{CHI_DAN_SUA[chien_luoc]}"
+    # `them` chỉ có giá trị ở nấc cuối của thang, và chỉ khi người dùng đường ống
+    # đưa vào một móc. Nối SAU chỉ dẫn sửa vì nó nói "lần này làm khác đi ra sao",
+    # tức là bổ nghĩa cho chỉ dẫn ấy chứ không thay thế nó.
+    if them:
+        noi_dung = f"{noi_dung}\n\n{them}"
     return (
         AssistantMessage(content=ban_nhap),
         UserMessage(content=wrap_xml_tag("bien_ban_kiem_dinh", noi_dung)),
@@ -124,7 +131,9 @@ def _dung_luot_sua(
 
 
 def _chan_doan(ket_qua: KetQuaKiemDinh, so_luot: int) -> str:
-    dong_loi = "; ".join(f"{e.dia_chi} {e.ma}: cần {e.ky_vong}, đang {e.thuc_te}" for e in ket_qua.loi)
+    dong_loi = "; ".join(
+        f"{e.dia_chi} {e.ma}: cần {e.ky_vong}, đang {e.thuc_te}" for e in ket_qua.loi
+    )
     return f"Sau {so_luot} lượt sửa vẫn còn {len(ket_qua.loi)} lỗi cứng — {dong_loi}"
 
 
@@ -141,6 +150,9 @@ async def generate_with_verification(
     timeout_sec: float = 60.0,
     should_stop_hook: Callable[[], bool] | None = None,
     default_model: str = "gpt-4o-mini",
+    lam_giau_spec: Callable[[str], Awaitable[Mapping[str, object]]] | None = None,
+    khi_leo_het_thang: Callable[[KetQuaKiemDinh], str] | None = None,
+    progress_hook: Callable[[str, dict[str, object]], Awaitable[None]] | None = None,
 ) -> Result[VerifiedOutput, BotError]:
     """Sinh → kiểm → bắt buộc soạn lại. Bảy chặn cứng G1–G7, đánh số tại chỗ."""
     bat_dau = time.monotonic()
@@ -153,9 +165,12 @@ async def generate_with_verification(
     lan_khong_tien_bo = 0
     da_thay: set[str] = set()
     leo_them = 0
+    da_lam_giau = False
 
     # CHẶN G1: trần số lượt. Lượt 0 là lần sinh đầu, các lượt sau là lượt sửa.
     for luot in range(max_repair_rounds + 1):
+        if progress_hook is not None:
+            await progress_hook("repairing" if luot else "generating", {"luot_sua": luot})
         # CHẶN G2: deadline, kiểm ĐẦU mỗi lượt chứ không giữa chừng
         if time.monotonic() - bat_dau > timeout_sec:
             return Err(UpstreamTimeout(upstream="verify_output", timeout_sec=timeout_sec))
@@ -187,6 +202,8 @@ async def generate_with_verification(
             ctx=ctx,
             should_stop_hook=should_stop_hook,
             default_model=default_model,
+            # GĐ3.4: đừng để một câu dẫn thế chỗ bài thơ mô hình vừa đưa đi kiểm.
+            la_ban_nhap=co_dang_bai_tho,
         )
         # So khớp tagged union bằng `isinstance`, đúng quy ước của dự án: nó thu
         # hẹp kiểu ở CẢ HAI nhánh, còn TypeGuard (`is_ok`/`is_err`) chỉ thu hẹp ở
@@ -195,6 +212,8 @@ async def generate_with_verification(
             return Err(sinh.error)
 
         ban_nhap = sinh.value
+        if progress_hook is not None:
+            await progress_hook("verifying", {"luot_sua": luot})
         ban_nhap_cuoi = ban_nhap
         ket_qua = verifier.kiem(ban_nhap, spec)
         ket_qua_cuoi = ket_qua
@@ -208,6 +227,32 @@ async def generate_with_verification(
                     chien_luoc_cuoi=chien_luoc_cuoi,
                 )
             )
+
+        # LÀM GIÀU BIÊN BẢN — MỘT LẦN DUY NHẤT, trên bản nháp trượt đầu tiên.
+        #
+        # Khe này tồn tại vì một ràng buộc thật: `OutputVerifier.kiem` phải ĐỒNG
+        # BỘ, THUẦN và TẤT ĐỊNH (`ports/verifier.py`), nên không thứ gì gọi mạng
+        # được phép chạy bên trong nó. Nhưng có thứ đáng đưa vào biên bản mà chỉ
+        # một lượt gọi mô hình mới lấy được — ý kiến của Reviewer về chỗ nào trong
+        # bài đáng giữ chẳng hạn.
+        #
+        # Lối ra: gọi ở NGOÀI cổng, nhét kết quả vào `spec.tham_so`, rồi kiểm lại.
+        # Cổng vẫn thuần vì nó chỉ đọc một chuỗi đã có sẵn trong spec.
+        #
+        # Tầng này KHÔNG biết gì về thơ hay Reviewer — nó chỉ gọi một callback do
+        # người dùng đường ống đưa vào. Nhét `xin_nhan_xet` thẳng vào đây là kéo
+        # một thể loại cụ thể vào đường ống chung, và `test_layer_boundaries` đúng
+        # ra phải đỏ vì chuyện đó.
+        #
+        # `verifier.kiem` chạy lại là RẺ: nó thuần và tính bằng mili-giây. Đổi lại,
+        # biên bản gửi mô hình mang đủ ngữ cảnh ngay từ lượt sửa đầu.
+        if lam_giau_spec is not None and not da_lam_giau:
+            da_lam_giau = True
+            bo_sung = await lam_giau_spec(ban_nhap)
+            if bo_sung:
+                spec = OutputSpec(ma_the=spec.ma_the, tham_so={**spec.tham_so, **bo_sung})
+                ket_qua = verifier.kiem(ban_nhap, spec)
+                ket_qua_cuoi = ket_qua
 
         # CHẶN G5: không tiến bộ. Số lỗi phải GIẢM; đứng yên hai lượt liên tiếp
         # nghĩa là cách sửa hiện tại không ăn, phải leo thang chứ không xin lại.
@@ -231,16 +276,25 @@ async def generate_with_verification(
         # CHỈ `leo_them` điều khiển thang. `luot` không còn góp vào — xem chú
         # thích ở `THANG_LEO_THANG`.
         chien_luoc_cuoi = _chien_luoc_cho_luot(leo_them)
-        messages.extend(_dung_luot_sua(ban_nhap, ket_qua, chien_luoc_cuoi))
+
+        # LEO HET THANG -> cho phep doi ca BAN THIET KE, khong chi pham vi viet lai.
+        them = (
+            khi_leo_het_thang(ket_qua)
+            if khi_leo_het_thang is not None and chien_luoc_cuoi == THANG_LEO_THANG[-1]
+            else ""
+        )
+        messages.extend(_dung_luot_sua(ban_nhap, ket_qua, chien_luoc_cuoi, them))
 
     # CHẶN G7: fail closed. Hết lượt thì KHÔNG trả bài sai — kể cả khi đã có văn
     # bản trông ổn. Trả lỗi có chẩn đoán để tầng trên nói thật với người dùng.
     assert ket_qua_cuoi is not None  # vòng chạy ít nhất một lượt
-    _ = ban_nhap_cuoi  # giữ lại cho chẩn đoán; KHÔNG đưa vào đường trả về
+    # `ban_nhap_cuoi` đi kèm lỗi CHỈ để chẩn đoán (bộ đo, Plan_PoeTone GĐ3.4). Nó
+    # không nằm trong `repr` của lỗi và API không đọc nó — bài sai vẫn không rời hệ thống.
     return Err(
         OutputKhongDat(
             ma_the=spec.ma_the,
             so_luot_da_sua=max_repair_rounds,
             chan_doan=_chan_doan(ket_qua_cuoi, max_repair_rounds),
+            ban_nhap_cuoi=ban_nhap_cuoi,
         )
     )

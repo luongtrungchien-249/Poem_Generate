@@ -31,10 +31,8 @@ forbidden_modules =
     redis
     sqlalchemy
     yaml
-# NO DEBT: domain.llm.token con dung contracts.chat.Message (Pydantic).
-# Se go o Buoc 4 khi tach Message domain khoi DTO cua API.
-ignore_imports =
-    domain.llm.token -> contracts.chat
+    contracts
+    pydantic
 
 [importlinter:contract:application-khong-biet-cong-nghe]
 name = Application khong duoc import thu vien ha tang

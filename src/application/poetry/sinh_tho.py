@@ -33,23 +33,31 @@ from dataclasses import dataclass
 from typing import TypeAlias
 
 from application.pipeline.stages.verify_output import generate_with_verification
-from application.poetry.fewshot import chon_che_do, chon_vi_du, dung_khoi_vi_du
+from application.poetry.fewshot import ViDuDuocChon, chon_vi_du, dung_khoi_vi_du
 from application.poetry.plan import PoetryPlan
-from application.poetry.planner import lap_ke_hoach_hop_le, mo_ta_ke_hoach_cho_mo_hinh
-from application.poetry.prompt import dung_luot_yeu_cau
+from application.poetry.planner import (
+    lap_ke_hoach_hop_le,
+    lap_lai_ke_hoach,
+    mo_ta_ke_hoach_cho_mo_hinh,
+)
+from application.poetry.progress import ProgressHook, report
+from application.poetry.prompt import dung_luot_yeu_cau, khung_thanh_cap_dong
 from application.poetry.requirement import (
     CanHoi,
     PoetryRequirement,
     danh_gia_du_thong_tin,
 )
-from application.poetry.sinh_theo_kho import SO_UNG_VIEN_MAC_DINH, sinh_tung_kho
+from application.poetry.reviewer import xin_nhan_xet
+from application.poetry.sinh_theo_kho import SO_SONG_SONG, SO_UNG_VIEN_MAC_DINH, sinh_tung_kho
 from application.poetry.state import DauVetTrangThai
+from application.poetry.tieu_de import dat_tieu_de
+from application.poetry.tts_style import huong_dan_doc
 from application.poetry.verifier import BienBanDayDu, PoemVerifierDayDu
 from application.ports.llm import CallContext, LlmPort, UserMessage
 from application.ports.poem_corpus import PoemCorpusPort
 from application.ports.rate_limit import RateLimitPort
 from application.ports.tools import ToolPort
-from application.ports.verifier import OutputSpec
+from application.ports.verifier import KetQuaKiemDinh, OutputSpec
 from application.prompting.context import ContextEnvelope
 from domain.common.errors import BotError
 from domain.common.result import Err, Ok, Result
@@ -85,6 +93,13 @@ class DaSinhTho:
     # §31 — đường đi thật của yêu cầu này qua máy trạng thái. §23 đòi reviewer thấy
     # được lịch sử; không ghi thì sau sự cố không ai biết hệ thống đã đi qua đâu.
     duong_di: tuple[str, ...] = ()
+    # QĐ-TD-1. Rỗng là giá trị HỢP LỆ, không phải lỗi: tiêu đề đặt bằng một lượt
+    # gọi phụ sau khi bài đã qua cổng, và lượt đó hỏng thì bài vẫn nguyên vẹn.
+    # Xem `poetry/tieu_de.py`.
+    tieu_de: str = ""
+    # Hướng dẫn cho giọng đọc máy, chốt 22/09/2026. Rỗng cũng là giá trị HỢP LỆ,
+    # cùng lý do với `tieu_de`. Xem `poetry/tts_style.py`.
+    huong_dan_doc: str = ""
 
 
 KetQuaSinhTho: TypeAlias = CanLamRo | DaSinhTho
@@ -104,9 +119,14 @@ async def sinh_bai_tho(
     timeout_sec: float = 60.0,
     should_stop_hook: Callable[[], bool] | None = None,
     default_model: str = "gpt-4o-mini",
+    so_song_song: int = SO_SONG_SONG,
+    progress_hook: ProgressHook | None = None,
+    adaptive_candidates: bool = False,
+    line_framing: bool = False,
 ) -> Result[KetQuaSinhTho, BotError]:
     """Sinh một bài thơ đã qua luật, chất lượng và sáu bước suy luận."""
     vet = DauVetTrangThai()
+    await report(progress_hook, "planning")
     vet.chuyen("VALIDATED", "qua rào đầu vào")
     vet.chuyen("ANALYZING", "đọc yêu cầu đã chuẩn hoá")
 
@@ -127,16 +147,28 @@ async def sinh_bai_tho(
         },
     )
 
-    # §26–28. Kho vắng, hoặc không có ví dụ nào giống yêu cầu -> lùi về zero-shot,
-    # đúng §32 *Retrieval Failure -> Zero-shot generation -> Verification*. Thiếu
-    # ví dụ làm bài KHÓ HƠN, không làm hệ thống hỏng: vòng ngoài vẫn bảo đảm.
-    che_do = chon_che_do(yeu_cau)
-    if corpus:
-        vet.chuyen("RESEARCHING", f"tra kho thơ mẫu, chế độ {che_do}")
-    vi_du = chon_vi_du(corpus.tat_ca(), yeu_cau, che_do=che_do) if corpus else ()
-    if not vi_du:
-        # §32 Retrieval Failure -> zero-shot.
-        che_do = "zero_shot"
+    # ✅ ONE-SHOT CHO MỌI YÊU CẦU — QĐ-P4, chủ dự án chốt 26/09/2026.
+    #
+    # Few-shot bị tắt ngày 22/09 để tiết kiệm token. A/B 26/09 (gpt-4o-mini, 12 chủ
+    # đề × 16 ứng viên khổ đầu mỗi nhánh, `datalake/scripts/do_p.py --vi-du 0 1 3`):
+    #
+    #                        zero-shot   ONE-SHOT   3 ví dụ
+    #     dòng đủ 7 tiếng      58,7 %     98,7 %    93,6 %
+    #     p (đủ tiếng+khuôn)   22,5 %     46,6 %    43,0 %
+    #     chép dòng bài mẫu      0          0         0
+    #     token vào           155k       169k      186k
+    #
+    # Một ví dụ gấp đôi `p` với +10 % token; ví dụ thứ hai, thứ ba không thêm gì.
+    # Baseline 200 đề (20 % đạt) chạy zero-shot — few-shot là khác biệt lớn nhất
+    # giữa lượt đo 21/09 (83 %) và hôm nay. Xem `docs/Plan_PoeTone.md` §0.E–0.F.
+    #
+    # CỐ Ý BỎ QUA `chon_che_do`: nó trả zero-shot khi người dùng không nêu ràng buộc
+    # nào — tức đúng ca phổ biến nhất của `/v1/poem`. Lợi ích đo được ở trên không
+    # phụ thuộc số ràng buộc, nên không có lý do giữ zero-shot cho ca đó.
+    vi_du: tuple[ViDuDuocChon, ...] = (
+        chon_vi_du(corpus.tat_ca(), yeu_cau, che_do="one_shot") if corpus else ()
+    )
+    che_do = "one_shot" if vi_du else "zero_shot"
 
     vet.chuyen("PLANNING", "lập kế hoạch tất định từ yêu cầu")
     ke_hoach = lap_ke_hoach_hop_le(yeu_cau)
@@ -152,6 +184,7 @@ async def sinh_bai_tho(
                     dung_khoi_vi_du(vi_du),
                     mo_ta_ke_hoach_cho_mo_hinh(ke_hoach) if ke_hoach else "",
                 )
+                + ("\n" + khung_thanh_cap_dong(yeu_cau.so_dong_int or 4) if line_framing else "")
             ),
         ),
         tokens_used=0,
@@ -169,6 +202,7 @@ async def sinh_bai_tho(
     #
     # Thất bại ở đây KHÔNG phải lỗi: rơi xuống vòng sinh–kiểm–sửa cũ bên dưới.
     vet.chuyen("GENERATING", "sinh từng khổ, chọn trong nhiều ứng viên")
+    await report(progress_hook, "generating")
     bo_sinh = "mot_lan"
     da_dung = 0
     if so_ung_vien_moi_kho > 1:
@@ -180,12 +214,23 @@ async def sinh_bai_tho(
             khoi_vi_du=dung_khoi_vi_du(vi_du),
             so_ung_vien=so_ung_vien_moi_kho,
             default_model=default_model,
+            # Tool tự soi cho bước cứu khổ bằng ReAct. Trước 22/09/2026 đường này
+            # chạy với `tools=()`, nên mô hình viết mù rồi để cổng chặn — thấy rõ
+            # nhất ở bài 8 chữ lọt ra ngoài mà không ai đếm tiếng giùm nó.
+            tools=tools,
+            chi_muc_chep=bo_kiem.chi_muc_chep,
+            so_song_song=so_song_song,
+            progress_hook=progress_hook,
+            should_stop_hook=should_stop_hook,
+            adaptive_candidates=adaptive_candidates,
+            line_framing=line_framing,
         )
         if isinstance(theo_kho, Ok) and theo_kho.value.du_kho:
             da_dung = theo_kho.value.so_ung_vien_da_dung
             # Bài ghép xong VẪN đi qua cổng kiểm đầy đủ. Bộ sinh không có quyền
             # phán — nó chỉ đề nghị.
             bien_ban_kho = bo_kiem.lap_bien_ban(theo_kho.value.van_ban, spec)
+            await report(progress_hook, "verifying")
             if bien_ban_kho.dat:
                 vet.chuyen("VERIFYING", "kiểm bài ghép từ các khổ đã chọn")
                 vet.chuyen("VERIFIED", "qua toàn bộ sáu bước suy luận")
@@ -202,15 +247,68 @@ async def sinh_bai_tho(
                         duong_di=(*vet.duong_di(), "FINAL_RESPONSE"),
                         bo_sinh="tung_kho",
                         so_ung_vien_da_dung=da_dung,
+                        # Đặt tiêu đề SAU cổng kiểm, trên bài đã đạt. Hỏng thì rỗng.
+                        tieu_de=await dat_tieu_de(
+                            bien_ban_kho.van_ban_tho,
+                            llm=llm,
+                            ctx=ctx,
+                            default_model=default_model,
+                        ),
+                        huong_dan_doc=await huong_dan_doc(
+                            bien_ban_kho.van_ban_tho,
+                            llm=llm,
+                            ctx=ctx,
+                            default_model=default_model,
+                        ),
                     )
                 )
         elif isinstance(theo_kho, Err):
             return Err(theo_kho.error)
 
     # ════ ĐƯỜNG LÙI: sinh cả bài rồi sửa ════
+
+    async def _xin_diem_sang(ban_nhap: str) -> dict[str, object]:
+        """Hỏi Reviewer bài này được ở chỗ nào, để lượt sửa biết phải giữ gì.
+
+        ⛔ BẤT BIẾN: CHỈ câu nhận xét đi qua. Hai điểm `mach_lac`/`hinh_anh` bị bỏ
+        lại ở đây, cố ý — xem `reviewer.py`. Điểm của một LLM không được chạm tới
+        phán quyết, kể cả gián tiếp qua biên bản.
+
+        Hỏng thì trả dict rỗng: Reviewer là TƯ VẤN, một lượt gọi phụ hỏng không
+        được phép làm hỏng vòng sửa.
+        """
+        nx = await xin_nhan_xet(ban_nhap, llm=llm, ctx=ctx, default_model=default_model)
+        return {"nhan_xet_reviewer": nx.nhan_xet} if nx.co_y_kien and nx.nhan_xet else {}
+
+    def _ke_hoach_khac(ket_qua: KetQuaKiemDinh) -> str:
+        """Nấc cuối của thang: đổi luôn BẢN THIẾT KẾ, không chỉ phạm vi viết lại.
+
+        Leo tới `sinh_lai_ca_bai` nghĩa là vá từng dòng và viết lại từng khổ đều
+        không ăn. Bảo mô hình dựng lại theo đúng kế hoạch vừa dẫn nó tới đó là xin
+        lại y hệt một lần nữa.
+
+        TẤT ĐỊNH và KHÔNG thêm lượt gọi: `lap_lai_ke_hoach` chỉ đảo pha khuôn hoặc
+        đổi nhịp, và chỉ khi biên bản có đúng loại lỗi đòi đổi. Nội dung của người
+        dùng không bị đụng tới.
+        """
+        if ke_hoach is None:
+            return ""
+        moi = lap_lai_ke_hoach(ke_hoach, [x.ma for x in ket_qua.loi])
+        if moi == ke_hoach:
+            # Không có bằng chứng đòi đổi -> đừng đổi. Đổi bừa một kế hoạch vốn
+            # không sai là làm hỏng thứ đang đúng.
+            return ""
+        return (
+            "Kế hoạch cũ không ăn. Lần này theo kế hoạch đã đổi dưới đây:\n"
+            + mo_ta_ke_hoach_cho_mo_hinh(moi)
+        )
+
     kq = await generate_with_verification(
         envelope=envelope,
         spec=spec,
+        khi_leo_het_thang=_ke_hoach_khac,
+        # Chỉ chạy khi bản nháp ĐẦU TIÊN trượt — bài đạt ngay không tốn lượt nào.
+        lam_giau_spec=_xin_diem_sang,
         verifier=bo_kiem,
         llm=llm,
         tools=tools,
@@ -220,6 +318,7 @@ async def sinh_bai_tho(
         timeout_sec=timeout_sec,
         should_stop_hook=should_stop_hook,
         default_model=default_model,
+        progress_hook=progress_hook,
     )
     if isinstance(kq, Err):
         return Err(kq.error)
@@ -247,5 +346,11 @@ async def sinh_bai_tho(
             duong_di=(*vet.duong_di(), "FINAL_RESPONSE"),
             bo_sinh=bo_sinh,
             so_ung_vien_da_dung=da_dung,
+            tieu_de=await dat_tieu_de(
+                bien_ban.van_ban_tho, llm=llm, ctx=ctx, default_model=default_model
+            ),
+            huong_dan_doc=await huong_dan_doc(
+                bien_ban.van_ban_tho, llm=llm, ctx=ctx, default_model=default_model
+            ),
         )
     )

@@ -50,7 +50,10 @@ logger = logging.getLogger("api.auth")
 # khoá", nên thêm một đường công khai là một hành động có chủ ý, không phải tác dụng
 # phụ của một mẫu khớp tiền tố nào đó.
 DUONG_CONG_KHAI: frozenset[str] = frozenset(
-    {"/healthz", "/readyz", "/metrics", "/docs", "/redoc", "/openapi.json"}
+    # "/" chỉ trả về một dòng chỉ đường tới giao diện web — không có dữ liệu nào
+    # của tenant, nên công khai được. Bắt xác thực ở đây thì người mở nhầm cổng
+    # trong trình duyệt nhận 401 và càng khó đoán chuyện gì đang xảy ra.
+    {"/", "/healthz", "/readyz", "/metrics", "/docs", "/redoc", "/openapi.json"}
 )
 
 TEN_HEADER = "x-api-key"

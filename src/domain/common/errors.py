@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TypeAlias
 
 
@@ -53,6 +53,11 @@ class OutputKhongDat:
     ma_the: str
     so_luot_da_sua: int
     chan_doan: str
+    # Bản nháp cuối đã trượt — CHỈ để chẩn đoán nội bộ (bộ đo). Không tầng nào được
+    # đưa trường này ra ngoài: fail closed nghĩa là bài sai không rời hệ thống.
+    # `repr=False` vì tool chat trả `str(lỗi)` cho mô hình — thiếu nó là bài sai
+    # lọt ra qua đường vòng.
+    ban_nhap_cuoi: str = field(default="", repr=False)
 
 
 BotError: TypeAlias = (

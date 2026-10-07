@@ -10,7 +10,7 @@ types:
 	mypy src
 
 arch:
-	lint-imports
+	PYTHONPATH=src lint-imports
 
 test:
 	pytest -q

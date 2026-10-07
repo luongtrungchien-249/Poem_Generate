@@ -1,6 +1,6 @@
 # KIẾN TRÚC TẦNG CỦA `rule.py`
 
-**Cập nhật:** 18/09/2026 · **Đối tượng:** `src/application/rule.py` — 2.200 dòng. 45 hàm
+**Cập nhật:** 18/09/2026 · **Đối tượng:** `src/application/rule.py` — 2.238 dòng. 46 hàm
 **Tài liệu luật gốc:** `docs/Luat_Tho_That_Ngon_Tu_Do.md`
 **Corpus đo:** `datalake/dataraw/final_data_7_chu.jsonl` — 67.150 bản ghi
 **Sinh lại số liệu:** `python datalake/scripts/kiem_tra_toan_bo.py`
@@ -851,17 +851,17 @@ Sơ đồ vần mà phụ thuộc thứ tự dòng thì **mọi số liệu tầ
 
 | Sơ đồ | Số cụm |                                        |
 | -------- | -------: | -------------------------------------- |
-| `axax` |   37.312 |                                        |
-| `aaxa` |   32.145 | ✓ §5.2                               |
-| `xaxa` |   26.805 |                                        |
-| `aaaa` |   19.921 | độc vận — trước QĐ-7b bị loại |
-| `xaax` |   17.079 |                                        |
-| `xxaa` |   17.002 |                                        |
+| `axax` |   37.314 |                                        |
+| `aaxa` |   32.147 | ✓ §5.2                               |
+| `xaxa` |   26.806 |                                        |
+| `aaaa` |   19.923 | độc vận — trước QĐ-7b bị loại |
+| `xaax` |   17.081 |                                        |
+| `xxaa` |   17.004 |                                        |
 | `aaax` |    7.396 |                                        |
-| `xaaa` |    7.393 |                                        |
+| `xaaa` |    7.391 |                                        |
 | `axaa` |    6.185 |                                        |
 | `aaxx` |    5.710 |                                        |
-| `axxa` |    4.200 |                                        |
+| `axxa` |    4.198 |                                        |
 | `abab` |    4.039 | ✓ §5.2                               |
 | `aabb` |    2.441 | ✓ §5.2                               |
 | `abba` |    1.176 | ✓ §5.2                               |

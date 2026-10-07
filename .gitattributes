@@ -1,0 +1,3 @@
+# The frozen rule SHA-256 was approved from CRLF bytes. Preserve those bytes
+# on every checkout, including Linux CI, without changing the rule or its hash.
+src/application/rule.py text eol=crlf

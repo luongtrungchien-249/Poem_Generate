@@ -1,5 +1,19 @@
 # PLAN — AI LLM Chat Web UI
 
+> **Bối cảnh — đọc trước mọi mục khác.** Tài liệu này được viết như một kế hoạch
+> dựng nền tảng chat đa dụng từ số không. Nhưng nó đang được áp vào **hệ thống
+> sinh thơ thất ngôn hiện có**, nơi backend, LLM gateway, streaming, RAG, tool
+> calling, agent, memory, safety và observability **đã có sẵn và đã có test**.
+>
+> Vì vậy phạm vi thật của việc cần làm là: **một frontend, nói chuyện với backend
+> đang có.** Các Phase 3/4/6/7/8/9/10/11 của tài liệu này không phải việc cần xây
+> mới — chúng là mô tả những gì đã chạy. Xem §25 (cấu trúc repo) và §30.
+>
+> Điều tài liệu gốc KHÔNG lường tới, và là phần khó nhất của giao diện này: bài
+> thơ **có thể không được trả về**. Hệ thống kiểm tra luật trước khi trả, và có ba
+> trạng thái không tồn tại trong một chat box thường — *hỏi lại*, *không đạt*,
+> *chờ người duyệt*. §30 dành cho ba trạng thái đó.
+
 ## 1. Mục tiêu dự án
 
 Xây dựng một Web UI cho phép người dùng:
@@ -942,103 +956,95 @@ Chưa cần:
 
 # 24. Roadmap đề xuất
 
+**Safety KHÔNG nằm ở Phase 11.** Tài liệu gốc xếp Safety sau Agent và Memory, tức
+là hệ thống sẽ phát chữ ra cho người dùng suốt mười phase trước khi có rào chắn
+đầu ra nào. Với một hệ thống sinh thơ thì còn nặng hơn: thứ được kiểm không chỉ là
+an toàn nội dung mà là **luật thơ** — và nếu kiểm luật chỉ được nối vào ở cuối,
+thì trong suốt thời gian trước đó giao diện đã trả về thơ SAI LUẬT như thể đúng.
+
+Một rào chắn nối sau còn khó hơn nối từ đầu: lúc đó streaming đã phát thẳng từng
+mẩu ra SSE, và chèn kiểm duyệt vào giữa buộc phải đổi lại giao diện phía client.
+Chính lỗi đó đã xảy ra trong repo này — `stream=true` từng đi vòng qua toàn bộ
+output rails, tức là *bật stream là tắt rào chắn* — xem chú thích trong
+`src/entrypoints/api/routers/chat.py`.
+
+Thứ tự đã sửa:
+
 ```text
-Phase 0
-Requirement
+Phase 0  Requirement
       ↓
-Phase 1
-UI/UX
+Phase 1  UI/UX
       ↓
-Phase 2
-Frontend
+Phase 2  Frontend
       ↓
-Phase 3
-Backend
+Phase 3  Backend
       ↓
-Phase 4
-LLM Gateway
+Phase 4  LLM Gateway
       ↓
-Phase 5
-Streaming
-      ↓
-Phase 6
-Conversation + DB
+Phase 5  Streaming ─┬─ Phase 5b  SAFETY + KIỂM LUẬT   ← đi CÙNG streaming
+                    │  (rào chắn đầu vào/đầu ra, kiểm
+                    │   luật thơ, ba trạng thái §30)
+      ↓─────────────┘
+Phase 6  Conversation + DB
       ↓
 ──── MVP ────
       ↓
-Phase 7
-File + RAG
+Phase 7  File + RAG
       ↓
-Phase 8
-Tool Calling
+Phase 8  Tool Calling
       ↓
-Phase 9
-Agent
+Phase 9  Agent
       ↓
-Phase 10
-Memory
+Phase 10 Memory
       ↓
-Phase 11
-Safety
+Phase 11 Evaluation
       ↓
-Phase 12
-Evaluation
-      ↓
-Phase 13
-Deployment
+Phase 12 Deployment
 ```
+
+Nguyên tắc: **không có đường nào phát chữ ra người dùng mà không đi qua rào chắn.**
+Thêm một đường phát mới (stream, tool output, agent trace) là thêm một chỗ phải nối
+rào — không phải một việc để lại sau.
 
 ---
 
 # 25. Cấu trúc Repository
 
+**Không tạo repo mới, không tạo thư mục `backend/`.** Backend là repo hiện tại.
+Dựng lại `backend/api/`, `backend/llm/`, `backend/rag/`, `backend/memory/`,
+`backend/database/` như cây thư mục gốc của tài liệu này đề xuất nghĩa là viết lại
+lần thứ hai những thứ đã có và đã qua kiểm thử — và bản thứ hai sẽ lệch dần khỏi
+bản thứ nhất, vì chỉ một trong hai được chạy thật.
+
+Đối chiếu cây thư mục gốc với thứ đã tồn tại:
+
+| Tài liệu đề xuất | Đã có trong repo này |
+|---|---|
+| `backend/api/` | `src/entrypoints/api/` |
+| `backend/llm/{openai,claude,gemini}.py` | `src/adapters/llm/` + `configs/models.yaml` |
+| `backend/services/chat/` | `src/application/` |
+| `backend/services/conversation/` | `src/entrypoints/api/routers/conversations.py` |
+| `backend/rag/` | `src/adapters/retrieval/` |
+| `backend/memory/` | `src/adapters/persistence/` |
+| `backend/tools/` | `src/application/tools/` |
+| `backend/database/` | `src/adapters/persistence/sql/` + `migrations/` |
+| `evaluation/` | `evals/` |
+
+Phần THẬT SỰ cần thêm chỉ là một thư mục:
+
 ```text
-ai-chat-platform/
-│
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── hooks/
-│   ├── services/
-│   ├── stores/
-│   ├── types/
-│   └── utils/
-│
-├── backend/
-│   ├── api/
-│   ├── services/
-│   │   ├── chat/
-│   │   ├── conversation/
-│   │   ├── file/
-│   │   └── agent/
-│   │
-│   ├── llm/
-│   │   ├── base.py
-│   │   ├── openai.py
-│   │   ├── gemini.py
-│   │   ├── claude.py
-│   │   └── local.py
-│   │
-│   ├── tools/
-│   ├── memory/
-│   ├── rag/
-│   ├── models/
-│   └── database/
-│
-├── evaluation/
-│
-├── tests/
-│
-├── docker/
-│
-├── docs/
-│
-├── .env.example
-├── docker-compose.yml
-└── README.md
+frontend/
+├── app/            # route, layout
+├── components/     # Sidebar, Header, MessageList, ChatInput, …
+├── hooks/          # useChat, useStream, useConversations
+├── services/       # gọi API backend — nơi DUY NHẤT biết URL backend
+├── stores/         # trạng thái hội thoại phía client
+├── types/          # sinh từ /openapi.json, không chép tay
+└── utils/
 ```
 
----
+`types/` sinh từ `GET /openapi.json` của backend, **không gõ tay**. Gõ tay thì mỗi
+lần backend đổi hợp đồng, frontend vẫn biên dịch xanh rồi hỏng lúc chạy.
 
 # 26. Kiến trúc cuối cùng
 
@@ -1162,6 +1168,23 @@ MVP được xem là hoàn thành khi:
 - [ ] Có test cho các flow chính.
 - [ ] Có Docker setup cho local deployment.
 
+Ba mục dưới đây **không có trong bản gốc** và không được bỏ. Chúng không phải
+"tính năng nâng cao" — thiếu chúng thì MVP không đưa ra ngoài máy cá nhân được:
+
+- [ ] **Xác thực.** Mọi đường đều theo tenant của khoá API, `user_id`/`tenant_id`
+      **không bao giờ** lấy từ thân request. §15 của tài liệu này có cột `user_id`
+      nhưng không mục nào nói ai xác minh nó; một `user_id` do client tự khai thì
+      mọi cô lập ở tầng dưới đều vô nghĩa. Ghim bằng test: hội thoại của tenant A
+      trả 404 cho tenant B — không phải 403, vì 403 xác nhận id đó có thật.
+- [ ] **Trần ngân sách theo tenant.** Một vòng lặp regenerate để chạy qua đêm là đủ
+      để tạo hoá đơn không giới hạn. Sinh thơ ở đây là **best-of-16 mỗi khổ**, nên
+      một yêu cầu 12 dòng tốn gấp hàng chục lần một lượt chat thường — trần ngân
+      sách ở đây không phải đề phòng lạm dụng, nó là chi phí vận hành bình thường.
+- [ ] **Trần dung lượng file upload.** §17 mô tả upload file nhưng không nêu giới
+      hạn nào. Không có trần thì một file duy nhất làm hết đĩa, và phần trích xuất
+      văn bản là nơi nhận dữ liệu do người ngoài kiểm soát — cần trần cả **dung
+      lượng, số trang, và thời gian xử lý**, vì một file nhỏ vẫn có thể là bom nén.
+
 ---
 
 # 29. Kết luận
@@ -1213,3 +1236,77 @@ Production AI Platform
 Nguyên tắc cốt lõi:
 
 > **Build the Chat UI first, decouple the LLM layer, then progressively add RAG, Tools, Agents, Memory, Evaluation and Safety.**
+
+---
+
+# 30. Ba trạng thái đặc thù của hệ sinh thơ
+
+Một chat box thường có hai trạng thái: *đang trả lời* và *đã trả lời*. Hệ thống này
+có ba trạng thái nữa, và tất cả đều **trước** khi người dùng thấy bài thơ. Nếu
+giao diện không dựng sẵn chỗ cho chúng, mỗi trạng thái sẽ hiện ra như một lỗi đỏ —
+trong khi cả ba đều là hệ thống đang làm đúng việc của nó.
+
+## 30.1. *Hỏi lại* — chưa đủ thông tin
+
+Hệ thống **không đoán** khi thiếu thông tin: thiếu chủ đề, thiếu số dòng, hoặc số
+dòng không phải bội của 4 thì nó hỏi lại thay vì tự chọn hộ.
+
+- Backend trả về **danh sách câu hỏi**, không phải một chuỗi lỗi.
+- UI dựng một khối hỏi lại ngay trong luồng chat, có nút gợi ý sẵn cho các lựa
+  chọn thường gặp (8 dòng · 12 dòng · 16 dòng), và vẫn cho gõ tự do.
+- Trả lời xong thì **tiếp tục yêu cầu cũ**, không bắt người dùng gõ lại từ đầu.
+
+Đừng hiển thị cái này như lỗi. Người dùng không làm sai gì cả.
+
+## 30.2. *Không đạt* — bài thơ trượt kiểm luật
+
+Đây là trạng thái quan trọng nhất và cũng dễ làm sai nhất. Khi kiểm luật không qua,
+**hệ thống không trả bài thơ ra**. Cám dỗ lớn nhất khi dựng UI là "cứ hiện ra kèm
+cảnh báo" — làm vậy là phá bỏ toàn bộ lý do kiểm luật tồn tại: người dùng sẽ chép
+bài thơ sai luật đi dùng, và dòng cảnh báo không đi theo.
+
+Hai cờ phải hiện **tách nhau**, vì chúng khác hẳn nhau về hệ quả:
+
+| Cờ | Nghĩa | Khi trượt |
+|---|---|---|
+| `dat_luat` | Đúng luật thất ngôn (thanh, vần, niêm, đối) | **Không trả bài.** Đây là ràng buộc cứng. |
+| `dat_chat_luong` | Đạt chuẩn chất lượng của dự án | Vẫn trả bài, kèm ghi chú. Đây là thang đo, không phải luật. |
+
+UI cần:
+
+- Nêu **trượt ở tầng nào** (tầng 1–7) và **dòng nào, tiếng thứ mấy** — báo "không
+  đạt" trống rỗng thì người dùng không biết phải yêu cầu lại thế nào.
+- Nút **thử lại**, ghi rõ rằng mỗi lần thử là một lượt sinh mới (xem trần ngân
+  sách, §28).
+- **Đừng** đếm ngược hay hứa thời gian. Sinh thơ ở đây là best-of-16 mỗi khổ và
+  chạy lâu hơn hẳn một lượt chat thường — đó là điều đã được chọn có chủ ý, đổi
+  thời gian lấy đúng luật. Nói thẳng điều đó với người dùng thay vì giấu nó sau
+  một thanh tiến trình giả.
+
+## 30.3. *Chờ người duyệt* — HITL
+
+Khi phân loại chủ đề cho kết quả `REVIEW`, yêu cầu **vẫn được xử lý** nhưng bị đánh
+dấu để người thật xem lại. Chặn ngay ở đây là biến bộ lọc thành bộ kiểm duyệt.
+
+UI cần một trạng thái thứ ba, **không phải lỗi và cũng không phải xong**: đã nhận,
+đang chờ duyệt, và người dùng đóng tab rồi quay lại vẫn thấy được. Nghĩa là trạng
+thái này phải nằm trong cơ sở dữ liệu của hội thoại, không phải trong bộ nhớ trình
+duyệt.
+
+## 30.4. Streaming và ba trạng thái này
+
+Cả ba trạng thái đều **mâu thuẫn với streaming từng chữ**. Không thể phát dần một
+bài thơ rồi mới phát hiện nó sai luật — chữ đã ra rồi.
+
+Với luồng sinh thơ, streaming nên dừng ở mức **tiến trình**, không phải nội dung:
+
+```text
+  ✓ Đã hiểu yêu cầu (12 dòng · chủ đề: mùa thu)
+  ✓ Khổ 1/3 — đạt luật (chọn từ 16 bản)
+  ⟳ Khổ 2/3 — đang sinh…
+    Khổ 3/3
+```
+
+Người dùng thấy hệ thống đang chạy, nhưng không thấy chữ nào cho tới khi cả bài
+qua kiểm. Với luồng chat thường thì giữ nguyên streaming từng chữ như §8.
+

@@ -6,18 +6,28 @@ CLI) đều gọi `build_container(settings)` để có bộ phụ thuộc của
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 from functools import lru_cache
+
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from adapters.llm.anthropic import AnthropicClient
 from adapters.llm.caching import LLMCacheManager
 from adapters.llm.chat_port import ChatLlmAdapter
+from adapters.llm.google import GoogleAIClient
 from adapters.llm.mock import MockLLMClient
 from adapters.llm.openai import OpenAIClient
 from adapters.llm.resilience import FallbackManager
 from adapters.llm.router import ModelRouter
+from adapters.llm.theo_model import LLMClientTheoModel
 from adapters.llm.vllm import VLLMClient
 from adapters.persistence.corpus import JsonlPoemCorpus, duong_dan_mac_dinh
+from adapters.persistence.corpus.chi_muc_dong import (
+    ChiMucDongTho,
+    nguon_jsonl_mac_dinh,
+    tep_dung_san_mac_dinh,
+)
 from adapters.persistence.memory.blob import LocalBlobRepository
 from adapters.persistence.memory.cache import InMemoryCacheRepository
 from adapters.persistence.memory.relational import InMemoryRelationalRepository
@@ -30,6 +40,7 @@ from adapters.persistence.sql import (
     dung_dsn_sqlite,
     tao_engine,
 )
+from adapters.persistence.sql.poem_jobs import SqlPoemJobStore
 from adapters.prompts.registry import PromptRegistry
 from adapters.rate_limit.memory import InMemoryRateLimiter
 from adapters.tools import register_default_tools
@@ -42,6 +53,7 @@ from application.ports.generation import GenerationPort
 from application.ports.llm import LlmPort
 from application.ports.llm_client import LLMClient
 from application.ports.poem_corpus import PoemCorpusPort
+from application.ports.poem_jobs import PoemJobStore
 from application.ports.rate_limit import RateLimitPort
 from application.ports.repositories import (
     BlobRepository,
@@ -54,6 +66,7 @@ from application.ports.tools import ToolPort
 from application.rag.context_builder import ContextAssembler
 from application.rag.reranker import FastHeuristicReranker
 from application.rag.retriever import HybridRetriever
+from bootstrap.model_validation import validate_catalog
 from bootstrap.settings import Settings, get_settings
 from domain.llm.token import TokenManager
 
@@ -94,25 +107,75 @@ class AppContainer:
     rate_limiter: RateLimitPort
     poem_verifier: PoemVerifierDayDu
     poem_corpus: PoemCorpusPort
+    poem_jobs: PoemJobStore | None = None
 
 
 def _build_llm(settings: Settings) -> LLMClient:
+    """Client cho provider mặc định, và định tuyến theo model khi có nhiều khoá.
+
+    Có khoá cho HƠN MỘT provider (vd. `OPENAI_API_KEY` và `GOOGLE_API_KEY`) thì trả
+    `LLMClientTheoModel`: `gemini-*` đi Google, `gpt-*` đi OpenAI, … — cả đường thơ,
+    chat lẫn model dự phòng trong `tiers` đều tới đúng nhà cung cấp. Chỉ một khoá thì
+    trả thẳng client đó, đúng hành vi cũ.
+    """
+    mot = _build_mot_llm(settings)
+    if isinstance(mot, MockLLMClient):
+        # Provider mặc định thiếu khoá: giữ nguyên hành vi lùi về mock, KHÔNG âm thầm
+        # đổi sang provider khác — đổi nhà cung cấp là quyết định của người vận hành.
+        return mot
+
+    s = settings.secrets
+    clients: dict[str, LLMClient] = {settings.llm.default_provider: mot, "mock": MockLLMClient()}
+    if s.openai_api_key and "openai" not in clients:
+        clients["openai"] = OpenAIClient(
+            api_key=s.openai_api_key, base_url=settings.llm.openai_base_url
+        )
+    if s.google_api_key and "google" not in clients:
+        clients["google"] = GoogleAIClient(
+            api_key=s.google_api_key, base_url=settings.llm.google_base_url
+        )
+    if s.anthropic_api_key and "anthropic" not in clients:
+        clients["anthropic"] = AnthropicClient(api_key=s.anthropic_api_key)
+    if len(clients) <= 2:  # provider mặc định + mock
+        return mot
+
+    danh_muc = ModelRouter(config_path=str(settings.models_catalog_path)).models
+    return LLMClientTheoModel(
+        clients,
+        provider_mac_dinh=settings.llm.default_provider,
+        model_mac_dinh=settings.llm.default_model,
+        provider_cua_model={ten: str(c.get("provider", "")) for ten, c in danh_muc.items()},
+    )
+
+
+def _build_mot_llm(settings: Settings) -> LLMClient:
     """Chọn provider theo cấu hình; thiếu khoá thì lùi về mock nếu dev cho phép."""
     provider = settings.llm.default_provider
     secrets = settings.secrets
 
     if provider == "openai":
         if secrets.openai_api_key:
-            return OpenAIClient(api_key=secrets.openai_api_key, base_url=settings.llm.openai_base_url)
-        if not settings.llm.mock_fallback_on_missing_key:
+            return OpenAIClient(
+                api_key=secrets.openai_api_key, base_url=settings.llm.openai_base_url
+            )
+        if settings.env != "dev" or not settings.llm.mock_fallback_on_missing_key:
             raise RuntimeError("Thiếu OPENAI_API_KEY và cấu hình không cho phép lùi về mock.")
         return MockLLMClient()
 
     if provider == "anthropic":
         if secrets.anthropic_api_key:
             return AnthropicClient(api_key=secrets.anthropic_api_key)
-        if not settings.llm.mock_fallback_on_missing_key:
+        if settings.env != "dev" or not settings.llm.mock_fallback_on_missing_key:
             raise RuntimeError("Thiếu ANTHROPIC_API_KEY và cấu hình không cho phép lùi về mock.")
+        return MockLLMClient()
+
+    if provider == "google":
+        if secrets.google_api_key:
+            return GoogleAIClient(
+                api_key=secrets.google_api_key, base_url=settings.llm.google_base_url
+            )
+        if settings.env != "dev" or not settings.llm.mock_fallback_on_missing_key:
+            raise RuntimeError("Thiếu GOOGLE_API_KEY và cấu hình không cho phép lùi về mock.")
         return MockLLMClient()
 
     if provider == "vllm":
@@ -142,7 +205,7 @@ def _build_storage(
     """
     blob = LocalBlobRepository(base_dir=str(settings.project_root / "data" / "blobs"))
 
-    if settings.storage.kind in ("sqlite", "sql"):
+    if settings.storage.kind in ("sqlite", "sql", "postgres"):
         # Một adapter, hai dialect. `sqlite` là lối tắt đặt DSN cho tệp cục bộ;
         # `sql` nhận DSN bất kỳ, kể cả `postgresql+asyncpg://`.
         dsn = settings.storage.database_url or dung_dsn_sqlite(
@@ -175,14 +238,53 @@ def _build_storage(
 
 def build_container(settings: Settings | None = None) -> AppContainer:
     settings = settings or get_settings()
+    validate_catalog(settings)
 
     relational_repo, vector_repo, blob_repo, cache_repo = _build_storage(settings)
     llm = _build_llm(settings)
     token_mgr = TokenManager()
     retriever = HybridRetriever(vector_repo=vector_repo, embedder=llm, rrf_k=settings.rag.rrf_k)
 
+    # Ba thứ này phải dựng TRƯỚC khi đăng ký tool, vì tool `sinh_tho` cần cả ba:
+    # nó gọi thẳng `sinh_bai_tho`, vốn đòi llm + tools + rate_limiter.
+    #
+    # `RegistryToolExecutor` là một KHUNG NHÌN vào sổ đăng ký, đọc lúc gọi chứ
+    # không chụp ảnh lúc dựng — nên truyền nó vào trước khi đăng ký xong vẫn đúng.
+    chat_llm = ChatLlmAdapter(llm, default_model=settings.llm.default_model)
+    tool_executor = RegistryToolExecutor()
+    rate_limiter = (
+        # Bộ đếm DÙNG CHUNG khi có kho SQL: chạy N worker với bộ đếm trong RAM
+        # nghĩa là hạn mức thực tế bị nhân N — lỗ kiểm soát chi phí.
+        SqlRateLimiter(tao_engine(_dsn_luu_tru(settings)))
+        if settings.storage.kind in ("sqlite", "sql", "postgres")
+        else InMemoryRateLimiter()
+    )
+
     # Đăng ký tool tường minh, đúng một lần, tại nơi duy nhất biết đủ phụ thuộc.
-    register_default_tools(retriever=retriever)
+    #
+    # `rate_limiter` đi xuống tận đây là CHỐT CHẶN CHI PHÍ DUY NHẤT của tool sinh
+    # thơ: `sinh_bai_tho` hỏi lại ngân sách ở MỖI khổ. Quên nó là mở đường cho một
+    # lượt chat đốt hết hạn mức ngày — một bài 20 dòng tốn tới ~36 lượt gọi.
+    # Một kho mẫu dùng chung cho /v1/poem và tool `sinh_tho` của chat (one-shot, QĐ-P4).
+    poem_corpus = JsonlPoemCorpus(duong_dan_mac_dinh(settings.project_root))
+    # QĐ-P2 — chỉ mục dòng thơ có sẵn. Tệp dựng sẵn nếu có (datalake/scripts/
+    # dung_chi_muc_dong.py); không thì lùi về tho_mau.jsonl để vẫn bắt chép BÀI MẪU.
+    poem_verifier = PoemVerifierDayDu(
+        chi_muc_chep=ChiMucDongTho.tu_tep_hoac_lui(
+            tep_dung_san_mac_dinh(settings.project_root),
+            nguon_jsonl_mac_dinh(settings.project_root)[:1],
+        )
+    )
+    register_default_tools(
+        retriever=retriever,
+        llm=chat_llm,
+        tools=tool_executor,
+        rate_limiter=rate_limiter,
+        default_model=settings.llm.default_model,
+        corpus=poem_corpus,
+        verifier=poem_verifier,
+        so_song_song=settings.llm.so_song_song,
+    )
 
     return AppContainer(
         settings=settings,
@@ -195,7 +297,10 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         streamer=llm,
         generator=llm,
         default_model=settings.llm.default_model,
-        router=ModelRouter(config_path=str(settings.models_catalog_path)),
+        router=ModelRouter(
+            config_path=str(settings.models_catalog_path),
+            provider=settings.llm.default_provider,
+        ),
         fallback_mgr=FallbackManager(),
         cache_mgr=LLMCacheManager(cache_repo=cache_repo),
         token_mgr=token_mgr,
@@ -205,17 +310,18 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         context_assembler=ContextAssembler(token_mgr=token_mgr),
         session_memory=SessionMemory(storage=relational_repo, token_mgr=token_mgr),
         profile_memory=ProfileMemory(),
-        chat_llm=ChatLlmAdapter(llm, default_model=settings.llm.default_model),
-        tools=RegistryToolExecutor(),
-        rate_limiter=(
-            # Bộ đếm DÙNG CHUNG khi có kho SQL: chạy N worker với bộ đếm trong RAM
-            # nghĩa là hạn mức thực tế bị nhân N — lỗ kiểm soát chi phí.
-            SqlRateLimiter(tao_engine(_dsn_luu_tru(settings)))
-            if settings.storage.kind in ("sqlite", "sql")
-            else InMemoryRateLimiter()
+        chat_llm=chat_llm,
+        tools=tool_executor,
+        rate_limiter=rate_limiter,
+        poem_verifier=poem_verifier,
+        poem_corpus=poem_corpus,
+        poem_jobs=SqlPoemJobStore(
+            tao_engine(
+                _dsn_luu_tru(settings)
+                if settings.storage.kind != "in_memory"
+                else dung_dsn_sqlite(settings.project_root / settings.storage.sqlite_path)
+            )
         ),
-        poem_verifier=PoemVerifierDayDu(),
-        poem_corpus=JsonlPoemCorpus(duong_dan_mac_dinh(settings.project_root)),
     )
 
 
@@ -223,3 +329,19 @@ def build_container(settings: Settings | None = None) -> AppContainer:
 def get_container() -> AppContainer:
     """Container mặc định của tiến trình. FastAPI ghi đè bằng `app.state` trong lifespan."""
     return build_container(get_settings())
+
+
+async def close_container(container: AppContainer) -> None:
+    """Dispose each owned SQL engine once, including shared adapter engines."""
+    engines = set()
+    for resource in (
+        container.relational_repo,
+        container.vector_repo,
+        container.cache_repo,
+        container.rate_limiter,
+        container.poem_jobs,
+    ):
+        engine = getattr(resource, "_engine", None) or getattr(resource, "engine", None)
+        if isinstance(engine, AsyncEngine):
+            engines.add(engine)
+    await asyncio.gather(*(engine.dispose() for engine in engines))
