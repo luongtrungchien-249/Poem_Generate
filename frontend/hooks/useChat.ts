@@ -4,7 +4,9 @@ import { useCallback } from "react";
 import { useChatStore } from "@/stores/chatStore";
 import { useUiStore } from "@/stores/uiStore";
 import { docLuongSSE } from "./useStreaming";
-import { sinhTho, LoiApi } from "@/services/api";
+import { LoiApi } from "@/services/api";
+import { sinhThoJob, cancelRememberedJob } from "@/services/poemJobs";
+import { progressMessage } from "@/lib/poemJobMessage";
 import { maNgauNhien } from "@/lib/utils";
 import type { BuocTienTrinh, TinNhan } from "@/lib/types";
 
@@ -28,9 +30,12 @@ export function useChat(sessionId: string | null) {
 
   const dung = useCallback(() => {
     const { huy } = useChatStore.getState();
-    huy?.abort();
+    huy?.abort("cancel-job");
+    if (cheDo === "tho") void cancelRememberedJob(sessionId).catch(() => {
+      // Keep the pointer so a reload can recover and retry cancellation.
+    });
     datDangChay(false, null);
-  }, [datDangChay]);
+  }, [datDangChay, sessionId, cheDo]);
 
   const gui = useCallback(
     /**
@@ -112,34 +117,15 @@ export function useChat(sessionId: string | null) {
           yeu_cau_goc: yeuCauDayDu,
         });
 
-        // Tiến trình này là ƯỚC LƯỢNG, không phải sự kiện thật từ backend:
-        // `/v1/poem` trả về một lần, không stream. Nó cho người dùng biết hệ
-        // thống còn sống, và cố ý KHÔNG hứa thời gian — sinh thơ là best-of-16
-        // mỗi khổ nên lâu hơn hẳn một lượt chat, và một thanh tiến trình giả sẽ
-        // nói dối về điều đó.
-        const nhip = setInterval(() => {
-          const t = useChatStore.getState().tinNhan.find((x) => x.id === idTraLoi);
-          if (!t?.tien_trinh) return;
-          const i = t.tien_trinh.findIndex((b) => b.trang_thai === "dang_chay");
-          if (i < 0 || i >= t.tien_trinh.length - 1) return;
-          const moi = t.tien_trinh.map((b, j) =>
-            j === i
-              ? { ...b, trang_thai: "xong" as const }
-              : j === i + 1
-                ? { ...b, trang_thai: "dang_chay" as const }
-                : b,
-          );
-          capNhat(idTraLoi, { tien_trinh: moi });
-        }, 2600);
-
         try {
-          const kq = await sinhTho({
+          const kq = await sinhThoJob({
             yeu_cau: yeuCauDayDu,
             chu_de: gan.chu_de ?? null,
             so_dong: gan.so_dong ?? null,
             session_id: sessionId,
-          });
-          clearInterval(nhip);
+          }, huy.signal, job => capNhat(idTraLoi, progressMessage(job)));
+
+          if (huy.signal.aborted) return;
 
           if (kq.loai === "hoi_lai") {
             // Còn thiếu thông tin: giữ mạch, và ghi nhớ lượt này đang hỏi gì
@@ -184,15 +170,14 @@ export function useChat(sessionId: string | null) {
             });
           }
         } catch (e) {
-          clearInterval(nhip);
           capNhat(idTraLoi, {
-            trang_thai: "loi",
+            trang_thai: huy.signal.aborted ? "da_dung" : "loi",
             tien_trinh: undefined,
             giay: daTroi(),
             loi: e instanceof LoiApi ? e.message : "Không sinh được bài thơ.",
           });
         } finally {
-          datDangChay(false, null);
+          if (useChatStore.getState().huy === huy) datDangChay(false, null);
         }
         return;
       }

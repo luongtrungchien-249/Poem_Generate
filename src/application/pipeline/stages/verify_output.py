@@ -131,7 +131,9 @@ def _dung_luot_sua(
 
 
 def _chan_doan(ket_qua: KetQuaKiemDinh, so_luot: int) -> str:
-    dong_loi = "; ".join(f"{e.dia_chi} {e.ma}: cần {e.ky_vong}, đang {e.thuc_te}" for e in ket_qua.loi)
+    dong_loi = "; ".join(
+        f"{e.dia_chi} {e.ma}: cần {e.ky_vong}, đang {e.thuc_te}" for e in ket_qua.loi
+    )
     return f"Sau {so_luot} lượt sửa vẫn còn {len(ket_qua.loi)} lỗi cứng — {dong_loi}"
 
 
@@ -150,6 +152,7 @@ async def generate_with_verification(
     default_model: str = "gpt-4o-mini",
     lam_giau_spec: Callable[[str], Awaitable[Mapping[str, object]]] | None = None,
     khi_leo_het_thang: Callable[[KetQuaKiemDinh], str] | None = None,
+    progress_hook: Callable[[str, dict[str, object]], Awaitable[None]] | None = None,
 ) -> Result[VerifiedOutput, BotError]:
     """Sinh → kiểm → bắt buộc soạn lại. Bảy chặn cứng G1–G7, đánh số tại chỗ."""
     bat_dau = time.monotonic()
@@ -166,6 +169,8 @@ async def generate_with_verification(
 
     # CHẶN G1: trần số lượt. Lượt 0 là lần sinh đầu, các lượt sau là lượt sửa.
     for luot in range(max_repair_rounds + 1):
+        if progress_hook is not None:
+            await progress_hook("repairing" if luot else "generating", {"luot_sua": luot})
         # CHẶN G2: deadline, kiểm ĐẦU mỗi lượt chứ không giữa chừng
         if time.monotonic() - bat_dau > timeout_sec:
             return Err(UpstreamTimeout(upstream="verify_output", timeout_sec=timeout_sec))
@@ -207,6 +212,8 @@ async def generate_with_verification(
             return Err(sinh.error)
 
         ban_nhap = sinh.value
+        if progress_hook is not None:
+            await progress_hook("verifying", {"luot_sua": luot})
         ban_nhap_cuoi = ban_nhap
         ket_qua = verifier.kiem(ban_nhap, spec)
         ket_qua_cuoi = ket_qua

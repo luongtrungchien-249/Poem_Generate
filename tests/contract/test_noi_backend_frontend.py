@@ -188,6 +188,7 @@ async def test_kho_SQL_hanh_xu_giong_kho_in_memory(tmp_path):
     await luu_luot(kho, a, cu.conversation_id, cau_hoi="câu thứ hai", tra_loi="đáp")
     lai = await kho.lay_hoi_thoai(a, cu.conversation_id)
     assert lai is not None and lai.tieu_de == "câu đầu tiên"
+    await e.dispose()
 
 
 @pytest.mark.asyncio
@@ -209,6 +210,7 @@ async def test_dat_tieu_de_khong_vuot_sang_tenant_khac(tmp_path):
 
     con = await kho.lay_hoi_thoai(a, c.conversation_id)
     assert con is not None and con.tieu_de == ""
+    await e.dispose()
 
 
 # ── Trần ngân sách ngày ──────────────────────────────────────────────────────

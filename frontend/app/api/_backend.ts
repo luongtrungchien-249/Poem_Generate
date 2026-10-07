@@ -42,7 +42,7 @@ function headersChoBackend(them?: HeadersInit): Headers {
  * nó về chuỗi là vứt bỏ đúng những thứ UI cần để giải thích cho người dùng.
  */
 export type KetQua<T> =
-  | { ok: true; data: T }
+  | { ok: true; data: T; nextCursor?: string }
   | { ok: false; status: number; detail: string; body: unknown };
 
 /** Gọi backend và trả JSON đã phân giải. Không bao giờ ném ra ngoài. */
@@ -81,7 +81,7 @@ export async function goiBackend<T>(
         : "") || `Backend trả về ${res.status}.`;
     return { ok: false, status: res.status, detail, body };
   }
-  return { ok: true, data: body as T };
+  return { ok: true, data: body as T, nextCursor: res.headers.get("x-next-cursor") ?? undefined };
 }
 
 /**
@@ -97,13 +97,14 @@ export async function chuyenTiepSSE(
   duong: string,
   than: unknown,
   signal: AbortSignal,
+  method: "POST" | "GET" = "POST",
 ): Promise<Response> {
   let res: Response;
   try {
     res = await fetch(`${BACKEND_URL}${duong}`, {
-      method: "POST",
+      method,
       headers: headersChoBackend({ "content-type": "application/json" }),
-      body: JSON.stringify(than),
+      body: method === "POST" ? JSON.stringify(than) : undefined,
       signal,
       cache: "no-store",
     });

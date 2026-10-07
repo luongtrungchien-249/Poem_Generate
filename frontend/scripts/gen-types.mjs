@@ -12,6 +12,7 @@
 const URL_BACKEND = process.env.BACKEND_URL ?? "http://127.0.0.1:8000";
 
 const CAN_CO = {
+  PoemJobResponse: ["job_id", "status", "conversation_id", "created_at", "updated_at", "deadline", "model", "provider", "progress", "result", "result_status", "error"],
   ModelInfo: ["ten", "provider", "tier", "context_window", "max_output_tokens"],
   Conversation: ["conversation_id", "tieu_de", "model", "tao_luc", "cap_nhat_luc", "so_tin_nhan"],
   ConversationDetail: ["tin_nhan"],
@@ -57,7 +58,7 @@ for (const ten of Object.keys(CAN_CO)) {
   }
 }
 
-for (const duong of ["/v1/chat", "/v1/poem", "/v1/models", "/v1/conversations"]) {
+for (const duong of ["/v1/chat", "/v1/poem", "/v1/poem/jobs", "/v1/models", "/v1/conversations"]) {
   if (!spec.paths?.[duong]) {
     console.error(`✗ Backend không còn đường ${duong}`);
     lech++;

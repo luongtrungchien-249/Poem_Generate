@@ -37,3 +37,37 @@ def _force_offline_providers() -> None:
 
     get_settings.cache_clear()
     get_container.cache_clear()
+
+
+@pytest.fixture(params=["sqlite", "postgres"])
+async def isolated_sql_dsn(request: pytest.FixtureRequest, tmp_path):
+    """Only reset explicitly named test databases, never DATABASE_URL/.env."""
+    import os
+
+    from sqlalchemy import text
+    from sqlalchemy.engine import make_url
+
+    from adapters.persistence.sql.bang import metadata
+    from adapters.persistence.sql.engine import dung_dsn_sqlite, tao_engine
+
+    if request.param == "sqlite":
+        yield dung_dsn_sqlite(tmp_path / "isolated.sqlite3")
+        return
+    dsn = os.environ.get("TEST_DATABASE_URL", "")
+    if not dsn:
+        pytest.skip("TEST_DATABASE_URL chưa trỏ tới PostgreSQL test riêng")
+    url = make_url(dsn)
+    if not url.drivername.startswith("postgresql") or not (url.database or "").startswith(
+        "poem_improve_test_"
+    ):
+        pytest.fail(
+            "TEST_DATABASE_URL chỉ nhận PostgreSQL DB tên poem_improve_test_*; không dùng DB thật"
+        )
+    engine = tao_engine(dsn)
+    try:
+        async with engine.begin() as connection:
+            await connection.run_sync(metadata.drop_all)
+            await connection.execute(text("DROP TABLE IF EXISTS alembic_version"))
+    finally:
+        await engine.dispose()
+    yield dsn

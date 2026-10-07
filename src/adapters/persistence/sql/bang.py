@@ -25,9 +25,49 @@ và cách này đúng như nhau ở hai dialect.
 
 from __future__ import annotations
 
-from sqlalchemy import Column, Float, Integer, MetaData, String, Table, Text
+from sqlalchemy import (
+    Column,
+    Float,
+    Index,
+    Integer,
+    MetaData,
+    String,
+    Table,
+    Text,
+    UniqueConstraint,
+)
 
 metadata = MetaData()
+
+# A per-tenant write gate serializes admission across API processes.
+poem_job_gate = Table(
+    "poem_job_gate",
+    metadata,
+    Column("tenant_id", String(128), primary_key=True),
+    Column("version", Integer, nullable=False, default=0),
+)
+poem_jobs = Table(
+    "poem_jobs",
+    metadata,
+    Column("tenant_id", String(128), primary_key=True),
+    Column("job_id", String(64), primary_key=True),
+    Column("idempotency_key", String(128), nullable=False),
+    Column("payload", Text, nullable=False),
+    Column("model", String(128), nullable=False),
+    Column("provider", String(32), nullable=False),
+    Column("status", String(32), nullable=False),
+    Column("created_at", Float, nullable=False),
+    Column("updated_at", Float, nullable=False),
+    Column("deadline", Float, nullable=False),
+    Column("lease_until", Float, nullable=False, default=0),
+    Column("owner", String(64), nullable=False, default=""),
+    Column("progress", Text, nullable=False, default="{}"),
+    Column("result", Text, nullable=True),
+    Column("result_status", Integer, nullable=True),
+    Column("error", Text, nullable=True),
+    UniqueConstraint("tenant_id", "idempotency_key", name="uq_poem_job_key"),
+)
+Index("ix_poem_jobs_claim", poem_jobs.c.status, poem_jobs.c.lease_until, poem_jobs.c.created_at)
 
 # Siêu dữ liệu một cuộc hội thoại — §15 của `AI_LLM_Chat_Web_UI_Plan.md`.
 #
@@ -45,6 +85,13 @@ hoi_thoai = Table(
     Column("model", String(128), nullable=False, default=""),
     Column("tao_luc", Float, nullable=False),
     Column("cap_nhat_luc", Float, nullable=False),
+)
+
+Index(
+    "ix_hoi_thoai_order",
+    hoi_thoai.c.tenant_id,
+    hoi_thoai.c.cap_nhat_luc,
+    hoi_thoai.c.conversation_id,
 )
 
 tin_nhan = Table(

@@ -112,7 +112,12 @@ class OpenAIClient:
         prompt_tokens = usage.get("prompt_tokens", 0)
         completion_tokens = usage.get("completion_tokens", 0)
 
-        cost = cost_calculator.calculate_cost(model, prompt_tokens, completion_tokens)
+        cost = cost_calculator.calculate_cost(
+            model,
+            prompt_tokens,
+            completion_tokens,
+            usage.get("prompt_tokens_details", {}).get("cached_tokens", 0),
+        )
         return LLMResponse(
             content=content,
             model=model,
@@ -141,12 +146,15 @@ class OpenAIClient:
         if max_tokens:
             payload["max_tokens"] = max_tokens
 
-        async with httpx.AsyncClient(timeout=60.0) as client, client.stream(
-            "POST",
-            f"{self.base_url}/chat/completions",
-            headers=self._headers(),
-            json=payload,
-        ) as response:
+        async with (
+            httpx.AsyncClient(timeout=60.0) as client,
+            client.stream(
+                "POST",
+                f"{self.base_url}/chat/completions",
+                headers=self._headers(),
+                json=payload,
+            ) as response,
+        ):
             response.raise_for_status()
             async for line in response.aiter_lines():
                 if not line or not line.startswith("data: "):

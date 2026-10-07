@@ -142,3 +142,17 @@ export type KetQuaTho =
 export function laCanLamRo(x: unknown): x is CanLamRo {
   return !!x && typeof x === "object" && (x as CanLamRo).can_lam_ro === true;
 }
+export interface PoemJob {
+  job_id: string;
+  status: "queued" | "planning" | "generating" | "verifying" | "repairing" | "completed" | "failed" | "cancelled" | "expired";
+  conversation_id: string | null;
+  created_at: number;
+  updated_at: number;
+  deadline: number;
+  model: string;
+  provider: string;
+  progress: { kho?: number; tong_kho?: number; ung_vien?: number; luot_sua?: number };
+  result: PoemResponse | CanLamRo | PoemKhongDat | null;
+  result_status: number | null;
+  error: string | null;
+}

@@ -7,7 +7,7 @@ chặn được việc đọc, việc đoán trúng vẫn là một kênh dò th
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 
 class ConversationCreate(BaseModel):
@@ -29,6 +29,9 @@ class Conversation(BaseModel):
     tao_luc: datetime
     cap_nhat_luc: datetime
     so_tin_nhan: int = 0
+    # Repository retains the exact SQL float here; datetime serialization rounds
+    # to microseconds and must never be used to reconstruct an ordering cursor.
+    _page_cursor: str | None = PrivateAttr(default=None)
 
 
 class ConversationDetail(Conversation):

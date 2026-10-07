@@ -1,5 +1,8 @@
 # AI Platform
 
+Thực thi cải thiện 06/10: [plan và trạng thái](docs/Plan_Improve_06_10.md),
+[hướng dẫn vận hành job/worker và benchmark](docs/Runbook_Improve_06_10.md).
+
 Nền tảng AI production theo **kiến trúc 4 vòng** (hexagonal): phụ thuộc chỉ đi từ ngoài vào trong,
 và ranh giới giữa các vòng do máy cưỡng chế chứ không dựa vào review.
 

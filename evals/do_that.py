@@ -168,7 +168,7 @@ async def _chay_mot(i: int, chu_de: str, so_dong: int, deps: dict) -> KetQuaMotB
     r.luot_reply, r.luot_cheap = dem.luot_reply, dem.luot_cheap
     r.token_vao, r.token_ra, r.token_cache = dem.token_vao, dem.token_ra, dem.token_cache
     r.chi_phi_usd = cost_calculator.calculate_cost(
-        deps["model"], dem.token_vao, dem.token_ra, dem.token_cache
+        deps["model"], dem.token_vao + dem.token_cache, dem.token_ra, dem.token_cache
     )
     return r
 
@@ -193,13 +193,15 @@ async def _chay_mot_tho(i: int, chu_de: str, so_dong: int, deps: dict) -> KetQua
         e = kq.error
         if isinstance(e, OutputKhongDat):
             return KetQuaMotBai(
-                chu_de, so_dong, False, e.so_luot_da_sua,
-                ly_do_that_bai=e.chan_doan[:200], giay=giay,
+                chu_de,
+                so_dong,
+                False,
+                e.so_luot_da_sua,
+                ly_do_that_bai=e.chan_doan[:200],
+                giay=giay,
                 ban_nhap_cuoi=e.ban_nhap_cuoi,
             )
-        return KetQuaMotBai(
-            chu_de, so_dong, False, 0, ly_do_that_bai=type(e).__name__, giay=giay
-        )
+        return KetQuaMotBai(chu_de, so_dong, False, 0, ly_do_that_bai=type(e).__name__, giay=giay)
 
     ra = kq.value
     if isinstance(ra, CanLamRo):
@@ -209,9 +211,17 @@ async def _chay_mot_tho(i: int, chu_de: str, so_dong: int, deps: dict) -> KetQua
 
     assert isinstance(ra, DaSinhTho)
     return KetQuaMotBai(
-        chu_de, so_dong, True, ra.so_luot, bai_tho=ra.text, giay=giay,
-        bo_sinh=ra.bo_sinh, so_ung_vien_da_dung=ra.so_ung_vien_da_dung,
-        chien_luoc_cuoi=ra.chien_luoc_cuoi, duong_di=ra.duong_di, tieu_de=ra.tieu_de,
+        chu_de,
+        so_dong,
+        True,
+        ra.so_luot,
+        bai_tho=ra.text,
+        giay=giay,
+        bo_sinh=ra.bo_sinh,
+        so_ung_vien_da_dung=ra.so_ung_vien_da_dung,
+        chien_luoc_cuoi=ra.chien_luoc_cuoi,
+        duong_di=ra.duong_di,
+        tieu_de=ra.tieu_de,
     )
 
 
@@ -222,21 +232,34 @@ def _nap_de(tep: Path, gioi_han: int | None) -> list[tuple[str, str, int]]:
 
 def _doc_tham_so() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
-    p.add_argument("so_yeu_cau", nargs="?", type=int, default=None,
-                   help="chỉ dùng khi KHÔNG có --de: lấy N đề đầu của DE_BAI")
-    p.add_argument("--de", type=Path, default=None,
-                   help="tệp đề JSONL (vd. evals/datasets/de_danh_gia.jsonl)")
+    p.add_argument(
+        "so_yeu_cau",
+        nargs="?",
+        type=int,
+        default=None,
+        help="chỉ dùng khi KHÔNG có --de: lấy N đề đầu của DE_BAI",
+    )
+    p.add_argument(
+        "--de", type=Path, default=None, help="tệp đề JSONL (vd. evals/datasets/de_danh_gia.jsonl)"
+    )
     p.add_argument("--gioi-han", type=int, default=None, help="chỉ chạy N đề đầu")
-    p.add_argument("--ra", type=Path, default=None,
-                   help="ghi JSONL từng bài; mặc định evals/ket_qua/baseline_<commit>.jsonl khi có --de")
+    p.add_argument(
+        "--ra",
+        type=Path,
+        default=None,
+        help="ghi JSONL từng bài; mặc định evals/ket_qua/baseline_<commit>.jsonl khi có --de",
+    )
     return p.parse_args()
 
 
 def _commit_hien_tai() -> str:
     try:
         return subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"], cwd=GOC, capture_output=True,
-            text=True, check=True,
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=GOC,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return "khong-ro"
@@ -298,11 +321,18 @@ async def main() -> int:
         if ghi is not None:
             # Ghi từng bài NGAY khi xong: lô dài bị ngắt giữa chừng vẫn giữ được
             # phần đã trả tiền.
-            ghi.write(json.dumps(
-                {**asdict(r), "commit": commit, "provider": s.llm.default_provider,
-                 "model": s.llm.default_model},
-                ensure_ascii=False,
-            ) + "\n")
+            ghi.write(
+                json.dumps(
+                    {
+                        **asdict(r),
+                        "commit": commit,
+                        "provider": s.llm.default_provider,
+                        "model": s.llm.default_model,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
             ghi.flush()
         if r.thanh_cong:
             print(f"ĐẠT sau {r.so_luot} lượt sửa ({r.giay:.1f}s)")
@@ -331,10 +361,14 @@ async def main() -> int:
         ghi.close()
         print(f"  ghi từng bài -> {tep_ra}")
     tong_usd = sum(r.chi_phi_usd for r in kq)
-    print(f"  lượt gọi TB mỗi bài  : reply {statistics.mean(r.luot_reply for r in kq):.1f}"
-          f" · cheap {statistics.mean(r.luot_cheap for r in kq):.1f}")
-    print(f"  chi phí              : {tong_usd:.4f} USD tổng · "
-          f"{tong_usd / n * 1000:.2f} USD / 1.000 bài (chưa tính lượt `cheap`)")
+    print(
+        f"  lượt gọi TB mỗi bài  : reply {statistics.mean(r.luot_reply for r in kq):.1f}"
+        f" · cheap {statistics.mean(r.luot_cheap for r in kq):.1f}"
+    )
+    print(
+        f"  chi phí              : {tong_usd:.4f} USD tổng · "
+        f"{tong_usd / n * 1000:.2f} USD / 1.000 bài (chưa tính lượt `cheap`)"
+    )
     theo_do_dai: dict[int, list[KetQuaMotBai]] = {}
     for r in kq:
         theo_do_dai.setdefault(r.so_dong_yc, []).append(r)
@@ -342,9 +376,11 @@ async def main() -> int:
         print("  theo độ dài          :")
         for so_dong, nhom in sorted(theo_do_dai.items()):
             dat_n = sum(r.thanh_cong for r in nhom)
-            print(f"    {so_dong:>2} dòng: đạt {dat_n}/{len(nhom)} · "
-                  f"reply TB {statistics.mean(r.luot_reply for r in nhom):.1f} · "
-                  f"{statistics.mean(r.giay for r in nhom):.0f}s")
+            print(
+                f"    {so_dong:>2} dòng: đạt {dat_n}/{len(nhom)} · "
+                f"reply TB {statistics.mean(r.luot_reply for r in nhom):.1f} · "
+                f"{statistics.mean(r.giay for r in nhom):.0f}s"
+            )
 
     # ── Vì sao trượt ────────────────────────────────────────────────────────
     if kiet_luot:
@@ -365,8 +401,10 @@ async def main() -> int:
         from evals.metrics.poetry import do_luong_tho
 
         m = do_luong_tho([r.bai_tho for r in dat], chu_de=None)
-        print(f"  {m.so_bai} bài đạt: đúng số tiếng {m.ty_le_dung_so_tieng:.0%} · "
-              f"đúng khuôn {m.ty_le_dung_khuon:.0%} · có vần {m.ty_le_co_van_chan:.0%}")
+        print(
+            f"  {m.so_bai} bài đạt: đúng số tiếng {m.ty_le_dung_so_tieng:.0%} · "
+            f"đúng khuôn {m.ty_le_dung_khuon:.0%} · có vần {m.ty_le_co_van_chan:.0%}"
+        )
 
         print()
         print("MỘT BÀI LÀM VÍ DỤ")
@@ -375,8 +413,10 @@ async def main() -> int:
         for d in mau.bai_tho.splitlines():
             print(f"    {d}")
         v = kiem_tra_bai_tho(mau.bai_tho)
-        print(f"  kiểm lại: dat={v.dat} · {v.so_dong} dòng · "
-              f"sơ đồ vần {['' .join(k) for k in v.so_do_van_theo_kho]}")
+        print(
+            f"  kiểm lại: dat={v.dat} · {v.so_dong} dòng · "
+            f"sơ đồ vần {[''.join(k) for k in v.so_do_van_theo_kho]}"
+        )
 
     return 0
 

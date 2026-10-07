@@ -15,7 +15,7 @@ SRC = Path(__file__).resolve().parents[2] / "src"
 
 # Mỗi tầng chỉ được import chính nó và các tầng bên trong.
 ALLOWED: dict[str, set[str]] = {
-    "domain": {"domain", "contracts"},
+    "domain": {"domain"},
     "application": {"application", "domain", "contracts"},
     "adapters": {"adapters", "application", "domain", "contracts"},
     "bootstrap": {"bootstrap", "adapters", "application", "domain", "contracts"},

@@ -43,7 +43,6 @@ from application.prompting.system import CACH_LAM_VIEC, CHI_DAN_CHAT_LUONG
 # của `luat_tho.py`.
 
 
-
 CHI_DAN_SINH_THO: str = f"""Bạn là người làm thơ thất ngôn tự do tiếng Việt.
 
 {BANG_LUAT_THO}
@@ -130,9 +129,14 @@ def _khuon_duoc_nhac_trong_chi_dan() -> frozenset[str]:
 KHUON_TRONG_CHI_DAN: frozenset[str] = _khuon_duoc_nhac_trong_chi_dan()
 
 
-def dung_luot_yeu_cau(
-    req: PoetryRequirement, khoi_vi_du: str = "", khoi_ke_hoach: str = ""
-) -> str:
+def khung_thanh_cap_dong(so_dong: int) -> str:
+    """Experimental guidance shared by stanza generation and all repair turns."""
+    return "Khung P2/P4/P6 (mỗi dòng đúng 7 tiếng): " + "; ".join(
+        f"D{i + 1} {'B-T-B' if i % 2 == 0 else 'T-B-T'}" for i in range(so_dong)
+    )
+
+
+def dung_luot_yeu_cau(req: PoetryRequirement, khoi_vi_du: str = "", khoi_ke_hoach: str = "") -> str:
     """Tầng 3 — dữ liệu của riêng lượt này, bọc thẻ để mô hình phân biệt nguồn.
 
     Chỉ đưa vào những trường CÓ giá trị. Nhồi "chưa rõ" vào prompt là dạy mô hình

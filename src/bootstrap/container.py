@@ -6,8 +6,11 @@ CLI) đều gọi `build_container(settings)` để có bộ phụ thuộc của
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 from functools import lru_cache
+
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from adapters.llm.anthropic import AnthropicClient
 from adapters.llm.caching import LLMCacheManager
@@ -37,6 +40,7 @@ from adapters.persistence.sql import (
     dung_dsn_sqlite,
     tao_engine,
 )
+from adapters.persistence.sql.poem_jobs import SqlPoemJobStore
 from adapters.prompts.registry import PromptRegistry
 from adapters.rate_limit.memory import InMemoryRateLimiter
 from adapters.tools import register_default_tools
@@ -49,6 +53,7 @@ from application.ports.generation import GenerationPort
 from application.ports.llm import LlmPort
 from application.ports.llm_client import LLMClient
 from application.ports.poem_corpus import PoemCorpusPort
+from application.ports.poem_jobs import PoemJobStore
 from application.ports.rate_limit import RateLimitPort
 from application.ports.repositories import (
     BlobRepository,
@@ -61,6 +66,7 @@ from application.ports.tools import ToolPort
 from application.rag.context_builder import ContextAssembler
 from application.rag.reranker import FastHeuristicReranker
 from application.rag.retriever import HybridRetriever
+from bootstrap.model_validation import validate_catalog
 from bootstrap.settings import Settings, get_settings
 from domain.llm.token import TokenManager
 
@@ -101,6 +107,7 @@ class AppContainer:
     rate_limiter: RateLimitPort
     poem_verifier: PoemVerifierDayDu
     poem_corpus: PoemCorpusPort
+    poem_jobs: PoemJobStore | None = None
 
 
 def _build_llm(settings: Settings) -> LLMClient:
@@ -120,9 +127,13 @@ def _build_llm(settings: Settings) -> LLMClient:
     s = settings.secrets
     clients: dict[str, LLMClient] = {settings.llm.default_provider: mot, "mock": MockLLMClient()}
     if s.openai_api_key and "openai" not in clients:
-        clients["openai"] = OpenAIClient(api_key=s.openai_api_key, base_url=settings.llm.openai_base_url)
+        clients["openai"] = OpenAIClient(
+            api_key=s.openai_api_key, base_url=settings.llm.openai_base_url
+        )
     if s.google_api_key and "google" not in clients:
-        clients["google"] = GoogleAIClient(api_key=s.google_api_key, base_url=settings.llm.google_base_url)
+        clients["google"] = GoogleAIClient(
+            api_key=s.google_api_key, base_url=settings.llm.google_base_url
+        )
     if s.anthropic_api_key and "anthropic" not in clients:
         clients["anthropic"] = AnthropicClient(api_key=s.anthropic_api_key)
     if len(clients) <= 2:  # provider mặc định + mock
@@ -144,15 +155,17 @@ def _build_mot_llm(settings: Settings) -> LLMClient:
 
     if provider == "openai":
         if secrets.openai_api_key:
-            return OpenAIClient(api_key=secrets.openai_api_key, base_url=settings.llm.openai_base_url)
-        if not settings.llm.mock_fallback_on_missing_key:
+            return OpenAIClient(
+                api_key=secrets.openai_api_key, base_url=settings.llm.openai_base_url
+            )
+        if settings.env != "dev" or not settings.llm.mock_fallback_on_missing_key:
             raise RuntimeError("Thiếu OPENAI_API_KEY và cấu hình không cho phép lùi về mock.")
         return MockLLMClient()
 
     if provider == "anthropic":
         if secrets.anthropic_api_key:
             return AnthropicClient(api_key=secrets.anthropic_api_key)
-        if not settings.llm.mock_fallback_on_missing_key:
+        if settings.env != "dev" or not settings.llm.mock_fallback_on_missing_key:
             raise RuntimeError("Thiếu ANTHROPIC_API_KEY và cấu hình không cho phép lùi về mock.")
         return MockLLMClient()
 
@@ -161,7 +174,7 @@ def _build_mot_llm(settings: Settings) -> LLMClient:
             return GoogleAIClient(
                 api_key=secrets.google_api_key, base_url=settings.llm.google_base_url
             )
-        if not settings.llm.mock_fallback_on_missing_key:
+        if settings.env != "dev" or not settings.llm.mock_fallback_on_missing_key:
             raise RuntimeError("Thiếu GOOGLE_API_KEY và cấu hình không cho phép lùi về mock.")
         return MockLLMClient()
 
@@ -192,7 +205,7 @@ def _build_storage(
     """
     blob = LocalBlobRepository(base_dir=str(settings.project_root / "data" / "blobs"))
 
-    if settings.storage.kind in ("sqlite", "sql"):
+    if settings.storage.kind in ("sqlite", "sql", "postgres"):
         # Một adapter, hai dialect. `sqlite` là lối tắt đặt DSN cho tệp cục bộ;
         # `sql` nhận DSN bất kỳ, kể cả `postgresql+asyncpg://`.
         dsn = settings.storage.database_url or dung_dsn_sqlite(
@@ -225,6 +238,7 @@ def _build_storage(
 
 def build_container(settings: Settings | None = None) -> AppContainer:
     settings = settings or get_settings()
+    validate_catalog(settings)
 
     relational_repo, vector_repo, blob_repo, cache_repo = _build_storage(settings)
     llm = _build_llm(settings)
@@ -242,7 +256,7 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         # Bộ đếm DÙNG CHUNG khi có kho SQL: chạy N worker với bộ đếm trong RAM
         # nghĩa là hạn mức thực tế bị nhân N — lỗ kiểm soát chi phí.
         SqlRateLimiter(tao_engine(_dsn_luu_tru(settings)))
-        if settings.storage.kind in ("sqlite", "sql")
+        if settings.storage.kind in ("sqlite", "sql", "postgres")
         else InMemoryRateLimiter()
     )
 
@@ -301,6 +315,13 @@ def build_container(settings: Settings | None = None) -> AppContainer:
         rate_limiter=rate_limiter,
         poem_verifier=poem_verifier,
         poem_corpus=poem_corpus,
+        poem_jobs=SqlPoemJobStore(
+            tao_engine(
+                _dsn_luu_tru(settings)
+                if settings.storage.kind != "in_memory"
+                else dung_dsn_sqlite(settings.project_root / settings.storage.sqlite_path)
+            )
+        ),
     )
 
 
@@ -308,3 +329,19 @@ def build_container(settings: Settings | None = None) -> AppContainer:
 def get_container() -> AppContainer:
     """Container mặc định của tiến trình. FastAPI ghi đè bằng `app.state` trong lifespan."""
     return build_container(get_settings())
+
+
+async def close_container(container: AppContainer) -> None:
+    """Dispose each owned SQL engine once, including shared adapter engines."""
+    engines = set()
+    for resource in (
+        container.relational_repo,
+        container.vector_repo,
+        container.cache_repo,
+        container.rate_limiter,
+        container.poem_jobs,
+    ):
+        engine = getattr(resource, "_engine", None) or getattr(resource, "engine", None)
+        if isinstance(engine, AsyncEngine):
+            engines.add(engine)
+    await asyncio.gather(*(engine.dispose() for engine in engines))

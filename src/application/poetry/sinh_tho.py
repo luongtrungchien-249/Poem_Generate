@@ -40,7 +40,8 @@ from application.poetry.planner import (
     lap_lai_ke_hoach,
     mo_ta_ke_hoach_cho_mo_hinh,
 )
-from application.poetry.prompt import dung_luot_yeu_cau
+from application.poetry.progress import ProgressHook, report
+from application.poetry.prompt import dung_luot_yeu_cau, khung_thanh_cap_dong
 from application.poetry.requirement import (
     CanHoi,
     PoetryRequirement,
@@ -119,9 +120,13 @@ async def sinh_bai_tho(
     should_stop_hook: Callable[[], bool] | None = None,
     default_model: str = "gpt-4o-mini",
     so_song_song: int = SO_SONG_SONG,
+    progress_hook: ProgressHook | None = None,
+    adaptive_candidates: bool = False,
+    line_framing: bool = False,
 ) -> Result[KetQuaSinhTho, BotError]:
     """Sinh một bài thơ đã qua luật, chất lượng và sáu bước suy luận."""
     vet = DauVetTrangThai()
+    await report(progress_hook, "planning")
     vet.chuyen("VALIDATED", "qua rào đầu vào")
     vet.chuyen("ANALYZING", "đọc yêu cầu đã chuẩn hoá")
 
@@ -179,6 +184,7 @@ async def sinh_bai_tho(
                     dung_khoi_vi_du(vi_du),
                     mo_ta_ke_hoach_cho_mo_hinh(ke_hoach) if ke_hoach else "",
                 )
+                + ("\n" + khung_thanh_cap_dong(yeu_cau.so_dong_int or 4) if line_framing else "")
             ),
         ),
         tokens_used=0,
@@ -196,6 +202,7 @@ async def sinh_bai_tho(
     #
     # Thất bại ở đây KHÔNG phải lỗi: rơi xuống vòng sinh–kiểm–sửa cũ bên dưới.
     vet.chuyen("GENERATING", "sinh từng khổ, chọn trong nhiều ứng viên")
+    await report(progress_hook, "generating")
     bo_sinh = "mot_lan"
     da_dung = 0
     if so_ung_vien_moi_kho > 1:
@@ -213,12 +220,17 @@ async def sinh_bai_tho(
             tools=tools,
             chi_muc_chep=bo_kiem.chi_muc_chep,
             so_song_song=so_song_song,
+            progress_hook=progress_hook,
+            should_stop_hook=should_stop_hook,
+            adaptive_candidates=adaptive_candidates,
+            line_framing=line_framing,
         )
         if isinstance(theo_kho, Ok) and theo_kho.value.du_kho:
             da_dung = theo_kho.value.so_ung_vien_da_dung
             # Bài ghép xong VẪN đi qua cổng kiểm đầy đủ. Bộ sinh không có quyền
             # phán — nó chỉ đề nghị.
             bien_ban_kho = bo_kiem.lap_bien_ban(theo_kho.value.van_ban, spec)
+            await report(progress_hook, "verifying")
             if bien_ban_kho.dat:
                 vet.chuyen("VERIFYING", "kiểm bài ghép từ các khổ đã chọn")
                 vet.chuyen("VERIFIED", "qua toàn bộ sáu bước suy luận")
@@ -306,6 +318,7 @@ async def sinh_bai_tho(
         timeout_sec=timeout_sec,
         should_stop_hook=should_stop_hook,
         default_model=default_model,
+        progress_hook=progress_hook,
     )
     if isinstance(kq, Err):
         return Err(kq.error)

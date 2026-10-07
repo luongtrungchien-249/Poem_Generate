@@ -49,6 +49,7 @@ class RelationalRepository(Protocol):
         trống, và tiêu đề do người dùng tự đặt có thể bị câu đầu tiên ghi đè.
         """
         ...
+
     async def get_messages(
         self, scope: TenantScope, session_id: str, limit: int = 50
     ) -> list[Message]: ...
@@ -66,7 +67,7 @@ class RelationalRepository(Protocol):
         ...
 
     async def danh_sach_hoi_thoai(
-        self, scope: TenantScope, limit: int = 50
+        self, scope: TenantScope, limit: int = 50, *, q: str = "", cursor: str | None = None
     ) -> list[Conversation]: ...
 
     async def lay_hoi_thoai(

@@ -9,24 +9,20 @@ luôn là Postgres, vì nó không chạy trong CI.
 Nên ở đây chỉ có MỘT bộ kiểm, `parametrize` theo dialect:
 
     sqlite+aiosqlite   luôn chạy
-    postgresql+asyncpg chạy khi có DATABASE_URL, tự SKIP khi không
+    postgresql+asyncpg chạy khi có TEST_DATABASE_URL, tự SKIP khi không
 
 Nhờ vậy adapter Postgres được kiểm bằng đúng những khẳng định đã kiểm SQLite, và
 khoảng chưa kiểm thu lại chỉ còn phương ngữ SQL — thứ SQLAlchemy lo.
 
 ════ CHẠY VỚI POSTGRES THẬT ════
 
-    docker compose -f infra/docker/docker-compose.yml up -d
-    DATABASE_URL=postgresql+asyncpg://user:pass@localhost/db pytest tests/integration
+    TEST_DATABASE_URL=postgresql+asyncpg://user:pass@localhost/poem_improve_test_local pytest tests/integration
 
-⚠️ Test này XOÁ SẠCH các bảng của ứng dụng trong DB được trỏ tới. Đừng trỏ vào một
-cơ sở dữ liệu có dữ liệu thật.
+⚠️ Fixture reset bảng ứng dụng và alembic_version, chỉ nhận tên DB poem_improve_test_*.
+Không dùng DATABASE_URL/.env hoặc một cơ sở dữ liệu có dữ liệu thật.
 """
 
 from __future__ import annotations
-
-import os
-from pathlib import Path
 
 import pytest
 
@@ -35,11 +31,9 @@ from adapters.persistence.sql import (
     SqlRateLimiter,
     SqlRelationalRepository,
     SqlVectorRepository,
-    dung_dsn_sqlite,
     tao_bang,
     tao_engine,
 )
-from adapters.persistence.sql.bang import metadata
 from contracts.chat import Message, Role
 from contracts.chunk import EnrichedChunk
 from domain.conversation.tenant import TenantScope
@@ -51,24 +45,11 @@ pytestmark = pytest.mark.integration
 A = TenantScope(tenant_id="cong_ty_a")
 B = TenantScope(tenant_id="cong_ty_b")
 
-DSN_POSTGRES = os.environ.get("DATABASE_URL", "")
 
-
-@pytest.fixture(params=["sqlite", "postgres"])
-async def engine(request: pytest.FixtureRequest, tmp_path: Path):
-    """Engine đã tạo bảng, dọn sạch trước mỗi test."""
-    if request.param == "postgres":
-        if not DSN_POSTGRES.startswith("postgresql"):
-            pytest.skip("không có DATABASE_URL trỏ tới PostgreSQL")
-        dsn = DSN_POSTGRES
-    else:
-        dsn = dung_dsn_sqlite(tmp_path / "tich_hop.sqlite3")
-
-    e = tao_engine(dsn)
-    # Dọn TRƯỚC, không phải sau: test trước có thể đã chết giữa chừng và để lại
-    # rác. Dọn sau thì trạng thái bẩn ấy đi vào test kế tiếp.
-    async with e.begin() as conn:
-        await conn.run_sync(metadata.drop_all)
+@pytest.fixture
+async def engine(isolated_sql_dsn):
+    """Shared isolation fixture never reads the developer's DATABASE_URL."""
+    e = tao_engine(isolated_sql_dsn)
     await tao_bang(e)
     yield e
     await e.dispose()
@@ -105,18 +86,26 @@ async def test_limit_lay_ban_MOI_NHAT(engine):
 
 def _chunk(cid: str, noi_dung: str, vec: list[float]) -> EnrichedChunk:
     return EnrichedChunk(
-        id=cid, doc_id="d1", tenant_id="x", index=0,
-        content=noi_dung, token_count=5, embedding=vec,
+        id=cid,
+        doc_id="d1",
+        tenant_id="x",
+        index=0,
+        content=noi_dung,
+        token_count=5,
+        embedding=vec,
     )
 
 
 @pytest.mark.asyncio
 async def test_tim_vector_tra_ve_dung_thu_hang(engine):
     kho = SqlVectorRepository(engine)
-    await kho.insert_chunks(A, [
-        _chunk("gan", "rất giống", [1.0, 0.0, 0.0]),
-        _chunk("xa", "khác hẳn", [0.0, 1.0, 0.0]),
-    ])
+    await kho.insert_chunks(
+        A,
+        [
+            _chunk("gan", "rất giống", [1.0, 0.0, 0.0]),
+            _chunk("xa", "khác hẳn", [0.0, 1.0, 0.0]),
+        ],
+    )
     kq = await kho.search_vector(A, [1.0, 0.0, 0.0], top_k=2)
     assert [r.chunk_id for r in kq] == ["gan", "xa"]
 
@@ -145,10 +134,13 @@ async def test_ghi_de_chunk_cung_id(engine):
 @pytest.mark.asyncio
 async def test_bm25_tim_theo_tu_khoa(engine):
     kho = SqlVectorRepository(engine)
-    await kho.insert_chunks(A, [
-        _chunk("co", "chiều sông quê hương", [0.0, 0.0, 0.0]),
-        _chunk("khong", "tàu vũ trụ sao hoả", [0.0, 0.0, 0.0]),
-    ])
+    await kho.insert_chunks(
+        A,
+        [
+            _chunk("co", "chiều sông quê hương", [0.0, 0.0, 0.0]),
+            _chunk("khong", "tàu vũ trụ sao hoả", [0.0, 0.0, 0.0]),
+        ],
+    )
     kq = await kho.search_bm25(A, "chiều sông", top_k=5)
     assert [r.chunk_id for r in kq] == ["co"]
 

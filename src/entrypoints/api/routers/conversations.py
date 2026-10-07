@@ -12,8 +12,9 @@ nhưng đoán trúng vẫn là một kênh dò thông tin.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 
+from application.conversation.cursor import encode_cursor
 from contracts.conversation import (
     Conversation,
     ConversationCreate,
@@ -41,14 +42,27 @@ async def tao_hoi_thoai(
 @router.get("/conversations", response_model=list[Conversation])
 async def danh_sach_hoi_thoai(
     raw_request: Request,
+    response: Response,
     limit: int = 50,
+    q: str = Query("", max_length=512),
+    cursor: str | None = Query(None, max_length=1024),
     app_container: AppContainer = Depends(get_container),
 ) -> list[Conversation]:
     # Không trả kèm tin nhắn: danh sách sidebar mà kéo theo toàn bộ nội dung từng
     # cuộc là một truy vấn nặng dần theo lịch sử người dùng.
-    return await app_container.relational_repo.danh_sach_hoi_thoai(
-        tenant_scope_cua(raw_request), limit=min(max(limit, 1), 200)
-    )
+    size = min(max(limit, 1), 200)
+    try:
+        rows = await app_container.relational_repo.danh_sach_hoi_thoai(
+            tenant_scope_cua(raw_request), limit=size + 1, q=q, cursor=cursor
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Cursor không hợp lệ.") from exc
+    if len(rows) > size:
+        last = rows[size - 1]
+        response.headers["x-next-cursor"] = last._page_cursor or encode_cursor(
+            last.cap_nhat_luc.timestamp(), last.conversation_id
+        )
+    return rows[:size]
 
 
 @router.get("/conversations/{conversation_id}", response_model=ConversationDetail)

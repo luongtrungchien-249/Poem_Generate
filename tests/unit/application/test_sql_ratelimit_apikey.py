@@ -36,11 +36,21 @@ from domain.policy.api_key import (
 pytestmark = pytest.mark.unit
 
 SCOPE = ThreadScope(platform="web", thread_id="t1")
+_owned_engines = []
+
+
+@pytest.fixture(autouse=True)
+async def dispose_test_engines():
+    yield
+    for engine in _owned_engines:
+        await engine.dispose()
+    _owned_engines.clear()
 
 
 async def _engine(duong_dan: Path):
     """Engine mới trên CÙNG một tệp — cách mô phỏng một tiến trình khác."""
     e = tao_engine(dung_dsn_sqlite(duong_dan))
+    _owned_engines.append(e)
     await tao_bang(e)
     return e
 
@@ -186,9 +196,7 @@ async def test_KHOA_NGUYEN_VAN_KHONG_duoc_luu(tmp_path: Path):
     khoa = await kho.phat_hanh("cong_ty_a")
 
     # Gom mọi tệp SQLite sinh ra: .sqlite3, -wal, -shm. Sao lưu thì chép tất.
-    noi_dung = b"".join(
-        p.read_bytes() for p in tmp_path.iterdir() if p.is_file()
-    )
+    noi_dung = b"".join(p.read_bytes() for p in tmp_path.iterdir() if p.is_file())
     assert bam_khoa(khoa).encode() in noi_dung, "đối chứng: băm phải có mặt trên đĩa"
     assert khoa.encode() not in noi_dung, "khoá nguyên văn nằm trên đĩa"
 

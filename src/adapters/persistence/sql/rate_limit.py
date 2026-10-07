@@ -27,6 +27,7 @@ from __future__ import annotations
 import time
 
 from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from application.ports.rate_limit import Pass, RateLimitOutcome, Silent, Warn
@@ -68,15 +69,11 @@ class SqlRateLimiter:
             # Dọn dấu vết quá cũ TRƯỚC khi đếm. Không dọn thì bảng phình vô hạn, và
             # phép đếm phải quét qua toàn bộ lịch sử để bỏ đi phần lớn.
             await conn.execute(
-                delete(dau_vet_goi).where(
-                    dau_vet_goi.c.khoa == khoa, dau_vet_goi.c.moc < nguong
-                )
+                delete(dau_vet_goi).where(dau_vet_goi.c.khoa == khoa, dau_vet_goi.c.moc < nguong)
             )
             so_lan = (
                 await conn.scalar(
-                    select(func.count()).select_from(dau_vet_goi).where(
-                        dau_vet_goi.c.khoa == khoa
-                    )
+                    select(func.count()).select_from(dau_vet_goi).where(dau_vet_goi.c.khoa == khoa)
                 )
             ) or 0
 
@@ -98,9 +95,9 @@ class SqlRateLimiter:
         async with self._engine.connect() as conn:
             so_lan = (
                 await conn.scalar(
-                    select(func.count()).select_from(dau_vet_goi).where(
-                        dau_vet_goi.c.khoa == khoa, dau_vet_goi.c.moc >= time.time() - 60.0
-                    )
+                    select(func.count())
+                    .select_from(dau_vet_goi)
+                    .where(dau_vet_goi.c.khoa == khoa, dau_vet_goi.c.moc >= time.time() - 60.0)
                 )
             ) or 0
         return so_lan >= self._canh_bao
@@ -111,24 +108,21 @@ class SqlRateLimiter:
         ngay = self._ngay_hom_nay()
 
         async with self._engine.begin() as conn:
-            hien_tai = await conn.scalar(
-                select(ngan_sach_ngay.c.so_lan).where(
-                    ngan_sach_ngay.c.khoa == khoa, ngan_sach_ngay.c.ngay == ngay
-                )
-            )
-            if hien_tai is None:
-                await conn.execute(
-                    insert(ngan_sach_ngay).values(khoa=khoa, ngay=ngay, so_lan=1)
-                )
-                return True
-            if int(hien_tai) >= self._max_ngay:
-                return False
-            # Cộng dồn bằng biểu thức SQL, KHÔNG bằng `so_lan = hien_tai + 1`: hai
-            # tiến trình đọc cùng một giá trị rồi cùng ghi sẽ mất một lượt đếm, và
-            # trần ngân sách bị nới ra âm thầm.
-            await conn.execute(
+            try:
+                async with conn.begin_nested():
+                    await conn.execute(
+                        insert(ngan_sach_ngay).values(khoa=khoa, ngay=ngay, so_lan=0)
+                    )
+            except IntegrityError:
+                pass
+            # One conditional UPDATE both reserves and enforces the ceiling.
+            changed = await conn.execute(
                 update(ngan_sach_ngay)
-                .where(ngan_sach_ngay.c.khoa == khoa, ngan_sach_ngay.c.ngay == ngay)
+                .where(
+                    ngan_sach_ngay.c.khoa == khoa,
+                    ngan_sach_ngay.c.ngay == ngay,
+                    ngan_sach_ngay.c.so_lan < self._max_ngay,
+                )
                 .values(so_lan=ngan_sach_ngay.c.so_lan + 1)
             )
-        return True
+            return bool(changed.rowcount)

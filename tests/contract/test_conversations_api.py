@@ -158,6 +158,7 @@ async def test_kho_SQL_hanh_xu_giong_kho_in_memory(tmp_path):
     assert sua is not None and sua.tieu_de == "đã sửa"
     assert await kho.xoa_hoi_thoai(a, c.conversation_id) is True
     assert await kho.lay_hoi_thoai(a, c.conversation_id) is None
+    await e.dispose()
 
 
 # ── §14 danh mục model ───────────────────────────────────────────────────────

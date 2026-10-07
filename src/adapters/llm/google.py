@@ -181,8 +181,18 @@ def _doc_phan_hoi(data: dict[str, Any], model: str) -> LLMResponse:
         content=content,
         model=model,
         finish_reason=ung_vien.get("finishReason", "STOP"),
-        usage={"prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens},
-        cost_usd=cost_calculator.calculate_cost(model, prompt_tokens, completion_tokens),
+        usage={
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            **(
+                {"cached_tokens": usage["cachedContentTokenCount"]}
+                if usage.get("cachedContentTokenCount")
+                else {}
+            ),
+        },
+        cost_usd=cost_calculator.calculate_cost(
+            model, prompt_tokens, completion_tokens, usage.get("cachedContentTokenCount", 0)
+        ),
         raw_response=data,
         tool_calls=tool_calls,
     )
@@ -263,14 +273,17 @@ class GoogleAIClient:
     ) -> AsyncIterator[LLMStreamChunk]:
         payload = self._than_yeu_cau(messages, temperature, max_tokens, None, kwargs)
 
-        async with httpx.AsyncClient(timeout=60.0) as client, client.stream(
-            "POST",
-            # `alt=sse` bắt buộc: thiếu nó Google trả một mảng JSON lớn chứ không
-            # phải luồng sự kiện, và vòng đọc dưới đây sẽ không thấy dòng nào.
-            f"{self.base_url}/{_duong_dan_model(model)}:streamGenerateContent?alt=sse",
-            headers=self._headers(),
-            json=payload,
-        ) as response:
+        async with (
+            httpx.AsyncClient(timeout=60.0) as client,
+            client.stream(
+                "POST",
+                # `alt=sse` bắt buộc: thiếu nó Google trả một mảng JSON lớn chứ không
+                # phải luồng sự kiện, và vòng đọc dưới đây sẽ không thấy dòng nào.
+                f"{self.base_url}/{_duong_dan_model(model)}:streamGenerateContent?alt=sse",
+                headers=self._headers(),
+                json=payload,
+            ) as response,
+        ):
             response.raise_for_status()
             async for line in response.aiter_lines():
                 if not line or not line.startswith("data: "):
@@ -294,11 +307,7 @@ class GoogleAIClient:
         tên model sinh vào đây sẽ nhận 400 với thông báo không nói rõ nguyên nhân.
         """
         ten = _duong_dan_model(model or MODEL_NHUNG_MAC_DINH)
-        payload = {
-            "requests": [
-                {"model": ten, "content": {"parts": [{"text": t}]}} for t in texts
-            ]
-        }
+        payload = {"requests": [{"model": ten, "content": {"parts": [{"text": t}]}} for t in texts]}
         async with httpx.AsyncClient(timeout=60.0) as client:
             resp = await client.post(
                 f"{self.base_url}/{ten}:batchEmbedContents",

@@ -12,6 +12,7 @@ import time
 import uuid
 from datetime import UTC, datetime
 
+from application.conversation.cursor import decode_cursor
 from contracts.chat import Message
 from contracts.chunk import Document
 from contracts.conversation import Conversation
@@ -43,9 +44,7 @@ class InMemoryRelationalRepository:
         # nào mang mã này thì bỏ qua: `session_id` không bắt buộc là hội thoại.
         c = self._hoi_thoai.get(khoa)
         if c is not None:
-            self._hoi_thoai[khoa] = c.model_copy(
-                update={"cap_nhat_luc": datetime.now(tz=UTC)}
-            )
+            self._hoi_thoai[khoa] = c.model_copy(update={"cap_nhat_luc": datetime.now(tz=UTC)})
 
     async def dat_tieu_de_neu_trong(
         self, scope: TenantScope, conversation_id: str, tieu_de: str
@@ -94,24 +93,28 @@ class InMemoryRelationalRepository:
         return c
 
     async def danh_sach_hoi_thoai(
-        self, scope: TenantScope, limit: int = 50
+        self, scope: TenantScope, limit: int = 50, *, q: str = "", cursor: str | None = None
     ) -> list[Conversation]:
-        cua_tenant = [
-            c for (t, _), c in self._hoi_thoai.items() if t == scope.tenant_id
-        ]
+        cua_tenant = [c for (t, _), c in self._hoi_thoai.items() if t == scope.tenant_id]
         # Mới nhất lên đầu: danh sách hội thoại luôn được đọc từ trên xuống.
         # `conversation_id` là khoá phụ để phá thế hoà — xem bản SQL.
         cua_tenant.sort(key=lambda c: (c.cap_nhat_luc, c.conversation_id), reverse=True)
+        cua_tenant = [c for c in cua_tenant if q.strip().casefold() in c.tieu_de.casefold()]
+        if cursor:
+            boundary = decode_cursor(cursor)
+            cua_tenant = [
+                c for c in cua_tenant if (c.cap_nhat_luc.timestamp(), c.conversation_id) < boundary
+            ]
         return [
             c.model_copy(
-                update={"so_tin_nhan": len(self._sessions.get(self._khoa(scope, c.conversation_id), []))}
+                update={
+                    "so_tin_nhan": len(self._sessions.get(self._khoa(scope, c.conversation_id), []))
+                }
             )
             for c in cua_tenant[:limit]
         ]
 
-    async def lay_hoi_thoai(
-        self, scope: TenantScope, conversation_id: str
-    ) -> Conversation | None:
+    async def lay_hoi_thoai(self, scope: TenantScope, conversation_id: str) -> Conversation | None:
         c = self._hoi_thoai.get(self._khoa(scope, conversation_id))
         if c is None:
             return None

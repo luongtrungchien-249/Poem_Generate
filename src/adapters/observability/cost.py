@@ -11,7 +11,11 @@ class CostCalculator:
         self._load_pricing(config_path)
 
     def _load_pricing(self, config_path: str | None) -> None:
-        path = Path(config_path) if config_path else Path(__file__).parents[2] / "configs" / "models.yaml"
+        path = (
+            Path(config_path)
+            if config_path
+            else Path(__file__).resolve().parents[3] / "configs" / "models.yaml"
+        )
         if path.exists():
             with open(path, encoding="utf-8") as f:
                 data = yaml.safe_load(f) or {}
@@ -31,7 +35,9 @@ class CostCalculator:
                 "mock-gpt": {"input": 0.0, "output": 0.0, "cached": 0.0},
             }
 
-    def calculate_cost(self, model: str, prompt_tokens: int, completion_tokens: int, cached_tokens: int = 0) -> float:
+    def calculate_cost(
+        self, model: str, prompt_tokens: int, completion_tokens: int, cached_tokens: int = 0
+    ) -> float:
         # Match prefix or exact model name
         rates = self.pricing.get(model)
         if not rates:

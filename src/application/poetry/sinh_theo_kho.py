@@ -50,6 +50,7 @@ from __future__ import annotations
 
 import asyncio
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from application.pipeline.stages.generate import generate_react_loop
@@ -57,7 +58,8 @@ from application.pipeline.stages.verify_output import co_dang_bai_tho
 from application.poem_verifier import dung_bien_ban
 from application.poetry.diem_tuan_thu import do_diem_tuan_thu
 from application.poetry.doi_chieu_chep import tim_dong_chep
-from application.poetry.prompt import dung_luot_yeu_cau
+from application.poetry.progress import ProgressHook, report
+from application.poetry.prompt import dung_luot_yeu_cau, khung_thanh_cap_dong
 from application.poetry.requirement import PoetryRequirement
 from application.ports.chi_muc_tho import ChiMucDongThoPort
 from application.ports.llm import CallContext, LlmPort, UserMessage
@@ -163,6 +165,10 @@ async def sinh_tung_kho(
     tools: ToolPort | None = None,
     chi_muc_chep: ChiMucDongThoPort | None = None,
     so_song_song: int = SO_SONG_SONG,
+    progress_hook: ProgressHook | None = None,
+    should_stop_hook: Callable[[], bool] | None = None,
+    adaptive_candidates: bool = False,
+    line_framing: bool = False,
 ) -> Result[KetQuaSinhKho, BotError]:
     """Sinh bài theo từng khổ 4 dòng, mỗi khổ chọn trong `so_ung_vien` ứng viên.
 
@@ -174,18 +180,32 @@ async def sinh_tung_kho(
     da_co: list[str] = []
     da_dung = 0
 
-    for _ in range(so_kho_can):
+    for kho in range(so_kho_can):
+        if should_stop_hook and should_stop_hook():
+            break
+        await report(progress_hook, "generating", kho=kho + 1, tong_kho=so_kho_can)
         # Hỏi lại ngân sách ở MỖI khổ. Mỗi khổ là `so_ung_vien` lần gọi có tính
         # tiền, nên hỏi một lần ở đầu rồi tin mãi là bỏ ngỏ chốt chặn chi phí.
         if rate_limiter and not await rate_limiter.within_daily_budget(ctx.scope):
             return Err(BudgetExceeded(scope_name=ctx.scope.thread_id, limit=0, current=0))
 
         loi_nhac = dung_luot_yeu_cau(yeu_cau, khoi_vi_du) + "\n" + _loi_nhac_khuon(da_co)
+        if line_framing:
+            loi_nhac += "\n" + khung_thanh_cap_dong(DONG_MOI_KHO)
         nhan = await _chon_mot_kho(
-            loi_nhac, da_co, llm=llm, ctx=ctx,
-            so_ung_vien=so_ung_vien, default_model=default_model,
-            tools=tools, rate_limiter=rate_limiter, chi_muc_chep=chi_muc_chep,
+            loi_nhac,
+            da_co,
+            llm=llm,
+            ctx=ctx,
+            so_ung_vien=so_ung_vien,
+            default_model=default_model,
+            tools=tools,
+            rate_limiter=rate_limiter,
+            chi_muc_chep=chi_muc_chep,
             so_song_song=so_song_song,
+            progress_hook=progress_hook,
+            should_stop_hook=should_stop_hook,
+            adaptive_candidates=adaptive_candidates,
         )
         da_dung += nhan[1]
         if nhan[0] is None:
@@ -214,6 +234,9 @@ async def _chon_mot_kho(
     rate_limiter: RateLimitPort | None = None,
     chi_muc_chep: ChiMucDongThoPort | None = None,
     so_song_song: int = SO_SONG_SONG,
+    progress_hook: ProgressHook | None = None,
+    should_stop_hook: Callable[[], bool] | None = None,
+    adaptive_candidates: bool = False,
 ) -> tuple[list[str] | None, int]:
     """Sinh ứng viên theo đợt, nhận ứng viên ĐẦU TIÊN giữ được cả bài hợp luật.
 
@@ -232,11 +255,26 @@ async def _chon_mot_kho(
     # số ứng viên. Làm tròn LÊN: thiếu còn hơn thừa thì ngược lại — hụt ứng viên
     # làm tụt tỉ lệ đạt của cả khổ.
     so_luot_can = -(-so_ung_vien // moi_luot)
-    nhac = loi_nhac if moi_luot == 1 else f"{loi_nhac}\n{CHI_DAN_NHIEU_UNG_VIEN.format(so=moi_luot)}"
+    nhac = (
+        loi_nhac if moi_luot == 1 else f"{loi_nhac}\n{CHI_DAN_NHIEU_UNG_VIEN.format(so=moi_luot)}"
+    )
 
-    buoc = max(1, so_song_song)
+    # Experimental small batches: keep the full candidate ceiling, with earlier
+    # repair at the 8/16 candidate checkpoints. Default remains unchanged for A/B.
+    buoc = max(1, min(so_song_song, 2) if adaptive_candidates else so_song_song)
+    rescued = False
     for dau in range(0, so_luot_can, buoc):
+        if should_stop_hook and should_stop_hook():
+            return None, da_dung
+        if rate_limiter and not await rate_limiter.within_daily_budget(ctx.scope):
+            return None, da_dung
         con = min(buoc, so_luot_can - dau)
+        await report(
+            progress_hook,
+            "generating",
+            ung_vien=min(so_ung_vien, (dau + con) * moi_luot),
+            kho=len(da_co) // 4 + 1,
+        )
         tra_loi = await asyncio.gather(
             *[
                 llm.reply(
@@ -277,15 +315,49 @@ async def _chon_mot_kho(
                 if gan_nhat is None or khoa < gan_nhat[1]:
                     gan_nhat = (dong, khoa)
 
+        checkpoint = (dau + con) * moi_luot
+        if (
+            adaptive_candidates
+            and checkpoint in (8, 16)
+            and gan_nhat
+            and tools
+            and not rescued
+            and gan_nhat[1][0] == 0
+            and gan_nhat[1][1] <= 1
+        ):
+            rescued = True
+            await report(progress_hook, "repairing", kho=len(da_co) // 4 + 1)
+            cuu = await _cuu_kho_bang_react(
+                gan_nhat[0],
+                da_co,
+                loi_nhac,
+                llm=llm,
+                ctx=ctx,
+                tools=tools,
+                rate_limiter=rate_limiter,
+                default_model=default_model,
+            )
+            da_dung += 1
+            if cuu is not None and not tim_dong_chep("\n".join(cuu), chi_muc_chep):
+                return cuu, da_dung
+
     # ════ CHƯA ĐẠT THÌ SUY NGHĨ, ĐỪNG BỎ CUỘC NGAY ════
-    if gan_nhat is not None and tools is not None:
+    if gan_nhat is not None and tools is not None and not rescued:
+        if should_stop_hook and should_stop_hook():
+            return None, da_dung
+        await report(progress_hook, "repairing", kho=len(da_co) // 4 + 1)
         cuu = await _cuu_kho_bang_react(
-            gan_nhat[0], da_co, loi_nhac,
-            llm=llm, ctx=ctx, tools=tools, rate_limiter=rate_limiter,
+            gan_nhat[0],
+            da_co,
+            loi_nhac,
+            llm=llm,
+            ctx=ctx,
+            tools=tools,
+            rate_limiter=rate_limiter,
             default_model=default_model,
         )
         da_dung += 1
-        if cuu is not None:
+        if cuu is not None and not tim_dong_chep("\n".join(cuu), chi_muc_chep):
             return cuu, da_dung
 
     return None, da_dung
@@ -386,9 +458,7 @@ class _NganSachLuonMo:
         return True
 
 
-_THE_PHUONG_AN = re.compile(
-    r"<phuong_an>(.*?)</phuong_an>", re.IGNORECASE | re.DOTALL
-)
+_THE_PHUONG_AN = re.compile(r"<phuong_an>(.*?)</phuong_an>", re.IGNORECASE | re.DOTALL)
 
 
 def _lay_cac_phuong_an(van_ban: str) -> list[list[str]]:

@@ -43,6 +43,14 @@ export const layDanhSachModel = () => lay<ModelInfo[]>("/api/models");
 export const layDanhSachHoiThoai = (q = "") =>
   lay<Conversation[]>(`/api/conversations${q ? `?q=${encodeURIComponent(q)}` : ""}`);
 
+export async function layTrangHoiThoai(q = "", cursor?: string, signal?: AbortSignal) {
+  const params = new URLSearchParams({ q, limit: "50" });
+  if (cursor) params.set("cursor", cursor);
+  const response = await fetch(`/api/conversations?${params}`, { signal });
+  if (!response.ok) throw new LoiApi("Không tải được hội thoại.", response.status);
+  return { rows: await response.json() as Conversation[], cursor: response.headers.get("x-next-cursor") };
+}
+
 export const taoHoiThoai = (tieu_de = "", model = "") =>
   lay<Conversation>("/api/conversations", {
     method: "POST",

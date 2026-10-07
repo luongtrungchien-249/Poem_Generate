@@ -61,6 +61,17 @@ class LLMConfig(BaseModel):
     # việc đó. Hạ khi hay gặp 429 (khoá Gemini miễn phí: đo 26/09/2026, 8 lượt song
     # song gây 5 lần 429 cho một bài 8 dòng).
     so_song_song: int = Field(default=8, ge=1, le=64)
+    adaptive_candidates: bool = False
+    line_framing: bool = False
+
+
+class PoemJobsConfig(BaseModel):
+    embedded_worker: bool = True
+    deadline_seconds: float = Field(300, ge=10, le=1800)
+    active_limit: int = Field(2, ge=1, le=20)
+    lease_seconds: float = Field(30, ge=10, le=120)
+    ttl_seconds: float = Field(86400, ge=3600)
+    max_model_calls: int = Field(80, ge=1, le=500)
 
 
 class AuthConfig(BaseModel):
@@ -145,6 +156,7 @@ class Settings(BaseModel):
     guardrails: GuardrailsConfig = Field(default_factory=GuardrailsConfig)
     rate_limit: RateLimitConfig = Field(default_factory=RateLimitConfig)
     auth: AuthConfig = Field(default_factory=AuthConfig)
+    poem_jobs: PoemJobsConfig = Field(default_factory=PoemJobsConfig)
     secrets: Secrets = Field(default_factory=Secrets)
 
     @property
@@ -169,10 +181,16 @@ def _kiem_lua_chon(gia_tri: object, hop_le: tuple[_T, ...], ten: str) -> _T:
 
 ENV_HOP_LE: tuple[Env, ...] = ("dev", "staging", "production")
 PROVIDER_HOP_LE: tuple[Literal["openai", "anthropic", "google", "vllm", "mock"], ...] = (
-    "openai", "anthropic", "google", "vllm", "mock",
+    "openai",
+    "anthropic",
+    "google",
+    "vllm",
+    "mock",
 )
 TIER_HOP_LE: tuple[Literal["cheap", "standard", "reasoning"], ...] = (
-    "cheap", "standard", "reasoning",
+    "cheap",
+    "standard",
+    "reasoning",
 )
 
 
@@ -237,7 +255,10 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
     _nap_dotenv(cfg_dir.parent / ".env")
     resolved_env = env or os.getenv("ENV", "dev")
 
-    raw = _deep_merge(_read_yaml(cfg_dir / "base.yaml"), _read_yaml(cfg_dir / f"{resolved_env}.yaml"))
+    env_file = cfg_dir / f"{resolved_env}.yaml"
+    if resolved_env == "production" and not env_file.exists():
+        env_file = cfg_dir / "prod.yaml"
+    raw = _deep_merge(_read_yaml(cfg_dir / "base.yaml"), _read_yaml(env_file))
     secrets = Secrets()
 
     app_raw = raw.get("app", {})
@@ -250,7 +271,8 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
     return Settings(
         env=_kiem_lua_chon(
             app_raw.get("env", resolved_env) if app_raw.get("env") != "base" else resolved_env,
-            ENV_HOP_LE, "ENV"
+            ENV_HOP_LE,
+            "ENV",
         ),
         debug=app_raw.get("debug", resolved_env == "dev"),
         configs_dir=cfg_dir,
@@ -258,19 +280,19 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             host=os.getenv("HOST", server_raw.get("host", "127.0.0.1")),
             port=int(os.getenv("PORT", server_raw.get("port", 8000))),
             workers=int(os.getenv("WORKERS", server_raw.get("workers", 1))),
-            cors_origins=_danh_sach(
-                os.getenv("CORS_ORIGINS"), server_raw.get("cors_origins", [])
-            ),
+            cors_origins=_danh_sach(os.getenv("CORS_ORIGINS"), server_raw.get("cors_origins", [])),
         ),
         llm=LLMConfig(
             default_provider=_kiem_lua_chon(
                 os.getenv("DEFAULT_PROVIDER", llm_raw.get("default_provider", "mock")),
-                PROVIDER_HOP_LE, "DEFAULT_PROVIDER"
+                PROVIDER_HOP_LE,
+                "DEFAULT_PROVIDER",
             ),
             default_model=os.getenv("DEFAULT_MODEL", llm_raw.get("default_model", "gpt-4o-mini")),
             default_tier=_kiem_lua_chon(
                 os.getenv("DEFAULT_TIER", llm_raw.get("router", {}).get("default_tier", "cheap")),
-                TIER_HOP_LE, "DEFAULT_TIER"
+                TIER_HOP_LE,
+                "DEFAULT_TIER",
             ),
             openai_base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
             google_base_url=os.getenv(
@@ -279,9 +301,14 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             vllm_base_url=os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1"),
             mock_fallback_on_missing_key=llm_raw.get("mock_fallback_on_missing_key", True),
             so_song_song=int(os.getenv("SO_SONG_SONG", llm_raw.get("so_song_song", 8))),
+            adaptive_candidates=_env_bool("POEM_ADAPTIVE_CANDIDATES", False),
+            line_framing=_env_bool("POEM_LINE_FRAMING", False),
         ),
         storage=StorageConfig(
-            kind=storage_raw.get("type", "in_memory"),
+            kind=os.getenv(
+                "STORAGE_TYPE", storage_raw.get("type", storage_raw.get("kind", "in_memory"))
+            ),
+            sqlite_path=storage_raw.get("sqlite_path", "data/app.sqlite3"),
             vector_kind=storage_raw.get("vector_db", "in_memory"),
             database_url=secrets.database_url,
             redis_url=secrets.redis_url,
@@ -301,6 +328,14 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             refill_rate=float(os.getenv("RATE_LIMIT_REFILL_RATE", 5.0)),
         ),
         secrets=secrets,
+        poem_jobs=PoemJobsConfig(
+            embedded_worker=_env_bool("POEM_EMBEDDED_WORKER", resolved_env == "dev"),
+            deadline_seconds=float(os.getenv("POEM_JOB_DEADLINE", "300")),
+            active_limit=int(os.getenv("POEM_JOB_ACTIVE_LIMIT", "2")),
+            lease_seconds=float(os.getenv("POEM_JOB_LEASE", "30")),
+            ttl_seconds=float(os.getenv("POEM_JOB_TTL", "86400")),
+            max_model_calls=int(os.getenv("POEM_JOB_MAX_CALLS", "80")),
+        ),
     )
 
 

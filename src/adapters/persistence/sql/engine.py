@@ -46,6 +46,10 @@ def dung_dsn_sqlite(duong_dan: str | Path) -> str:
 
 def tao_engine(dsn: str) -> AsyncEngine:
     """Engine async cho một DSN bất kỳ trong hai dialect được hỗ trợ."""
+    if dsn.startswith("postgresql://"):
+        dsn = "postgresql+asyncpg://" + dsn.removeprefix("postgresql://")
+    elif dsn.startswith("postgres://"):
+        dsn = "postgresql+asyncpg://" + dsn.removeprefix("postgres://")
     engine = create_async_engine(dsn, future=True)
 
     if la_sqlite(dsn):
@@ -67,8 +71,8 @@ async def tao_bang(engine: AsyncEngine) -> None:
     Alembic lo**: `create_all` không biết gì về việc đổi lược đồ trên dữ liệu đã
     có — nó chỉ tạo cái còn thiếu, và im lặng bỏ qua cột đã đổi kiểu.
 
-    ⚠️ Alembic CHƯA được thêm. Ghi ra đây thay vì để người deploy phát hiện lúc
-    cần đổi lược đồ lần đầu.
+    Alembic nằm ở migrations/: vận hành production chạy `alembic upgrade head`
+    có sao lưu, trước khi khởi động API/worker.
     """
     async with engine.begin() as conn:
         await conn.run_sync(metadata.create_all)

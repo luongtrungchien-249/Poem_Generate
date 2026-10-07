@@ -192,6 +192,7 @@ class ChatLlmAdapter:
         self._so_lan_thu_lai = so_lan_thu_lai
         # Tiêm được để test không phải chờ thật.
         self._ngu = ngu
+        self.retry_counts: dict[str, int] = {}
 
     async def reply(
         self,
@@ -212,18 +213,27 @@ class ChatLlmAdapter:
                 break
             except Exception as e:  # noqa: BLE001 — biên với thế giới ngoài
                 if _la_loi_tam_thoi(e) and lan < self._so_lan_thu_lai:
+                    status = str(_ma_trang_thai(e) or "network")
+                    self.retry_counts[status] = self.retry_counts.get(status, 0) + 1
                     await self._ngu(_thoi_gian_cho(e, lan))
                     lan += 1
                     continue
                 # Mọi lỗi provider quy về một lỗi nghiệp vụ CÓ PHÂN LOẠI. Để ngoại
                 # lệ thô đi lên sẽ phá hợp đồng `Result` của cả đường ống.
-                return Err(UpstreamError(
-                    upstream=type(self._client).__name__,
-                    status_code=_ma_trang_thai(e),
-                    message=str(e),
-                ))
+                return Err(
+                    UpstreamError(
+                        upstream=type(self._client).__name__,
+                        status_code=_ma_trang_thai(e),
+                        message=str(e),
+                    )
+                )
 
         usage = resp.usage or {}
+        cached = int(
+            usage.get(
+                "cached_tokens", usage.get("prompt_tokens_details", {}).get("cached_tokens", 0)
+            )
+        )
         return Ok(
             LlmReply(
                 text=resp.content,
@@ -232,8 +242,9 @@ class ChatLlmAdapter:
                     for tc in resp.tool_calls
                 ),
                 usage=LlmUsage(
-                    input_tokens=int(usage.get("prompt_tokens", 0)),
+                    input_tokens=max(0, int(usage.get("prompt_tokens", 0)) - cached),
                     output_tokens=int(usage.get("completion_tokens", 0)),
+                    cached_tokens=cached,
                 ),
             )
         )

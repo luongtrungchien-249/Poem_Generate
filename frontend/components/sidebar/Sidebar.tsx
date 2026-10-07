@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MessageSquare, Plus, Search, Sparkles, Trash2, X } from "lucide-react";
-import { layDanhSachHoiThoai, taoHoiThoai, xoaHoiThoai } from "@/services/api";
+import { layTrangHoiThoai, taoHoiThoai, xoaHoiThoai } from "@/services/api";
 import { useConversationStore } from "@/stores/conversationStore";
 import { useUiStore } from "@/stores/uiStore";
 import { cx, thoiGianGon } from "@/lib/utils";
@@ -14,17 +14,38 @@ export function Sidebar({ dangMo }: { dangMo: string | null }) {
   const { danhSach, datDanhSach, xoaKhoiDanhSach } = useConversationStore();
   const { timKiem, datTimKiem, sidebarMo, datSidebar } = useUiStore();
   const [dangTai, datDangTai] = useState(true);
+  const [cursor, datCursor] = useState<string | null>(null);
+  const [taiThem, datTaiThem] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+    datCursor(null);
+    datDangTai(true);
     // Gõ tới đâu gọi tới đó sẽ bắn một request mỗi phím — §49 yêu cầu debounce.
     const h = setTimeout(() => {
-      layDanhSachHoiThoai(timKiem)
-        .then(datDanhSach)
-        .catch(() => datDanhSach([]))
-        .finally(() => datDangTai(false));
+      layTrangHoiThoai(timKiem, undefined, controller.signal)
+        .then(page => { if (!controller.signal.aborted) { datDanhSach(page.rows); datCursor(page.cursor); } })
+        .catch(() => { if (!controller.signal.aborted) datDanhSach([]); })
+        .finally(() => { if (!controller.signal.aborted) datDangTai(false); });
     }, 220);
-    return () => clearTimeout(h);
+    return () => { clearTimeout(h); controller.abort(); };
   }, [timKiem, datDanhSach]);
+
+  async function themTrang() {
+    if (!cursor || taiThem) return;
+    const query = timKiem;
+    datTaiThem(true);
+    try {
+      const page = await layTrangHoiThoai(query, cursor);
+      if (useUiStore.getState().timKiem !== query) return;
+      const rows = useConversationStore.getState().danhSach;
+      const ids = new Set(rows.map(row => row.conversation_id));
+      datDanhSach([...rows, ...page.rows.filter(row => !ids.has(row.conversation_id))]);
+      datCursor(page.cursor);
+    } catch {
+      // Preserve the current page/cursor so the user can retry.
+    } finally { datTaiThem(false); }
+  }
 
   async function moiCuocTroChuyen() {
     try {
@@ -187,6 +208,11 @@ export function Sidebar({ dangMo }: { dangMo: string | null }) {
                 );
               })}
             </ul>
+          )}
+          {cursor && !dangTai && (
+            <button onClick={() => void themTrang()} disabled={taiThem} className="w-full px-2 py-2 text-sm">
+              {taiThem ? "Đang tải…" : "Xem thêm hội thoại"}
+            </button>
           )}
         </div>
       </aside>
