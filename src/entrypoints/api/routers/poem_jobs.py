@@ -17,19 +17,23 @@ router = APIRouter(prefix="/v1/poem/jobs", tags=["Poem jobs"])
 
 
 def public_job(job: PoemJob) -> PoemJobResponse:
-    return PoemJobResponse(
-        job_id=job.job_id,
-        status=job.status,
-        conversation_id=job.payload.get("session_id"),
-        created_at=job.created_at,
-        updated_at=job.updated_at,
-        deadline=job.deadline,
-        model=job.model,
-        provider=job.provider,
-        progress=job.progress,
-        result=job.result,
-        result_status=job.result_status,
-        error=job.error,
+    # Stored JSON crosses a validation boundary: parse status and the result
+    # union through Pydantic rather than pretending they are typed models.
+    return PoemJobResponse.model_validate(
+        {
+            "job_id": job.job_id,
+            "status": job.status,
+            "conversation_id": job.payload.get("session_id"),
+            "created_at": job.created_at,
+            "updated_at": job.updated_at,
+            "deadline": job.deadline,
+            "model": job.model,
+            "provider": job.provider,
+            "progress": job.progress,
+            "result": job.result,
+            "result_status": job.result_status,
+            "error": job.error,
+        }
     )
 
 

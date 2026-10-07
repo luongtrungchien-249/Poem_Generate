@@ -9,8 +9,10 @@ import json
 import time
 import uuid
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import delete, func, insert, or_, select, update
+from sqlalchemy.engine import Row
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from application.conversation.cursor import decode_cursor, encode_cursor
@@ -294,13 +296,13 @@ class SqlRelationalRepository:
         return bool(kq.rowcount)
 
 
-def _sang_conversation(hang: object, so_tin_nhan: int = 0) -> Conversation:
+def _sang_conversation(hang: Row[Any], so_tin_nhan: int = 0) -> Conversation:
     result = Conversation(
-        conversation_id=hang.conversation_id,  # type: ignore[attr-defined]
-        tieu_de=hang.tieu_de or "",  # type: ignore[attr-defined]
-        model=hang.model or "",  # type: ignore[attr-defined]
-        tao_luc=datetime.fromtimestamp(float(hang.tao_luc), tz=UTC),  # type: ignore[attr-defined]
-        cap_nhat_luc=datetime.fromtimestamp(float(hang.cap_nhat_luc), tz=UTC),  # type: ignore[attr-defined]
+        conversation_id=hang.conversation_id,
+        tieu_de=hang.tieu_de or "",
+        model=hang.model or "",
+        tao_luc=datetime.fromtimestamp(float(hang.tao_luc), tz=UTC),
+        cap_nhat_luc=datetime.fromtimestamp(float(hang.cap_nhat_luc), tz=UTC),
         so_tin_nhan=so_tin_nhan,
     )
     result._page_cursor = encode_cursor(float(hang.cap_nhat_luc), hang.conversation_id)

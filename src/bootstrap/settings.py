@@ -67,10 +67,10 @@ class LLMConfig(BaseModel):
 
 class PoemJobsConfig(BaseModel):
     embedded_worker: bool = True
-    deadline_seconds: float = Field(300, ge=10, le=1800)
+    deadline_seconds: float = Field(300.0, ge=10, le=1800)
     active_limit: int = Field(2, ge=1, le=20)
-    lease_seconds: float = Field(30, ge=10, le=120)
-    ttl_seconds: float = Field(86400, ge=3600)
+    lease_seconds: float = Field(30.0, ge=10, le=120)
+    ttl_seconds: float = Field(86400.0, ge=3600)
     max_model_calls: int = Field(80, ge=1, le=500)
 
 
@@ -156,7 +156,7 @@ class Settings(BaseModel):
     guardrails: GuardrailsConfig = Field(default_factory=GuardrailsConfig)
     rate_limit: RateLimitConfig = Field(default_factory=RateLimitConfig)
     auth: AuthConfig = Field(default_factory=AuthConfig)
-    poem_jobs: PoemJobsConfig = Field(default_factory=PoemJobsConfig)
+    poem_jobs: PoemJobsConfig = Field(default_factory=lambda: PoemJobsConfig.model_validate({}))
     secrets: Secrets = Field(default_factory=Secrets)
 
     @property
@@ -305,8 +305,12 @@ def load_settings(env: str | None = None, configs_dir: Path | None = None) -> Se
             line_framing=_env_bool("POEM_LINE_FRAMING", False),
         ),
         storage=StorageConfig(
-            kind=os.getenv(
-                "STORAGE_TYPE", storage_raw.get("type", storage_raw.get("kind", "in_memory"))
+            kind=_kiem_lua_chon(
+                os.getenv(
+                    "STORAGE_TYPE", storage_raw.get("type", storage_raw.get("kind", "in_memory"))
+                ),
+                ("in_memory", "sqlite", "sql", "postgres"),
+                "STORAGE_TYPE",
             ),
             sqlite_path=storage_raw.get("sqlite_path", "data/app.sqlite3"),
             vector_kind=storage_raw.get("vector_db", "in_memory"),

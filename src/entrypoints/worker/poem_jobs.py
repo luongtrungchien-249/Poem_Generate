@@ -7,6 +7,7 @@ import logging
 import time
 import uuid
 from dataclasses import replace
+from typing import Any, TypedDict
 
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
@@ -25,12 +26,17 @@ from entrypoints.api.routers.poem import execute_poem
 logger = logging.getLogger("poem.worker")
 
 
+class JobProgress(TypedDict):
+    status: str
+    progress: dict[str, Any]
+
+
 async def run_job(container: AppContainer, job: PoemJob) -> None:
     repo = container.poem_jobs
     assert repo is not None
     cfg = container.settings.poem_jobs
     tenant = TenantScope(job.tenant_id)
-    state = {"status": "planning", "progress": {}}
+    state: JobProgress = {"status": "planning", "progress": {}}
 
     async def progress(status: str, details: dict) -> None:
         state["status"] = status
@@ -98,7 +104,7 @@ async def run_job(container: AppContainer, job: PoemJob) -> None:
         async with asyncio.timeout(max(0.01, job.deadline - time.time())):
             outcome = await task
         if isinstance(outcome, JSONResponse):
-            body, code = json.loads(outcome.body), outcome.status_code
+            body, code = json.loads(bytes(outcome.body)), outcome.status_code
         else:
             body, code = outcome.model_dump(mode="json"), 200
         done = await repo.finish(
@@ -124,7 +130,8 @@ async def run_job(container: AppContainer, job: PoemJob) -> None:
         await repo.get(tenant, job.job_id)
     except asyncio.CancelledError:
         task.cancel()
-        if asyncio.current_task().cancelling():
+        current = asyncio.current_task()
+        if current is not None and current.cancelling():
             raise
     except HTTPException as exc:
         await repo.finish(
@@ -161,7 +168,8 @@ async def worker_loop(container: AppContainer) -> None:
                 except asyncio.CancelledError:
                     # Cancellation due to fenced lease/tenant cancel is local.
                     # Process shutdown cancellation must propagate.
-                    if asyncio.current_task().cancelling():
+                    current = asyncio.current_task()
+                    if current is not None and current.cancelling():
                         raise
             else:
                 await asyncio.sleep(0.5)

@@ -1,9 +1,11 @@
 """Admission of model calls shared by all calls in a single job."""
 
-from application.ports.llm import CallContext, LlmPort
+from typing import Any
+
+from application.ports.llm import CallContext, CheapRoute, LlmMessage, LlmPort, LlmReply
 from application.ports.rate_limit import RateLimitPort
-from domain.common.errors import BudgetExceeded
-from domain.common.result import Err
+from domain.common.errors import BotError, BudgetExceeded
+from domain.common.result import Err, Result
 from domain.conversation.thread import ThreadScope
 
 
@@ -24,7 +26,13 @@ class JobBudgetLlm:
         self.calls += 1
         return await self.limiter.within_daily_budget(self.scope)
 
-    async def reply(self, messages, tools, ctx: CallContext, model=None):
+    async def reply(
+        self,
+        messages: tuple[LlmMessage, ...],
+        tools: tuple[Any, ...],
+        ctx: CallContext,
+        model: str | None = None,
+    ) -> Result[LlmReply, BotError]:
         if not await self._reserve():
             return Err(
                 BudgetExceeded(
@@ -33,7 +41,9 @@ class JobBudgetLlm:
             )
         return await self.inner.reply(messages=messages, tools=tools, ctx=ctx, model=model)
 
-    async def cheap(self, messages, route, ctx: CallContext):
+    async def cheap(
+        self, messages: tuple[LlmMessage, ...], route: CheapRoute, ctx: CallContext
+    ) -> Result[str, BotError]:
         if not await self._reserve():
             return Err(
                 BudgetExceeded(

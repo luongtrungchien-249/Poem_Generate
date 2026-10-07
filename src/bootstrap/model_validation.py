@@ -44,11 +44,13 @@ async def validate_remote_model(settings: Settings) -> None:
         if settings.env == "dev" and settings.llm.mock_fallback_on_missing_key:
             return
         raise ValueError(f"Thiếu API key cho {provider}.")
-    headers = {}
+    headers: dict[str, str] = {}
     if provider == "google":
+        assert key is not None
         url = f"{settings.llm.google_base_url.rstrip('/')}/models/{model}"
         headers = {"x-goog-api-key": key}
     elif provider == "anthropic":
+        assert key is not None
         url = f"https://api.anthropic.com/v1/models/{model}"
         headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
     else:
